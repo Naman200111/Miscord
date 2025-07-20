@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
+import { ThemeProvider } from "@/providers/theme-provider";
 
 const font = Open_Sans({ subsets: ["latin"] });
 
@@ -17,8 +18,16 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider signInFallbackRedirectUrl="/" signUpFallbackRedirectUrl="/">
-      <html lang="en">
-        <body className={`${font.className}`}>{children}</body>
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${font.className}`}>
+          <ThemeProvider
+            storageKey="miscord-theme"
+            attribute="class"
+            defaultTheme="dark"
+          >
+            {children}
+          </ThemeProvider>
+        </body>
       </html>
     </ClerkProvider>
   );
