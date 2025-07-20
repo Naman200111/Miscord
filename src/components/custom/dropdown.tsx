@@ -7,10 +7,7 @@ import { cn } from "@/lib/utils";
 interface DropdownTriggerProps {
   children: React.ReactNode;
   className?: string;
-  icon?: (props: {
-    onClick: () => void;
-    ref: React.RefObject<null>;
-  }) => React.ReactNode;
+  icon?: React.ReactNode;
 }
 
 export const DropdownTrigger = ({
@@ -36,20 +33,29 @@ export const DropdownTrigger = ({
 
   return (
     <div className={cn("select-none cursor-pointer", className)}>
-      <div className="w-6 h-6 rounded-full flex items-center justify-center">
-        {icon ? (
-          icon({
-            onClick: () => setShow((prev) => !prev),
-            ref,
-          })
-        ) : (
-          <EllipsisVertical
-            size="16"
-            ref={ref}
-            onClick={() => setShow((prev) => !prev)}
-          />
-        )}
-      </div>
+      {icon ? (
+        <div
+          className={cn(
+            "w-8 h-8 rounded-md flex items-center justify-center hover:bg-accent",
+            className
+          )}
+          onClick={() => setShow((prev) => !prev)}
+          ref={ref}
+        >
+          {icon}
+        </div>
+      ) : (
+        <div
+          className={cn(
+            "w-8 h-8 rounded-full flex items-center justify-center hover:bg-accent",
+            className
+          )}
+          ref={ref}
+          onClick={() => setShow((prev) => !prev)}
+        >
+          <EllipsisVertical size="16" />
+        </div>
+      )}
       {show ? (
         <div className="flex flex-col w-[100px] rounded-sm overflow-hidden">
           {children}

@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <ClerkProvider signInFallbackRedirectUrl="/" signUpFallbackRedirectUrl="/">
       <html lang="en" suppressHydrationWarning>
-        <body className={`${font.className}`}>
+        <body className={`${font.className} dark:bg-[#303338]`}>
           <ThemeProvider
             storageKey="miscord-theme"
             attribute="class"
