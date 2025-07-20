@@ -6,14 +6,17 @@ import { cn } from "@/lib/utils";
 
 interface DropdownTriggerProps {
   children: React.ReactNode;
-  ellipsisClassName?: string;
   className?: string;
+  icon?: (props: {
+    onClick: () => void;
+    ref: React.RefObject<null>;
+  }) => React.ReactNode;
 }
 
 export const DropdownTrigger = ({
   children,
-  ellipsisClassName,
   className,
+  icon,
 }: DropdownTriggerProps) => {
   const [show, setShow] = useState(false);
   const ref = useRef(null);
@@ -33,13 +36,25 @@ export const DropdownTrigger = ({
 
   return (
     <div className={cn("select-none cursor-pointer", className)}>
-      <EllipsisVertical
-        className={cn(ellipsisClassName, "")}
-        size="16"
-        ref={ref}
-        onClick={() => setShow((prev) => !prev)}
-      />
-      {show ? <div className="flex flex-col">{children}</div> : null}
+      <div className="w-6 h-6 rounded-full flex items-center justify-center">
+        {icon ? (
+          icon({
+            onClick: () => setShow((prev) => !prev),
+            ref,
+          })
+        ) : (
+          <EllipsisVertical
+            size="16"
+            ref={ref}
+            onClick={() => setShow((prev) => !prev)}
+          />
+        )}
+      </div>
+      {show ? (
+        <div className="flex flex-col w-[100px] rounded-sm overflow-hidden">
+          {children}
+        </div>
+      ) : null}
     </div>
   );
 };
@@ -49,7 +64,10 @@ export const DropdownItem = ({
   onClick,
 }: React.ComponentProps<"button">) => {
   return (
-    <Button className="select-none cursor-pointer" onClick={onClick}>
+    <Button
+      className="select-none cursor-pointer rounded-none"
+      onClick={onClick}
+    >
       {children}
     </Button>
   );
