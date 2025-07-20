@@ -32,6 +32,7 @@ export const servers = pgTable("servers", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
   imageUrl: text("image_url"),
   name: text("name").notNull(),
+  inviteLink: text("invite_link").notNull(),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
