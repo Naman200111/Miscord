@@ -8,12 +8,22 @@ interface DropdownTriggerProps {
   children: React.ReactNode;
   className?: string;
   icon?: React.ReactNode;
+  position: "top-right" | "right";
 }
+
+const positionClasses = {
+  // "top-left": "absolute top-0 left-0 translate-y-[-100%] mb-2",
+  "top-right": "absolute top-[-5px] left-[10px] translate-y-[-100%] mb-2",
+  right: "absolute top-[50px] left-[50px] translate-y-[-100%] mb-2",
+  // "bottom-left": "absolute bottom-0 left-0 translate-y-[100%] mt-2",
+  // "bottom-right": "absolute bottom-0 right-0 translate-y-[100%] mt-2",
+};
 
 export const DropdownTrigger = ({
   children,
   className,
   icon,
+  position,
 }: DropdownTriggerProps) => {
   const [show, setShow] = useState(false);
   const ref = useRef(null);
@@ -32,11 +42,11 @@ export const DropdownTrigger = ({
   }, [show]);
 
   return (
-    <div className={cn("select-none cursor-pointer", className)}>
+    <div className={cn("relative select-none cursor-pointer", className)}>
       {icon ? (
         <div
           className={cn(
-            "w-8 h-8 rounded-md flex items-center justify-center hover:bg-accent",
+            "w-10 h-10 rounded-md flex items-center justify-center hover:bg-indigo-400",
             className
           )}
           onClick={() => setShow((prev) => !prev)}
@@ -47,7 +57,7 @@ export const DropdownTrigger = ({
       ) : (
         <div
           className={cn(
-            "w-8 h-8 rounded-full flex items-center justify-center hover:bg-accent",
+            "w-8 h-8 rounded-full flex items-center justify-center hover:bg-indigo-400",
             className
           )}
           ref={ref}
@@ -57,7 +67,12 @@ export const DropdownTrigger = ({
         </div>
       )}
       {show ? (
-        <div className="flex flex-col w-[100px] rounded-sm overflow-hidden">
+        <div
+          className={cn(
+            "flex flex-col w-[100px] rounded-sm overflow-hidden absolute",
+            positionClasses[position]
+          )}
+        >
           {children}
         </div>
       ) : null}
@@ -71,7 +86,7 @@ export const DropdownItem = ({
 }: React.ComponentProps<"button">) => {
   return (
     <Button
-      className="select-none cursor-pointer rounded-none"
+      className="select-none cursor-pointer rounded-none bg-foreground z-100"
       onClick={onClick}
     >
       {children}

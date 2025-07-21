@@ -14,15 +14,15 @@ const ThemeSwitcher = () => {
   }, []);
 
   const themeIcon = !mounted ? (
-    <CircleDashed className="animate-spin" />
+    <CircleDashed className="animate-spin text-foreground" />
   ) : theme === "light" && mounted ? (
-    <Sun size="16" />
+    <Sun size="16" className="text-background" />
   ) : (
-    <MoonIcon size="16" />
+    <MoonIcon size="16" className="text-foreground" />
   );
 
   return (
-    <DropdownTrigger icon={themeIcon}>
+    <DropdownTrigger icon={themeIcon} position="right">
       <DropdownItem onClick={() => setTheme("light")}>
         <Sun /> Light
       </DropdownItem>
