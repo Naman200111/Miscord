@@ -5,11 +5,12 @@ import Image from "next/image";
 interface SidebarButtonProps {
   icon?: React.ReactNode;
   name?: string;
-  imageUrl?: string;
+  imageUrl?: string | null;
+  onClick?: () => void;
 }
 
 const buttonVariants = cva(
-  "rounded-xl bg-background p-3 mt-4 duration-200 cursor-pointer",
+  "rounded-xl bg-background p-2 mt-4 duration-200 cursor-pointer",
   {
     variants: {
       vairant: {
@@ -24,19 +25,26 @@ const buttonVariants = cva(
   }
 );
 
-const SidebarButton = ({ icon, imageUrl, name }: SidebarButtonProps) => {
+const SidebarButton = ({
+  icon,
+  imageUrl,
+  name,
+  onClick,
+}: SidebarButtonProps) => {
   return (
     <>
       {icon && (
-        <div className={buttonVariants({ vairant: "icon" })}>{icon}</div>
+        <div className={buttonVariants({ vairant: "icon" })} onClick={onClick}>
+          {icon}
+        </div>
       )}
       {imageUrl && (
-        <div className={buttonVariants({ vairant: "image" })}>
+        <div className={buttonVariants({ vairant: "image" })} onClick={onClick}>
           <Image fill src={imageUrl} alt="Logo" />
         </div>
       )}
       {name && (
-        <div className={buttonVariants({ vairant: "text" })}>
+        <div className={buttonVariants({ vairant: "text" })} onClick={onClick}>
           {getInitials(name)}
         </div>
       )}

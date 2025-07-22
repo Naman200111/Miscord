@@ -1,9 +1,16 @@
 import ServerSidebarSection from "../sections/server-sidebar-section";
+import { getServersList } from "@/procedures/home/servers-procedure";
 
-const HomeView = () => {
+type ServersListType = Awaited<ReturnType<typeof getServersList>>;
+
+interface HomeViewProps {
+  serversList: ServersListType;
+}
+
+const HomeView = ({ serversList }: HomeViewProps) => {
   return (
-    <div className="w-full h-full flex">
-      <ServerSidebarSection />
+    <div className="w-full h-full">
+      <ServerSidebarSection serversList={serversList} />
       {/* <ServerChannelsSection /> */}
       {/* <ChannelMainSection /> */}
     </div>

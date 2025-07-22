@@ -2,7 +2,6 @@ import { X } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 interface ModalProps {
-  className?: string;
   open: boolean;
   onClose: () => void;
   children?: React.ReactNode;
@@ -23,16 +22,26 @@ const Modal = ({ open, onClose, children }: ModalProps) => {
   }, [open]);
 
   return (
-    <dialog ref={modalRef} className="backdrop:backdrop-contrast-50">
-      <div className="relative">
+    <dialog
+      ref={modalRef}
+      className="backdrop:backdrop-contrast-50 max-w-[400px] max-h-[400px] overflow-y-auto rounded-lg p-0"
+      onClick={(e) => {
+        const target = e.target as HTMLDialogElement;
+        if (target.nodeName === "DIALOG") {
+          modalRef.current?.close();
+          onClose();
+        }
+      }}
+    >
+      <div className="relative px-4 py-6 h-full">
         <div
-          className="absolute right-1 top-1 hover:bg-muted rounded-full p-1"
+          className="absolute right-1 top-1 hover:bg-muted rounded-full p-1 cursor-pointer"
           onClick={onClose}
         >
           <X size="16" />
         </div>
+        {children}
       </div>
-      <div className="px-4 py-6">{children}</div>
     </dialog>
   );
 };
