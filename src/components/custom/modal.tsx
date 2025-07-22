@@ -24,7 +24,7 @@ const Modal = ({ open, onClose, children }: ModalProps) => {
   return (
     <dialog
       ref={modalRef}
-      className="backdrop:backdrop-contrast-50 max-w-[400px] max-h-[400px] overflow-y-auto rounded-lg p-0"
+      className="backdrop:backdrop-contrast-50 max-w-[500px] max-h-[600px] overflow-y-auto rounded-lg p-0"
       onClick={(e) => {
         const target = e.target as HTMLDialogElement;
         if (target.nodeName === "DIALOG") {

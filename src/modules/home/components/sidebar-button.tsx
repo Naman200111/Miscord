@@ -10,17 +10,18 @@ interface SidebarButtonProps {
 }
 
 const buttonVariants = cva(
-  "rounded-xl bg-background p-2 mt-4 duration-200 cursor-pointer",
+  "rounded-xl bg-background p-2 duration-200 cursor-pointer",
   {
     variants: {
-      vairant: {
+      variant: {
         icon: "hover:bg-indigo-400 active:bg-indigo-400",
-        image: "relative",
-        text: "hover:bg-indigo-400 active:bg-indigo-400",
+        image:
+          "relative object-cover h-[40px] w-full overflow-hidden rounded-md",
+        text: "hover:bg-indigo-400 active:bg-indigo-400 text-center",
       },
     },
     defaultVariants: {
-      vairant: "icon",
+      variant: "icon",
     },
   }
 );
@@ -34,17 +35,17 @@ const SidebarButton = ({
   return (
     <>
       {icon && (
-        <div className={buttonVariants({ vairant: "icon" })} onClick={onClick}>
+        <div className={buttonVariants({ variant: "icon" })} onClick={onClick}>
           {icon}
         </div>
       )}
       {imageUrl && (
-        <div className={buttonVariants({ vairant: "image" })} onClick={onClick}>
+        <div className={buttonVariants({ variant: "image" })} onClick={onClick}>
           <Image fill src={imageUrl} alt="Logo" />
         </div>
       )}
       {name && (
-        <div className={buttonVariants({ vairant: "text" })} onClick={onClick}>
+        <div className={buttonVariants({ variant: "text" })} onClick={onClick}>
           {getInitials(name)}
         </div>
       )}

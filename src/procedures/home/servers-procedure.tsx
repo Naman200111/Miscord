@@ -2,10 +2,10 @@ import { db } from "@/db/drizzle";
 import { servers, serverUsers, users } from "@/db/schema";
 import { eq, getTableColumns } from "drizzle-orm";
 
-export const getServersList = async (userId: string | null) => {
+export const getServersList = async (userId: string | null | undefined) => {
   if (!userId) return [];
 
-  const [user] = await db.select().from(users).where(eq(users.clerkId, userId));
+  const [user] = await db.select().from(users).where(eq(users.id, userId));
   if (!user) {
     return [];
   }

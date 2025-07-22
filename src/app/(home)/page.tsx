@@ -1,10 +1,10 @@
+import { getCurrentUser } from "@/lib/get-user";
 import HomeView from "@/modules/home/views/home-view";
 import { getServersList } from "@/procedures/home/servers-procedure";
-import { auth } from "@clerk/nextjs/server";
 
 const Home = async () => {
-  const { userId } = await auth();
-  const serversList = await getServersList(userId);
+  const user = await getCurrentUser();
+  const serversList = await getServersList(user?.id);
 
   return (
     <div className="h-full w-full">

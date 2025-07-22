@@ -52,7 +52,7 @@ const ServerSidebarSection = ({ serversList }: ServerSidebarSectionProps) => {
   return (
     <>
       <div className="h-full w-[60px] flex flex-col gap-2 bg-[#2b2b2d] items-center">
-        <div className="flex-1">
+        <div className="flex-1 mt-4">
           <SidebarButton
             icon={<Plus className="text-foreground" />}
             onClick={() => setCreateNewServerModalOpen(true)}

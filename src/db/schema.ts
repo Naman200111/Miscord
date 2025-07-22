@@ -50,7 +50,7 @@ export const channels = pgTable("channels", {
 export const serverUsers = pgTable(
   "server_users",
   {
-    role: serverRoles("role").default("MEMBER"),
+    role: serverRoles("role").notNull().default("MEMBER"),
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),

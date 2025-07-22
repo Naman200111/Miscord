@@ -14,7 +14,7 @@ export const getInitials = (name: string) => {
 
   let initials = "";
   words.forEach((word) => {
-    initials += word[0].toUpperCase();
+    initials += word[0]?.toUpperCase();
   });
 
   return initials.substring(0, 2);
