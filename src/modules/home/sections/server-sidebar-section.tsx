@@ -52,21 +52,21 @@ const ServerSidebarSection = ({ serversList }: ServerSidebarSectionProps) => {
   return (
     <>
       <div className="h-full w-[60px] flex flex-col gap-2 bg-[#2b2b2d] items-center">
-        <div className="flex-1 mt-4">
+        <div className="mt-4 w-[65%]">
           <SidebarButton
             icon={<Plus className="text-foreground" />}
             onClick={() => setCreateNewServerModalOpen(true)}
           />
           <div className="h-[1px] mx-1 my-3 bg-background"></div>
-          <div className="flex flex-col gap-2">
-            {serversList.map(({ server }, index) => (
-              <SidebarButton
-                key={index}
-                imageUrl={server.imageUrl}
-                name={server.name}
-              />
-            ))}
-          </div>
+        </div>
+        <div className="flex flex-col gap-2 overflow-auto no-scrollbar w-[65%] flex-1">
+          {serversList.map(({ server }, index) => (
+            <SidebarButton
+              key={index}
+              imageUrl={server.imageUrl}
+              name={server.name}
+            />
+          ))}
         </div>
         <div className="my-4 flex flex-col gap-2 items-center">
           <ThemeSwitcher />

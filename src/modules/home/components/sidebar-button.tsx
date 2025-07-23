@@ -7,6 +7,7 @@ interface SidebarButtonProps {
   name?: string;
   imageUrl?: string | null;
   onClick?: () => void;
+  className?: string;
 }
 
 const buttonVariants = cva(
@@ -16,7 +17,7 @@ const buttonVariants = cva(
       variant: {
         icon: "hover:bg-indigo-400 active:bg-indigo-400",
         image:
-          "relative object-cover h-[40px] w-full overflow-hidden rounded-md",
+          "relative object-cover min-h-[40px] w-full overflow-hidden rounded-md",
         text: "hover:bg-indigo-400 active:bg-indigo-400 text-center",
       },
     },
@@ -31,21 +32,31 @@ const SidebarButton = ({
   imageUrl,
   name,
   onClick,
+  className,
 }: SidebarButtonProps) => {
   return (
     <>
       {icon && (
-        <div className={buttonVariants({ variant: "icon" })} onClick={onClick}>
+        <div
+          className={buttonVariants({ className, variant: "icon" })}
+          onClick={onClick}
+        >
           {icon}
         </div>
       )}
       {imageUrl && (
-        <div className={buttonVariants({ variant: "image" })} onClick={onClick}>
+        <div
+          className={buttonVariants({ className, variant: "image" })}
+          onClick={onClick}
+        >
           <Image fill src={imageUrl} alt="Logo" />
         </div>
       )}
       {name && (
-        <div className={buttonVariants({ variant: "text" })} onClick={onClick}>
+        <div
+          className={buttonVariants({ className, variant: "text" })}
+          onClick={onClick}
+        >
           {getInitials(name)}
         </div>
       )}
