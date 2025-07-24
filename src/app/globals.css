@@ -1,5 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "uploadthing/tw/v4";
+/* @import 'tailwind-scrollbar-hide/v4'; */
+
+@source "../../node_modules/@uploadthing/react/dist";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -110,6 +114,11 @@
   --sidebar-accent-foreground: oklch(0.985 0.001 106.423);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.553 0.013 58.071);
+}
+
+/* hides scrollbar when applied no-scrollbar class */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 @layer base {

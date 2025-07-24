@@ -1,0 +1,3 @@
+1. uploadthing error handling
+2. server hover side white tag ✅
+3. server create modal design

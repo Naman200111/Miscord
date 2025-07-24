@@ -11,13 +11,12 @@ interface SidebarButtonProps {
 }
 
 const buttonVariants = cva(
-  "rounded-xl bg-background p-2 duration-200 cursor-pointer",
+  "rounded-xl bg-background p-2 duration-200 cursor-pointer flex justify-center items-center",
   {
     variants: {
       variant: {
-        icon: "hover:bg-indigo-400 active:bg-indigo-400",
-        image:
-          "relative object-cover min-h-[40px] w-full overflow-hidden rounded-md",
+        icon: "hover:bg-indigo-400 active:bg-indigo-400 mx-auto",
+        image: "relative object-cover min-h-[40px] overflow-hidden rounded-md",
         text: "hover:bg-indigo-400 active:bg-indigo-400 text-center",
       },
     },
@@ -52,7 +51,7 @@ const SidebarButton = ({
           <Image fill src={imageUrl} alt="Logo" />
         </div>
       )}
-      {name && (
+      {name && !imageUrl && (
         <div
           className={buttonVariants({ className, variant: "text" })}
           onClick={onClick}
