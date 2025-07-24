@@ -4,22 +4,28 @@ import axios from "axios";
 import Input from "@/components/custom/input";
 import Modal from "@/components/custom/modal";
 import { toast } from "sonner";
-import { UploadDropzone } from "@/lib/uploadthing";
+import { UploadButton } from "@/lib/uploadthing";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { X } from "lucide-react";
+import { deleteImage } from "@/app/actions/server-actions";
 
 interface ModalProps {
   open: boolean;
   onClose: () => void;
 }
 
+const initialForm = {
+  name: "",
+  imageUrl: "",
+  imageKey: "",
+};
+
 const CreateNewServerModal = ({ open, onClose }: ModalProps) => {
   const router = useRouter();
-  const [form, setForm] = useState({
-    name: "",
-    imageUrl: "",
-  });
+  const [form, setForm] = useState(initialForm);
 
   const onUploadFailed = () => {
     toast.error("Upload Failed");
@@ -27,40 +33,80 @@ const CreateNewServerModal = ({ open, onClose }: ModalProps) => {
 
   const handleServerCreate = async () => {
     try {
-      const create = await axios.post("/api/server", form);
-      console.log(create, "create");
-      onClose();
+      await axios.post("/api/server", form);
       router.refresh();
+
+      setForm(initialForm);
+      onClose();
+
       toast.message("Server Created");
     } catch {
       toast.error("Failed to create server");
     }
   };
 
+  const handleImageRemove = async () => {
+    try {
+      await deleteImage(form.imageKey);
+      setForm((prev) => ({ ...prev, imageUrl: "", imageKey: "" }));
+
+      toast.message("Image Removed");
+    } catch (err) {
+      console.log(err, "err");
+      toast.error("Failed to remove image");
+    }
+  };
+
   return (
     <Modal open={open} onClose={onClose}>
       <div className="flex flex-col items-center gap-1">
-        <p className="text-2xl font-bold">Create your own server</p>
+        <p className="text-2xl font-bold text-center">Create your own server</p>
         <p className="text-muted-foreground text-sm text-center">
           Give your server a personality with a name and an image. You can
           always change that later
         </p>
-        <UploadDropzone
-          endpoint="serverImageUploader"
-          onClientUploadComplete={async (params) => {
-            const [data] = await params;
-            setForm((prev) => ({
-              ...prev,
-              imageUrl: data.ufsUrl,
-            }));
+        {form.imageUrl ? (
+          <div className="h-28 w-28 relative mt-4">
+            <Image
+              fill
+              src={form.imageUrl}
+              alt="logo"
+              className="rounded-full"
+            />
+            <Button
+              className="h-6 w-6 absolute right-2 top-0 bg-red-500 rounded-full cursor-pointer hover:bg-red-500"
+              onClick={handleImageRemove}
+            >
+              <X />
+            </Button>
+          </div>
+        ) : (
+          <UploadButton
+            endpoint="serverImageUploader"
+            className="mt-4"
+            onClientUploadComplete={async (params) => {
+              try {
+                const [data] = params;
+                console.log(data, " upload data");
 
-            toast.message("Upload Complete");
-          }}
-          onUploadAborted={onUploadFailed}
-          onUploadError={onUploadFailed}
-        />
+                setForm((prev) => ({
+                  ...prev,
+                  imageUrl: data.ufsUrl,
+                  imageKey: data.key,
+                }));
 
-        <div className="mt-4 self-start ml-10 w-[80%]">
+                toast.success("Upload complete!");
+              } catch (err) {
+                console.error("UploadThing error:", err);
+                toast.error("Upload failed");
+              }
+            }}
+            onUploadAborted={onUploadFailed}
+            onUploadError={onUploadFailed}
+          />
+        )}
+
+        <div className="mt-2 self-center w-[80%] min-w-[200px]">
           <p className="font-semibold text-muted-foreground mb-1">
             Server Name
           </p>
@@ -75,7 +121,7 @@ const CreateNewServerModal = ({ open, onClose }: ModalProps) => {
         </div>
 
         <Button
-          className="w-[80%] ml-2 mt-2 cursor-pointer"
+          className="w-[80%] min-w-[200px] mt-2 cursor-pointer"
           onClick={handleServerCreate}
         >
           Create

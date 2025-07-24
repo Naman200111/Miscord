@@ -57,7 +57,7 @@ const ServerSidebarSection = ({ serversList }: ServerSidebarSectionProps) => {
             icon={<Plus className="text-foreground" />}
             onClick={() => setCreateNewServerModalOpen(true)}
           />
-          <div className="h-[1px] mx-1 my-3 bg-background"></div>
+          <div className="h-[1px] mx-1 my-3 bg-[#e4e7eb]"></div>
         </div>
         <div className="flex flex-col gap-2 overflow-auto no-scrollbar w-full flex-1">
           {serversList.map(({ server }, index) => (
