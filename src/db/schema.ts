@@ -31,6 +31,7 @@ export const users = pgTable("users", {
 export const servers = pgTable("servers", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
   imageUrl: text("image_url"),
+  imageKey: text("image_key"),
   name: text("name").notNull(),
   inviteLink: text("invite_link").notNull(),
 

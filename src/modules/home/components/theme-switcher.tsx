@@ -16,9 +16,9 @@ const ThemeSwitcher = () => {
   const themeIcon = !mounted ? (
     <CircleDashed className="animate-spin text-foreground" />
   ) : theme === "light" && mounted ? (
-    <Sun size="16" className="text-background" />
+    <Sun size="16" className="text-[#2b2b2d]" />
   ) : (
-    <MoonIcon size="16" className="text-foreground" />
+    <MoonIcon size="16" className="text-[#eff4fa]" />
   );
 
   return (

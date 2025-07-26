@@ -1,3 +1,11 @@
 1. uploadthing error handling
 2. server hover side white tag ✅
 3. server create modal design
+4. improve visual appearance
+5. create tooltip
+6. create second side
+6. create individual server page
+
+
+#white shades : eff4fa, eaeaea
+#dark shades : 2b2b2d

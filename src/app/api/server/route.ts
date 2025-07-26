@@ -5,10 +5,9 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { name, imageUrl } = await req.json();
+    const { name, imageUrl, imageKey } = await req.json();
     const user = await getCurrentUser();
 
-    console.log(name, imageUrl, user);
     if (!name || !user) {
       return new NextResponse("Server Name required", { status: 400 });
     }
@@ -18,6 +17,7 @@ export async function POST(req: Request) {
       .values({
         name,
         imageUrl,
+        imageKey,
         // Todo: 'add invite link logic
         inviteLink: "",
       })
