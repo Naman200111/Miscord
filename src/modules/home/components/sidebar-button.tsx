@@ -1,3 +1,8 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { getInitials } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 import Image from "next/image";
@@ -8,16 +13,17 @@ interface SidebarButtonProps {
   imageUrl?: string | null;
   onClick?: () => void;
   className?: string;
+  tooltipLabel: string;
 }
 
 const buttonVariants = cva(
-  "rounded-xl bg-background p-2 duration-200 cursor-pointer flex justify-center items-center",
+  "rounded-xl bg-background p-2 duration-200 cursor-pointer flex justify-center items-center border",
   {
     variants: {
       variant: {
-        icon: "hover:bg-indigo-400 active:bg-indigo-400 mx-auto",
-        image: "relative object-cover min-h-[40px] overflow-hidden rounded-md",
-        text: "hover:bg-indigo-400 active:bg-indigo-400 text-center",
+        icon: "hover:bg-indigo-400 h-[40px] w-[40px] active:bg-indigo-400 mx-auto",
+        image: "relative h-[40px] w-[40px] overflow-hidden rounded-md",
+        text: "hover:bg-indigo-400 h-[40px] w-[40px] active:bg-indigo-400 text-center",
       },
     },
     defaultVariants: {
@@ -32,34 +38,40 @@ const SidebarButton = ({
   name,
   onClick,
   className,
+  tooltipLabel,
 }: SidebarButtonProps) => {
   return (
-    <>
-      {icon && (
-        <div
-          className={buttonVariants({ className, variant: "icon" })}
-          onClick={onClick}
-        >
-          {icon}
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div>
+          <TooltipContent side="right">{tooltipLabel}</TooltipContent>
+          {icon && (
+            <div
+              className={buttonVariants({ className, variant: "icon" })}
+              onClick={onClick}
+            >
+              {icon}
+            </div>
+          )}
+          {imageUrl && (
+            <div
+              className={buttonVariants({ className, variant: "image" })}
+              onClick={onClick}
+            >
+              <Image fill src={imageUrl} alt="Logo" />
+            </div>
+          )}
+          {name && !imageUrl && (
+            <div
+              className={buttonVariants({ className, variant: "text" })}
+              onClick={onClick}
+            >
+              {getInitials(name)}
+            </div>
+          )}
         </div>
-      )}
-      {imageUrl && (
-        <div
-          className={buttonVariants({ className, variant: "image" })}
-          onClick={onClick}
-        >
-          <Image fill src={imageUrl} alt="Logo" />
-        </div>
-      )}
-      {name && !imageUrl && (
-        <div
-          className={buttonVariants({ className, variant: "text" })}
-          onClick={onClick}
-        >
-          {getInitials(name)}
-        </div>
-      )}
-    </>
+      </TooltipTrigger>
+    </Tooltip>
   );
 };
 
