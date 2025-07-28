@@ -1,16 +1,7 @@
-import ServerSidebarSection from "../sections/server-sidebar-section";
-import { getServersList } from "@/procedures/home/servers-procedure";
-
-type ServersListType = Awaited<ReturnType<typeof getServersList>>;
-
-interface HomeViewProps {
-  serversList: ServersListType;
-}
-
-const HomeView = ({ serversList }: HomeViewProps) => {
+// Todo: Render Placeholder for second and 3rd page
+const HomeView = () => {
   return (
-    <div className="w-full h-full bg-background">
-      <ServerSidebarSection serversList={serversList} />
+    <div className="w-full h-full">
       {/* <ServerChannelsSection /> */}
       {/* <ChannelMainSection /> */}
     </div>

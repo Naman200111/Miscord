@@ -1,6 +1,7 @@
 import { db } from "@/db/drizzle";
 import { servers, serverUsers } from "@/db/schema";
 import { getCurrentUser } from "@/lib/get-user";
+import { generateInviteCode } from "@/lib/utils";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -18,8 +19,8 @@ export async function POST(req: Request) {
         name,
         imageUrl,
         imageKey,
-        // Todo: 'add invite link logic
-        inviteLink: "",
+        // Todo: Can change name to invite code
+        inviteLink: generateInviteCode(),
       })
       .returning();
 

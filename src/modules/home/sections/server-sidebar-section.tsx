@@ -7,6 +7,8 @@ import ThemeSwitcher from "../components/theme-switcher";
 import { getServersList } from "@/procedures/home/servers-procedure";
 import { useState } from "react";
 import CreateNewServerModal from "../components/create-new-server-modal";
+import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 type ServersListType = Awaited<ReturnType<typeof getServersList>>;
 
@@ -15,6 +17,9 @@ interface ServerSidebarSectionProps {
 }
 
 const ServerSidebarSection = ({ serversList }: ServerSidebarSectionProps) => {
+  const router = useRouter();
+
+  const [activeServerId, setActiveServerId] = useState("");
   const [createNewServerModalOpen, setCreateNewServerModalOpen] =
     useState(false);
 
@@ -31,7 +36,12 @@ const ServerSidebarSection = ({ serversList }: ServerSidebarSectionProps) => {
         <div className=" overflow-auto no-scrollbar w-full flex-1 flex flex-col gap-3">
           {serversList.map(({ server }, index) => (
             <div key={index} className="group relative">
-              <div className="absolute top-[10px] invisible group-hover:visible h-1 group-hover:h-5 duration-100 bg-indigo-400 w-[2px] rounded-tr-2xl rounded-br-2xl"></div>
+              <div
+                className={cn(
+                  "absolute top-[10px] invisible group-hover:visible h-1 group-hover:h-5 duration-100 bg-indigo-400 w-[2px] rounded-tr-2xl rounded-br-2xl",
+                  server.id === activeServerId ? "visible h-5" : ""
+                )}
+              ></div>
 
               <SidebarButton
                 imageUrl={server.imageUrl}
@@ -39,6 +49,10 @@ const ServerSidebarSection = ({ serversList }: ServerSidebarSectionProps) => {
                 className="mx-auto"
                 key={index}
                 tooltipLabel={server.name}
+                onClick={() => {
+                  router.push(`/server/${server.id}`);
+                  setActiveServerId(server.id);
+                }}
               />
             </div>
           ))}

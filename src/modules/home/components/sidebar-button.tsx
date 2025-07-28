@@ -41,6 +41,7 @@ const SidebarButton = ({
   tooltipLabel,
 }: SidebarButtonProps) => {
   return (
+    // Todo: Understand tooltip code
     <Tooltip>
       <TooltipTrigger asChild>
         <div>
