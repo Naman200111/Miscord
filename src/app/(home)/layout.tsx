@@ -1,6 +1,6 @@
 import { getCurrentUser } from "@/lib/get-user";
 import ServerSidebarSection from "@/modules/home/sections/server-sidebar-section";
-import { getServersList } from "@/procedures/home/servers-procedure";
+import { getServersList } from "@/procedures/server/servers-procedure";
 
 const MainLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await getCurrentUser();

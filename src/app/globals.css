@@ -126,7 +126,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground w-[100%] h-[100%];
+    @apply bg-background text-foreground w-[100%] h-[100%] flex items-center justify-center;
   }
   html {
     @apply w-[100%] h-[100%]

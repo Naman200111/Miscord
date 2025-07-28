@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import SidebarButton from "@/modules/home/components/sidebar-button";
 import { UserButton } from "@clerk/nextjs";
 import ThemeSwitcher from "../components/theme-switcher";
-import { getServersList } from "@/procedures/home/servers-procedure";
+import { getServersList } from "@/procedures/server/servers-procedure";
 import { useState } from "react";
 import CreateNewServerModal from "../components/create-new-server-modal";
 import { useRouter } from "next/navigation";

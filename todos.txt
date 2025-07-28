@@ -3,7 +3,7 @@
 3. server create modal design ✅
 4. improve visual appearance ✅
 5. create tooltip ✅
-6. create second side
+6. create second side -- work on creating dropdown and more on second page
 6. create individual server page
 
 

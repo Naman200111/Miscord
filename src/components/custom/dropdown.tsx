@@ -86,7 +86,7 @@ export const DropdownItem = ({
 }: React.ComponentProps<"button">) => {
   return (
     <Button
-      className="select-none cursor-pointer rounded-none bg-foreground z-100"
+      className="select-none cursor-pointer rounded-none bg-background text-foreground hover:bg-muted z-100"
       onClick={onClick}
     >
       {children}
