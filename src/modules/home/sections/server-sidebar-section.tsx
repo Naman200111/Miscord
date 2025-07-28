@@ -27,7 +27,7 @@ const ServerSidebarSection = ({ serversList }: ServerSidebarSectionProps) => {
           tooltipLabel="Create a Server"
           onClick={() => setCreateNewServerModalOpen(true)}
         />
-        <div className="h-[1px] mx-1 my-3 bg-[#eaeaea] w-[60%]"></div>
+        <div className="h-[1px] mx-1 my-3 bg-[#373738] dark:bg-[#eaeaea] w-[50%]"></div>
         <div className=" overflow-auto no-scrollbar w-full flex-1 flex flex-col gap-3">
           {serversList.map(({ server }, index) => (
             <div key={index} className="group relative">

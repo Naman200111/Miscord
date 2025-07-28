@@ -26,10 +26,7 @@ const initialForm = {
 const CreateNewServerModal = ({ open, onClose }: ModalProps) => {
   const router = useRouter();
   const [form, setForm] = useState(initialForm);
-
-  const onUploadFailed = () => {
-    toast.error("Upload Failed");
-  };
+  const [fileReset, setFileReset] = useState(0);
 
   const handleServerCreate = async () => {
     try {
@@ -82,12 +79,12 @@ const CreateNewServerModal = ({ open, onClose }: ModalProps) => {
           </div>
         ) : (
           <UploadButton
+            key={fileReset}
             endpoint="serverImageUploader"
             className="mt-4"
             onClientUploadComplete={async (params) => {
               try {
                 const [data] = params;
-                console.log(data, " upload data");
 
                 setForm((prev) => ({
                   ...prev,
@@ -99,10 +96,19 @@ const CreateNewServerModal = ({ open, onClose }: ModalProps) => {
               } catch (err) {
                 console.error("UploadThing error:", err);
                 toast.error("Upload failed");
+              } finally {
+                setFileReset((prev) => 1 - prev);
               }
             }}
-            onUploadAborted={onUploadFailed}
-            onUploadError={onUploadFailed}
+            onUploadError={(error) => {
+              setFileReset((prev) => 1 - prev);
+              if (error.message.includes("FileSizeMismatch")) {
+                toast.error("File Size Limit Exceeded");
+                return;
+              }
+              console.log(error.message, "Upload Failed");
+              toast.error("Upload Failed");
+            }}
           />
         )}
 
