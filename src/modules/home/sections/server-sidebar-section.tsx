@@ -57,7 +57,7 @@ const ServerSidebarSection = ({ serversList }: ServerSidebarSectionProps) => {
             </div>
           ))}
         </div>
-        <div className="my-4 flex flex-col gap-2 items-center">
+        <div className="my-4 flex flex-col gap-4 items-center">
           <ThemeSwitcher />
           <UserButton />
         </div>

@@ -1,6 +1,13 @@
 "use client";
 
-import { DropdownItem, DropdownTrigger } from "@/components/custom/dropdown";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 import { CircleDashed, MoonIcon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
@@ -22,15 +29,19 @@ const ThemeSwitcher = () => {
   );
 
   return (
-    <DropdownTrigger icon={themeIcon} position="right">
-      <DropdownItem onClick={() => setTheme("light")}>
-        <Sun /> Light
-      </DropdownItem>
-      <DropdownItem onClick={() => setTheme("dark")}>
-        <MoonIcon />
-        Dark
-      </DropdownItem>
-    </DropdownTrigger>
+    <DropdownMenu>
+      <DropdownMenuTrigger className="outline-none p-2">
+        {themeIcon}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent side="right">
+        <DropdownMenuItem onClick={() => setTheme("light")}>
+          <Sun /> Light
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("dark")}>
+          <MoonIcon /> Dark
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
