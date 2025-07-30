@@ -5,6 +5,10 @@
 5. create tooltip ✅
 6. create second side -- work on creating dropdown and more on second page
 6. create individual server page
+6. add invite people functionality
+6. add server settings -> to update and change server name and image
+6. change the server create modal to use react-form-hook
+6. improve ui performance with skeletons
 
 
 #white shades : eff4fa, eaeaea
