@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
+
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/providers/theme-provider";
-import { Toaster } from "sonner";
+import { TRPCReactProvider } from "@/trpc/client";
 
 const font = Open_Sans({ subsets: ["latin"] });
 
@@ -21,14 +23,16 @@ export default function RootLayout({
     <ClerkProvider signInFallbackRedirectUrl="/" signUpFallbackRedirectUrl="/">
       <html lang="en" suppressHydrationWarning>
         <body className={`${font.className} dark:bg-[#303338]`}>
-          <ThemeProvider
-            storageKey="miscord-theme"
-            attribute="class"
-            defaultTheme="dark"
-          >
-            <Toaster />
-            {children}
-          </ThemeProvider>
+          <TRPCReactProvider>
+            <ThemeProvider
+              storageKey="miscord-theme"
+              attribute="class"
+              defaultTheme="dark"
+            >
+              <Toaster />
+              {children}
+            </ThemeProvider>
+          </TRPCReactProvider>
         </body>
       </html>
     </ClerkProvider>
