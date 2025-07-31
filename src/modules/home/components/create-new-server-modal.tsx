@@ -1,16 +1,15 @@
 "use client";
 
-import axios from "axios";
 import Input from "@/components/custom/input";
 import Modal from "@/components/custom/modal";
 import { toast } from "sonner";
 import { UploadButton } from "@/lib/uploadthing";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { X } from "lucide-react";
-import { deleteImage } from "@/app/actions/server-actions";
+import { useTRPC } from "@/trpc/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface ModalProps {
   open: boolean;
@@ -24,35 +23,39 @@ const initialForm = {
 };
 
 const CreateNewServerModal = ({ open, onClose }: ModalProps) => {
-  const router = useRouter();
   const [form, setForm] = useState(initialForm);
   const [fileReset, setFileReset] = useState(0);
 
-  const handleServerCreate = async () => {
-    try {
-      await axios.post("/api/server", form);
-      router.refresh();
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
 
-      setForm(initialForm);
-      onClose();
+  const createServer = useMutation(
+    trpc.server.create.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(trpc.server.getMany.queryOptions());
 
-      toast.message("Server Created");
-    } catch {
-      toast.error("Failed to create server");
-    }
-  };
+        setForm(initialForm);
+        onClose();
 
-  const handleImageRemove = async () => {
-    try {
-      await deleteImage(form.imageKey);
-      setForm((prev) => ({ ...prev, imageUrl: "", imageKey: "" }));
+        toast.message("Server Created");
+      },
+      onError: () => {
+        toast.error("Failed to create server");
+      },
+    })
+  );
 
-      toast.message("Image Removed");
-    } catch (err) {
-      console.log(err, "err");
-      toast.error("Failed to remove image");
-    }
-  };
+  const deleteServerImage = useMutation(
+    trpc.server.deleteServerImage.mutationOptions({
+      onSuccess: () => {
+        setForm((prev) => ({ ...prev, imageUrl: "", imageKey: "" }));
+        toast.message("Image Removed");
+      },
+      onError: () => {
+        toast.error("Failed to remove image");
+      },
+    })
+  );
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -72,7 +75,9 @@ const CreateNewServerModal = ({ open, onClose }: ModalProps) => {
             />
             <Button
               className="h-6 w-6 absolute right-2 top-0 bg-red-500 rounded-full cursor-pointer hover:bg-red-500"
-              onClick={handleImageRemove}
+              onClick={() =>
+                deleteServerImage.mutate({ imageKey: form.imageKey })
+              }
             >
               <X />
             </Button>
@@ -128,7 +133,8 @@ const CreateNewServerModal = ({ open, onClose }: ModalProps) => {
 
         <Button
           className="w-[80%] min-w-[200px] mt-2 cursor-pointer"
-          onClick={handleServerCreate}
+          onClick={() => createServer.mutate(form)}
+          disabled={createServer.isPending}
         >
           Create
         </Button>

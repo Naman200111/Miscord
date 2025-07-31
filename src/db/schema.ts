@@ -33,7 +33,7 @@ export const servers = pgTable("servers", {
   imageUrl: text("image_url"),
   imageKey: text("image_key"),
   name: text("name").notNull(),
-  inviteLink: text("invite_link").notNull(),
+  inviteCode: text("invite_code").notNull(),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

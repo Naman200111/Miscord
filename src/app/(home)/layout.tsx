@@ -1,16 +1,18 @@
-import { getCurrentUser } from "@/lib/get-user";
 import ServerSidebarSection from "@/modules/home/sections/server-sidebar-section";
-import { getServersList } from "@/procedures/server/servers-procedure";
+import { getQueryClient, trpc } from "@/trpc/server";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 const MainLayout = async ({ children }: { children: React.ReactNode }) => {
-  const user = await getCurrentUser();
-  const serversList = await getServersList(user?.id);
+  const queryClient = getQueryClient();
+  void queryClient.prefetchQuery(trpc.server.getMany.queryOptions());
 
   return (
-    <div className="w-full h-full flex">
-      <ServerSidebarSection serversList={serversList} />
-      {children}
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <div className="w-full h-full flex">
+        <ServerSidebarSection />
+        {children}
+      </div>
+    </HydrationBoundary>
   );
 };
 

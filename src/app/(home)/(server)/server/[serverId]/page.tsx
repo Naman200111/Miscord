@@ -1,7 +1,5 @@
-import { getCurrentUser } from "@/lib/get-user";
 import ServerView from "@/modules/servers/views/server-view";
-import { getServerData } from "@/procedures/server/servers-procedure";
-import { redirect } from "next/navigation";
+import { getQueryClient, trpc } from "@/trpc/server";
 
 interface ServerPageProps {
   params: Promise<{ serverId: string }>;
@@ -10,21 +8,12 @@ interface ServerPageProps {
 const ServerPage = async ({ params }: ServerPageProps) => {
   const { serverId } = await params;
 
-  const currentUser = await getCurrentUser();
-  if (!currentUser) {
-    redirect("/");
-  }
+  const queryClient = getQueryClient();
 
-  const serverUserData = await getServerData({
-    serverId,
-    userId: currentUser.id,
-  });
+  // why not working?
+  void queryClient.prefetchQuery(trpc.server.getOne.queryOptions({ serverId }));
 
-  if (!serverUserData) {
-    redirect("/");
-  }
-
-  return <ServerView {...serverUserData} />;
+  return <ServerView serverId={serverId} />;
 };
 
 export default ServerPage;
