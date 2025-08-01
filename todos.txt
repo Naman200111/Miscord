@@ -8,7 +8,9 @@
 6. add invite people functionality
 6. add server settings -> to update and change server name and image
 6. change the server create modal to use react-form-hook
-6. improve ui performance with skeletons
+6. improve ui performance with skeletons ✅
+
+6. test server leaving functionality when you are not admin
 
 
 #white shades : eff4fa, eaeaea

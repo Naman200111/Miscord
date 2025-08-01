@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-const ServerSidebarSection = () => {
+const NavigationSidebarSection = () => {
   const router = useRouter();
 
   const [activeServerId, setActiveServerId] = useState("");
@@ -69,4 +69,4 @@ const ServerSidebarSection = () => {
   );
 };
 
-export default ServerSidebarSection;
+export default NavigationSidebarSection;

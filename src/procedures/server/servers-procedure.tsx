@@ -58,6 +58,30 @@ export const serverProcedure = createTRPCRouter({
       };
     }),
 
+  deleteOrLeave: protectedProcedure
+    .input(
+      z.object({
+        serverId: z.uuid(),
+      })
+    )
+    .mutation(async ({ input, ctx: { id: userId } }) => {
+      const { serverId } = input;
+
+      const [userServerData] = await db
+        .delete(serverUsers)
+        .where(
+          and(
+            eq(serverUsers.serverId, serverId),
+            eq(serverUsers.userId, userId)
+          )
+        )
+        .returning();
+
+      if (userServerData.role === "ADMIN") {
+        await db.delete(servers).where(eq(servers.id, serverId)).returning();
+      }
+    }),
+
   getOne: protectedProcedure
     .input(z.object({ serverId: z.string().nonempty() }))
     .query(async ({ input: { serverId }, ctx: { id: userId } }) => {

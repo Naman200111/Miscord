@@ -1,11 +1,6 @@
 // Todo: Render Placeholder for second and 3rd page
 const HomeView = () => {
-  return (
-    <div className="w-full h-full">
-      {/* <ServerChannelsSection /> */}
-      {/* <ChannelMainSection /> */}
-    </div>
-  );
+  return <div>Create a Server, or open a server / channel to deep dive</div>;
 };
 
 export default HomeView;

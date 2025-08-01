@@ -1,3 +1,5 @@
+"use client";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,62 +17,82 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
+import { useState } from "react";
+import ServerLeaveDeletionModal from "./server-leave--deletion-modal";
 const ServerHeader = ({
   name,
   role,
+  serverId,
 }: {
   name: string;
   role: "ADMIN" | "MODERATOR" | "MEMBER";
+  serverId: string;
 }) => {
   const isAdmin = role === "ADMIN";
   const isMember = role === "MEMBER";
 
+  const [showDeletionModal, setShowDeletionModal] = useState(false);
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger className="flex justify-between items-center w-full py-2 px-4 cursor-pointer outline-none hover:bg-[#dedede] dark:hover:bg-[#2e2e2e] transition shadow">
-        {name}
-        <ChevronDown size={20} />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="center" className="w-56">
-        <DropdownMenuItem className="text-indigo-500 dark:text-indigo-400">
-          Invite People
-          <UserPlus className="ml-auto text-indigo-500 dark:text-indigo-400" />
-        </DropdownMenuItem>
-        {isAdmin && (
-          <DropdownMenuItem>
-            Server Settings
-            <Settings className="ml-auto" />
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger className="flex justify-between items-center w-full py-2 px-4 cursor-pointer outline-none hover:bg-[#dedede] dark:hover:bg-[#2e2e2e] transition shadow">
+          {name}
+          <ChevronDown size={20} />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="center" className="w-56">
+          <DropdownMenuItem className="text-indigo-500 dark:text-indigo-400">
+            Invite People
+            <UserPlus className="ml-auto text-indigo-500 dark:text-indigo-400" />
           </DropdownMenuItem>
-        )}
-        {!isMember && (
-          <DropdownMenuItem>
-            Manage Members
-            <Users className="ml-auto" />
-          </DropdownMenuItem>
-        )}
-        {!isMember && (
-          <DropdownMenuItem>
-            Create Channel
-            <CirclePlus className="ml-auto" />
-          </DropdownMenuItem>
-        )}
-        {!isAdmin && (
-          <DropdownMenuItem>
-            Leave Server
-            <LogOut className="ml-auto" />
-          </DropdownMenuItem>
-        )}
-        {isAdmin && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-400 dark:text-red-400">
-              Delete Server
-              <Trash className="ml-auto text-red-400 dark:text-red-400" />
+          {isAdmin && (
+            <DropdownMenuItem>
+              Server Settings
+              <Settings className="ml-auto" />
             </DropdownMenuItem>
-          </>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+          )}
+          {!isMember && (
+            <DropdownMenuItem>
+              Manage Members
+              <Users className="ml-auto" />
+            </DropdownMenuItem>
+          )}
+          {!isMember && (
+            <DropdownMenuItem>
+              Create Channel
+              <CirclePlus className="ml-auto" />
+            </DropdownMenuItem>
+          )}
+          {!isAdmin && (
+            <DropdownMenuItem>
+              Leave Server
+              <LogOut className="ml-auto" />
+            </DropdownMenuItem>
+          )}
+          {isAdmin && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="text-red-400 dark:text-red-400"
+                onClick={() => setShowDeletionModal(true)}
+              >
+                Delete Server
+                <Trash className="ml-auto text-red-400 dark:text-red-400" />
+              </DropdownMenuItem>
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+      {showDeletionModal ? (
+        <ServerLeaveDeletionModal
+          open={showDeletionModal}
+          onClose={() => setShowDeletionModal(false)}
+          name={name}
+          isAdmin={isAdmin}
+          serverId={serverId}
+        />
+      ) : null}
+    </>
   );
 };
 
