@@ -19,19 +19,26 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import ServerLeaveDeletionModal from "./server-leave--deletion-modal";
+import CreateNewServerModal from "@/modules/home/components/create-new-server-modal";
+
 const ServerHeader = ({
   name,
   role,
   serverId,
+  serverImageUrl = "",
+  serverImageKey = "",
 }: {
   name: string;
   role: "ADMIN" | "MODERATOR" | "MEMBER";
   serverId: string;
+  serverImageUrl?: string | null;
+  serverImageKey?: string | null;
 }) => {
   const isAdmin = role === "ADMIN";
   const isMember = role === "MEMBER";
 
   const [showDeletionModal, setShowDeletionModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   return (
     <>
@@ -46,7 +53,7 @@ const ServerHeader = ({
             <UserPlus className="ml-auto text-indigo-500 dark:text-indigo-400" />
           </DropdownMenuItem>
           {isAdmin && (
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setShowSettingsModal(true)}>
               Server Settings
               <Settings className="ml-auto" />
             </DropdownMenuItem>
@@ -89,6 +96,16 @@ const ServerHeader = ({
           onClose={() => setShowDeletionModal(false)}
           name={name}
           isAdmin={isAdmin}
+          serverId={serverId}
+        />
+      ) : null}
+      {showSettingsModal ? (
+        <CreateNewServerModal
+          open={showSettingsModal}
+          onClose={() => setShowSettingsModal(false)}
+          name={name}
+          serverImageUrl={serverImageUrl}
+          serverImageKey={serverImageKey}
           serverId={serverId}
         />
       ) : null}

@@ -2,23 +2,40 @@ import { db } from "@/db/drizzle";
 import { servers, serverUsers, users } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import z from "zod";
-import { and, eq, getTableColumns } from "drizzle-orm";
+import { and, asc, eq, getTableColumns } from "drizzle-orm";
 import { generateInviteCode } from "@/lib/utils";
 import { TRPCError } from "@trpc/server";
 import { UTApi } from "uploadthing/server";
 
 export const serverProcedure = createTRPCRouter({
-  create: protectedProcedure
+  createOrUpdate: protectedProcedure
     .input(
       z.object({
         name: z.string().nonempty(),
         imageUrl: z.string(),
         imageKey: z.string(),
+        serverId: z.uuid().nullish(),
       })
     )
     .mutation(async ({ input, ctx }) => {
       const { id: userId } = ctx;
-      const { name, imageUrl, imageKey } = input;
+      const { name, imageUrl, imageKey, serverId } = input;
+
+      if (serverId) {
+        const [updateServer] = await db
+          .update(servers)
+          .set({ name, imageKey, imageUrl })
+          .where(eq(servers.id, serverId))
+          .returning();
+
+        if (!updateServer) {
+          throw new TRPCError({
+            message: "Failed to update server",
+            code: "BAD_REQUEST",
+          });
+        }
+        return updateServer;
+      }
 
       const [createServer] = await db
         .insert(servers)
@@ -117,7 +134,8 @@ export const serverProcedure = createTRPCRouter({
       })
       .from(serverUsers)
       .innerJoin(servers, eq(servers.id, serverUsers.serverId))
-      .where(eq(serverUsers.userId, userId));
+      .where(eq(serverUsers.userId, userId))
+      .orderBy(asc(serverUsers.createdAt));
 
     return serversList;
   }),

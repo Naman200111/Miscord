@@ -44,6 +44,8 @@ const ServerDetailsSectionSuspense = ({
         name={data.server.name || "Server name"}
         role={data.role}
         serverId={serverId}
+        serverImageUrl={data.server.imageUrl}
+        serverImageKey={data.server.imageKey}
       />
     </div>
   );

@@ -14,33 +14,49 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 interface ModalProps {
   open: boolean;
   onClose: () => void;
+  serverImageUrl?: string | null;
+  name?: string;
+  serverImageKey?: string | null;
+  serverId?: string;
 }
 
-const initialForm = {
-  name: "",
-  imageUrl: "",
-  imageKey: "",
-};
-
-const CreateNewServerModal = ({ open, onClose }: ModalProps) => {
+const CreateNewServerModal = ({
+  open,
+  onClose,
+  serverImageUrl,
+  name,
+  serverImageKey,
+  serverId,
+}: ModalProps) => {
+  console.log(name, serverImageUrl);
+  const initialForm = {
+    name: name || "",
+    imageUrl: serverImageUrl || "",
+    imageKey: serverImageKey || "",
+  };
   const [form, setForm] = useState(initialForm);
   const [fileReset, setFileReset] = useState(0);
 
   const queryClient = useQueryClient();
   const trpc = useTRPC();
 
-  const createServer = useMutation(
-    trpc.server.create.mutationOptions({
+  const createOrUpdateServer = useMutation(
+    trpc.server.createOrUpdate.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries(trpc.server.getMany.queryOptions());
+        if (serverId) {
+          queryClient.invalidateQueries(
+            trpc.server.getOne.queryOptions({ serverId })
+          );
+        }
 
         setForm(initialForm);
         onClose();
 
-        toast.message("Server Created");
+        toast.message(`Server ${serverId ? "Updated" : "Created"}`);
       },
       onError: () => {
-        toast.error("Failed to create server");
+        toast.error(`Failed to ${serverId ? "Updated" : "Created"} server`);
       },
     })
   );
@@ -60,10 +76,12 @@ const CreateNewServerModal = ({ open, onClose }: ModalProps) => {
   return (
     <Modal open={open} onClose={onClose}>
       <div className="flex flex-col items-center gap-1">
-        <p className="text-2xl font-bold text-center">Create your own server</p>
+        <p className="text-2xl font-bold text-center">
+          Customize your own server
+        </p>
         <p className="text-muted-foreground text-sm text-center">
           Give your server a personality with a name and an image. You can
-          always change that later
+          always change that later.
         </p>
         {form.imageUrl ? (
           <div className="h-28 w-28 relative mt-4">
@@ -133,10 +151,10 @@ const CreateNewServerModal = ({ open, onClose }: ModalProps) => {
 
         <Button
           className="w-[80%] min-w-[200px] mt-2 cursor-pointer"
-          onClick={() => createServer.mutate(form)}
-          disabled={createServer.isPending}
+          onClick={() => createOrUpdateServer.mutate({ ...form, serverId })}
+          disabled={createOrUpdateServer.isPending}
         >
-          Create
+          Save
         </Button>
       </div>
     </Modal>

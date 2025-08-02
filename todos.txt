@@ -11,6 +11,7 @@
 6. improve ui performance with skeletons ✅
 
 6. test server leaving functionality when you are not admin
+6. check if user check needed while updating server settings
 
 
 #white shades : eff4fa, eaeaea
