@@ -45,18 +45,21 @@ const ChannelMessagingSectionSuspense = ({
   const channelName = "general";
 
   return !channelId ? (
-    <div className="h-full w-full justify-center items-center mx-4 text-center hidden sm:flex">
+    <div className="h-full w-full justify-center items-center text-center hidden sm:flex bg-[#e5e5e5] dark:bg-[#2e2e2e]">
       Select a channel, to view conversions ☺
     </div>
   ) : (
     <div className="h-full w-full flex-col items-center flex">
-      <div className="w-full h-12 rounded-none bg-[#f7f7f7] dark:bg-[#2b2b2d] shadow z-1 px-4 flex gap-2 items-center">
-        <ArrowLeftCircle onClick={() => router.push(`/server/${serverId}`)} />
+      <div className="w-full h-12 rounded-none bg-[#e5e5e5] dark:bg-[#2e2e2e] shadow z-1 px-4 flex gap-2 items-center">
+        <ArrowLeftCircle
+          onClick={() => router.push(`/server/${serverId}`)}
+          className="mr-2"
+        />
         <Hash size={22} />
         <p>{channelName}</p>
       </div>
-      <div className="w-full flex-1 rounded-none bg-[#f7f7f7] dark:bg-[#2b2b2d] flex flex-col-reverse gap-2">
-        <div className="flex items-center mx-2 my-6 border rounded-md">
+      <div className="w-full flex-1 rounded-none bg-[#e5e5e5] dark:bg-[#2e2e2e] flex flex-col-reverse gap-2">
+        <div className="flex items-center mx-2 sm:px-4 my-6 border rounded-md bg-muted">
           <button className="cursor-pointer bg-muted-foreground rounded-full ml-2">
             <Plus size={22} className="text-background" />
           </button>

@@ -46,8 +46,8 @@ const ServerLeaveDeletionModal = ({
         <div className="font-bold text-2xl">{operation} Server</div>
         <div className="text-muted-foreground flex gap-1">
           <p>
-            {/* give name indigo-400 */}
-            Are you sure you want to {operation} {name}
+            Are you sure you want to {operation.toLowerCase()}{" "}
+            <span className="text-indigo-500">{name}</span>
           </p>
         </div>
 

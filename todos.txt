@@ -3,21 +3,23 @@
 3. server create modal design ✅
 4. improve visual appearance ✅
 5. create tooltip ✅
-6. create second side -- work on creating dropdown and more on second page
-6. create individual server page
-6. add invite people functionality
-6. add server settings -> to update and change server name and image
+6. create second side -- work on creating dropdown and more on second page ✅
+6. create individual server page ✅
+6. add server settings -> to update and change server name and image ✅
 6. change the server create modal to use react-form-hook
 6. improve ui performance with skeletons ✅
 6. make 3 pages mobile friendly ✅
-6. make sidebar color different from messaging side, when in mobile difficult to see
+6. make sidebar color different from messaging side, when in mobile difficult to see ✅
+6. add invite people functionality
+6. add manage members functionality
+6. add create channel functionality
 
 6. test server leaving functionality when you are not admin
 6. check if user check needed while updating server settings
-
+6. handle timeout and retry in upload thing uploading
 
 #white shades : f7f7f7 > ececec 
-#white hover: dedede
+#white hover: e5e5e5
 
 #dark shades: 222222 > 2b2b2d
 #black hover: 2e2e2e

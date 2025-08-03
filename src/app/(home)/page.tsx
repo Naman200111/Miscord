@@ -1,6 +1,6 @@
 const Home = async () => {
   return (
-    <div className="h-full w-full flex justify-center items-center mx-4 text-center">
+    <div className="h-full w-full flex justify-center items-center text-center bg-[#e5e5e5] dark:bg-[#2e2e2e]">
       Create a Server, open a server to deep dive ☺
     </div>
   );
