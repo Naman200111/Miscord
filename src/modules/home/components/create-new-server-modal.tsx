@@ -28,7 +28,6 @@ const CreateNewServerModal = ({
   serverImageKey,
   serverId,
 }: ModalProps) => {
-  console.log(name, serverImageUrl);
   const initialForm = {
     name: name || "",
     imageUrl: serverImageUrl || "",

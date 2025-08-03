@@ -32,7 +32,6 @@ function getUrl() {
     if (typeof window !== "undefined") return "";
     return APP_URL;
   })();
-  console.log(base, "base");
   return `${base}/api/trpc`;
 }
 

@@ -1,11 +1,17 @@
-import { ServerDetailsSection } from "../sections/server-details-section";
-import { ServerMessagingSection } from "../sections/server-messaging-section";
+import { ChannelsSection } from "../sections/channels-section";
+import { ChannelMessagingSection } from "../sections/channel-messaging-section";
 
-const ServerView = ({ serverId }: { serverId: string }) => {
+const ServerView = ({
+  serverId,
+  channelId,
+}: {
+  serverId: string;
+  channelId: string;
+}) => {
   return (
     <div className="flex flex-1">
-      <ServerDetailsSection serverId={serverId} />
-      <ServerMessagingSection />
+      <ChannelsSection serverId={serverId} />
+      <ChannelMessagingSection serverId={serverId} channelId={channelId} />
     </div>
   );
 };
