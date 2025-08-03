@@ -1,5 +1,5 @@
 import { ServerDetailsSection } from "../sections/server-details-section";
-import ServerMessagingSection from "../sections/server-messaging-section";
+import { ServerMessagingSection } from "../sections/server-messaging-section";
 
 const ServerView = ({ serverId }: { serverId: string }) => {
   return (

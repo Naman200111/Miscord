@@ -14,5 +14,8 @@
 6. check if user check needed while updating server settings
 
 
-#white shades : eff4fa, eaeaea
-#dark shades : 2b2b2d
+#white shades : f7f7f7 > ececec 
+#white hover: dedede
+
+#dark shades: 222222 > 2b2b2d
+#black hover: 2e2e2e

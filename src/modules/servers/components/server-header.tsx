@@ -43,7 +43,7 @@ const ServerHeader = ({
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex justify-between items-center w-full py-2 px-4 cursor-pointer outline-none hover:bg-[#dedede] dark:hover:bg-[#2e2e2e] transition shadow">
+        <DropdownMenuTrigger className="flex justify-between items-center w-full h-12 py-2 px-4 cursor-pointer outline-none hover:bg-[#dedede] dark:hover:bg-[#2e2e2e] transition shadow">
           {name}
           <ChevronDown size={20} />
         </DropdownMenuTrigger>
