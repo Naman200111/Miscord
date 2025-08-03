@@ -11,7 +11,6 @@ const ServerPage = async ({ params }: ServerPageProps) => {
 
   const queryClient = getQueryClient();
 
-  // why not working?
   void queryClient.prefetchQuery(trpc.server.getOne.queryOptions({ serverId }));
 
   return (

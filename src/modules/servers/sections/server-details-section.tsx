@@ -12,7 +12,7 @@ interface ServerDetailsSectionProps {
 }
 
 const ServerDetailsSkeleton = () => (
-  <div className="h-full w-72 flex flex-col items-center">
+  <div className="h-full w-full sm:w-64 md:w-72 flex flex-col items-center">
     <Skeleton className="w-full h-full rounded-none bg-[#e2e2e2] dark:bg-[#2c2c2c]" />
   </div>
 );
@@ -39,7 +39,7 @@ const ServerDetailsSectionSuspense = ({
   );
 
   return (
-    <div className="h-full w-72 flex flex-col gap-2 bg-[#ececec] dark:bg-[#222222] items-center">
+    <div className="h-full w-full sm:w-64 md:w-72 flex flex-col gap-2 bg-[#ececec] dark:bg-[#222222] items-center">
       <ServerHeader
         name={data.server.name || "Server name"}
         role={data.role}

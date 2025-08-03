@@ -8,7 +8,7 @@ const MainLayout = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className="w-full h-full flex">
+      <div className="w-full h-full flex overflow-y-hidden">
         <NavigationSidebarSection />
         {children}
       </div>

@@ -24,8 +24,8 @@ export const ServerMessagingSection = ({}) => {
 const ServerMessagingSectionSuspense = () => {
   const channelName = "general";
   return (
-    <div className="h-full w-full flex flex-col items-center">
-      <div className="w-full h-12 rounded-none bg-[#f7f7f7] dark:bg-[#2b2b2d] shadow px-4 flex gap-2 items-center">
+    <div className="h-full w-full flex-col items-center hidden sm:flex">
+      <div className="w-full h-12 rounded-none bg-[#f7f7f7] dark:bg-[#2b2b2d] shadow z-1 px-4 flex gap-2 items-center">
         <Hash size={22} />
         <p>{channelName}</p>
       </div>

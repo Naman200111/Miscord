@@ -45,8 +45,10 @@ const ServerLeaveDeletionModal = ({
       <div className="flex flex-col gap-2 items-center">
         <div className="font-bold text-2xl">{operation} Server</div>
         <div className="text-muted-foreground flex gap-1">
-          <p>Are you sure you want to {operation}</p>
-          <p className="text-indigo-400">{name}</p>?
+          <p>
+            {/* give name indigo-400 */}
+            Are you sure you want to {operation} {name}
+          </p>
         </div>
 
         <div className=" w-full mt-2 h-[40px] flex justify-around">
