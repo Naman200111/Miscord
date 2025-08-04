@@ -146,4 +146,16 @@ export const serverProcedure = createTRPCRouter({
       const utapi = new UTApi();
       await utapi.deleteFiles([imageKey]);
     }),
+
+  updateInviteCode: protectedProcedure
+    .input(z.object({ serverId: z.uuid() }))
+    .mutation(async ({ input: { serverId } }) => {
+      const newInviteCode = generateInviteCode();
+      const [updatedServer] = await db
+        .update(servers)
+        .set({ inviteCode: newInviteCode })
+        .where(eq(servers.id, serverId))
+        .returning();
+      return updatedServer;
+    }),
 });

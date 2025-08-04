@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 import { useEffect, useRef } from "react";
 
@@ -5,9 +6,10 @@ interface ModalProps {
   open: boolean;
   onClose: () => void;
   children?: React.ReactNode;
+  className?: string;
 }
 
-const Modal = ({ open, onClose, children }: ModalProps) => {
+const Modal = ({ open, onClose, children, className }: ModalProps) => {
   const modalRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -24,7 +26,10 @@ const Modal = ({ open, onClose, children }: ModalProps) => {
   return (
     <dialog
       ref={modalRef}
-      className="backdrop:backdrop-contrast-50 max-h-[500px] overflow-y-auto rounded-lg p-0 m-auto"
+      className={cn(
+        "backdrop:backdrop-contrast-50 max-w-[90%] max-h-[500px] overflow-y-auto rounded-lg p-0 m-auto",
+        className
+      )}
       onClick={(e) => {
         const target = e.target as HTMLDialogElement;
         if (target.nodeName === "DIALOG") {

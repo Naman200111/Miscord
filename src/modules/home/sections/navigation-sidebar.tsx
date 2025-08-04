@@ -5,7 +5,7 @@ import SidebarButton from "@/modules/home/components/sidebar-button";
 import { UserButton } from "@clerk/nextjs";
 import ThemeSwitcher from "../components/theme-switcher";
 import { useState } from "react";
-import CreateNewServerModal from "../components/create-new-server-modal";
+import CreateNewServerModal from "../components/customize-server-modal";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";

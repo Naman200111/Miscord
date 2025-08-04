@@ -19,7 +19,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import ServerLeaveDeletionModal from "./server-leave--deletion-modal";
-import CreateNewServerModal from "@/modules/home/components/create-new-server-modal";
+import CustomizeServerModal from "@/modules/home/components/customize-server-modal";
+import ServerInviteModal from "./server-invite-modal";
 
 const ServerHeader = ({
   name,
@@ -27,18 +28,21 @@ const ServerHeader = ({
   serverId,
   serverImageUrl = "",
   serverImageKey = "",
+  inviteCode = "",
 }: {
   name: string;
   role: "ADMIN" | "MODERATOR" | "MEMBER";
   serverId: string;
   serverImageUrl?: string | null;
   serverImageKey?: string | null;
+  inviteCode?: string;
 }) => {
   const isAdmin = role === "ADMIN";
   const isMember = role === "MEMBER";
 
   const [showDeletionModal, setShowDeletionModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
 
   return (
     <>
@@ -48,7 +52,10 @@ const ServerHeader = ({
           <ChevronDown size={20} />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="center" className="w-56">
-          <DropdownMenuItem className="text-indigo-500 dark:text-indigo-400">
+          <DropdownMenuItem
+            className="text-indigo-500 dark:text-indigo-400"
+            onClick={() => setShowInviteModal(true)}
+          >
             Invite People
             <UserPlus className="ml-auto text-indigo-500 dark:text-indigo-400" />
           </DropdownMenuItem>
@@ -100,12 +107,20 @@ const ServerHeader = ({
         />
       ) : null}
       {showSettingsModal ? (
-        <CreateNewServerModal
+        <CustomizeServerModal
           open={showSettingsModal}
           onClose={() => setShowSettingsModal(false)}
           name={name}
           serverImageUrl={serverImageUrl}
           serverImageKey={serverImageKey}
+          serverId={serverId}
+        />
+      ) : null}
+      {showInviteModal ? (
+        <ServerInviteModal
+          open={showInviteModal}
+          onClose={() => setShowInviteModal(false)}
+          inviteCode={inviteCode}
           serverId={serverId}
         />
       ) : null}

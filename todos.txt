@@ -13,6 +13,7 @@
 6. add invite people functionality
 6. add manage members functionality
 6. add create channel functionality
+6. add Ctrl+K search functionality
 
 6. test server leaving functionality when you are not admin
 6. check if user check needed while updating server settings

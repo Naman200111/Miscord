@@ -5,6 +5,7 @@ const Input = ({
   placeholder,
   value,
   onChange,
+  disabled,
 }: React.ComponentProps<"input">) => {
   return (
     <input
@@ -12,6 +13,7 @@ const Input = ({
       className={cn("border py-1 px-3 rounded-md", className)}
       placeholder={placeholder}
       value={value}
+      disabled={disabled}
     />
   );
 };

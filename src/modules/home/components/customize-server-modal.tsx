@@ -20,7 +20,7 @@ interface ModalProps {
   serverId?: string;
 }
 
-const CreateNewServerModal = ({
+const CustomizeServerModal = ({
   open,
   onClose,
   serverImageUrl,
@@ -160,4 +160,4 @@ const CreateNewServerModal = ({
   );
 };
 
-export default CreateNewServerModal;
+export default CustomizeServerModal;
