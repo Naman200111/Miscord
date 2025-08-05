@@ -78,7 +78,7 @@ const ServerHeader = ({
             </DropdownMenuItem>
           )}
           {!isAdmin && (
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setShowDeletionModal(true)}>
               Leave Server
               <LogOut className="ml-auto" />
             </DropdownMenuItem>

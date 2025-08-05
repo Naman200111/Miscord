@@ -10,12 +10,13 @@
 6. improve ui performance with skeletons ✅
 6. make 3 pages mobile friendly ✅
 6. make sidebar color different from messaging side, when in mobile difficult to see ✅
+6. apply all permission checks on BE also
 6. add invite people functionality
 6. add manage members functionality
 6. add create channel functionality
 6. add Ctrl+K search functionality
 
-6. test server leaving functionality when you are not admin
+6. test server leaving functionality when you are not admin ✅
 6. check if user check needed while updating server settings
 6. handle timeout and retry in upload thing uploading
 

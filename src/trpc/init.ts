@@ -1,6 +1,6 @@
 import { db } from "@/db/drizzle";
 import { users } from "@/db/schema";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { cache } from "react";
@@ -28,17 +28,26 @@ export const protectedProcedure = t.procedure.use(async (opts) => {
   const {
     ctx: { clerkUserId },
   } = opts;
-  if (!clerkUserId) {
+  const clerkUser = await currentUser();
+  if (!clerkUserId || !clerkUser) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
-  const [user] = await db
+  let [user] = await db
     .select()
     .from(users)
     .where(eq(users.clerkId, clerkUserId));
 
   if (!user) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
+    [user] = await db
+      .insert(users)
+      .values({
+        clerkId: clerkUser.id,
+        name: `${clerkUser.fullName}`,
+        email: clerkUser.emailAddresses[0].emailAddress,
+        imageUrl: clerkUser.imageUrl,
+      })
+      .returning();
   }
 
   return opts.next({

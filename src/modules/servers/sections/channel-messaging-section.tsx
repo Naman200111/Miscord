@@ -18,7 +18,7 @@ export const ChannelMessagingSection = ({
   channelId,
   serverId,
 }: {
-  channelId: string;
+  channelId?: string;
   serverId: string;
 }) => {
   return (
@@ -37,7 +37,7 @@ const ChannelMessagingSectionSuspense = ({
   channelId,
   serverId,
 }: {
-  channelId: string;
+  channelId?: string;
   serverId: string;
 }) => {
   const router = useRouter();

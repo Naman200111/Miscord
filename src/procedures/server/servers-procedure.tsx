@@ -124,6 +124,45 @@ export const serverProcedure = createTRPCRouter({
       return serverDetails;
     }),
 
+  getOneFromInvite: protectedProcedure
+    .input(z.object({ inviteCode: z.string().nonempty() }))
+    .query(async ({ input: { inviteCode }, ctx: { id: userId } }) => {
+      const [server] = await db
+        .select()
+        .from(servers)
+        .where(eq(servers.inviteCode, inviteCode));
+
+      if (!server) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Invalid Invite Code",
+        });
+      }
+
+      const [serverUserDetails] = await db
+        .select()
+        .from(serverUsers)
+        .where(
+          and(
+            eq(serverUsers.serverId, server.id),
+            eq(serverUsers.userId, userId)
+          )
+        );
+      if (!serverUserDetails) {
+        const [userAdded] = await db
+          .insert(serverUsers)
+          .values({
+            serverId: server.id,
+            userId,
+            role: "MEMBER",
+          })
+          .returning();
+        return userAdded;
+      }
+
+      return serverUserDetails;
+    }),
+
   getMany: protectedProcedure.query(async ({ ctx }) => {
     const { id: userId } = ctx;
 

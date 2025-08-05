@@ -15,7 +15,7 @@ const ServerPage = async ({ params }: ServerPageProps) => {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <ServerView serverId={serverId} channelId={""} />
+      <ServerView serverId={serverId} />
     </HydrationBoundary>
   );
 };
