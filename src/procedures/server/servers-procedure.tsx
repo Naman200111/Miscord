@@ -135,7 +135,7 @@ export const serverProcedure = createTRPCRouter({
       if (!server) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Invalid Invite Code",
+          message: "This Invite Link is no longer valid",
         });
       }
 
@@ -148,6 +148,7 @@ export const serverProcedure = createTRPCRouter({
             eq(serverUsers.userId, userId)
           )
         );
+
       if (!serverUserDetails) {
         const [userAdded] = await db
           .insert(serverUsers)
@@ -157,6 +158,14 @@ export const serverProcedure = createTRPCRouter({
             role: "MEMBER",
           })
           .returning();
+
+        if (!userAdded) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Something went wrong.",
+          });
+        }
+
         return userAdded;
       }
 

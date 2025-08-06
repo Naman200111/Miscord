@@ -42,7 +42,7 @@ const ServerLeaveDeletionModal = ({
   const operation = isAdmin ? "Delete" : "Leave";
   return (
     <Modal open={open} onClose={onClose}>
-      <div className="flex flex-col gap-2 items-center">
+      <div className="flex flex-col gap-2 items-center px-4">
         <div className="font-bold text-2xl">{operation} Server</div>
         <div className="text-muted-foreground flex gap-1">
           <p>
@@ -51,7 +51,7 @@ const ServerLeaveDeletionModal = ({
           </p>
         </div>
 
-        <div className=" w-full mt-2 h-[40px] flex justify-around">
+        <div className=" w-full mt-5 flex justify-around">
           <Button
             onClick={onClose}
             className="outline-none"

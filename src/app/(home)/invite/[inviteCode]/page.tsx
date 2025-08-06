@@ -6,7 +6,6 @@ interface InvitePageProps {
 
 const InvitePage = async ({ params }: InvitePageProps) => {
   const { inviteCode } = await params;
-
   return <InviteView inviteCode={inviteCode} />;
 };
 
