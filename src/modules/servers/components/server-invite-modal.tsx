@@ -14,6 +14,7 @@ interface ServerInviteModalProps {
   onClose: () => void;
   inviteCode: string;
   serverId: string;
+  canUpdateInviteCode?: boolean;
 }
 
 const ServerInviteModal = ({
@@ -21,6 +22,7 @@ const ServerInviteModal = ({
   onClose,
   inviteCode,
   serverId,
+  canUpdateInviteCode = false,
 }: ServerInviteModalProps) => {
   const trpc = useTRPC();
 
@@ -61,7 +63,7 @@ const ServerInviteModal = ({
           <Button
             className="flex gap-4 items-center cursor-pointer bg-muted hover:bg-muted mt-2"
             onClick={() => updateServer.mutate({ serverId })}
-            disabled={updateServer.isPending}
+            disabled={updateServer.isPending || !canUpdateInviteCode}
           >
             <p className="text-foreground">Generate New Link</p>
             <RefreshCwIcon

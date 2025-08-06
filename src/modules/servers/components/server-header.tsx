@@ -78,9 +78,12 @@ const ServerHeader = ({
             </DropdownMenuItem>
           )}
           {!isAdmin && (
-            <DropdownMenuItem onClick={() => setShowDeletionModal(true)}>
+            <DropdownMenuItem
+              onClick={() => setShowDeletionModal(true)}
+              className="text-red-400 dark:text-red-400"
+            >
               Leave Server
-              <LogOut className="ml-auto" />
+              <LogOut className="ml-auto text-red-400 dark:text-red-400" />
             </DropdownMenuItem>
           )}
           {isAdmin && (
@@ -122,6 +125,7 @@ const ServerHeader = ({
           onClose={() => setShowInviteModal(false)}
           inviteCode={inviteCode}
           serverId={serverId}
+          canUpdateInviteCode={isAdmin}
         />
       ) : null}
     </>
