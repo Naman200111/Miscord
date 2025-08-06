@@ -189,15 +189,56 @@ export const serverProcedure = createTRPCRouter({
   }),
 
   deleteServerImage: protectedProcedure
-    .input(z.object({ imageKey: z.string().nonempty() }))
-    .mutation(async ({ input: { imageKey } }) => {
-      const utapi = new UTApi();
-      await utapi.deleteFiles([imageKey]);
-    }),
+    .input(
+      z.object({
+        imageKey: z.string().nonempty(),
+        serverId: z.string().nonempty(),
+      })
+    )
+    .mutation(
+      async ({ input: { imageKey, serverId }, ctx: { id: userId } }) => {
+        const [serverUser] = await db
+          .select()
+          .from(serverUsers)
+          .where(
+            and(
+              eq(serverUsers.serverId, serverId),
+              eq(serverUsers.userId, userId)
+            )
+          );
+
+        if (serverUser.role !== "ADMIN") {
+          return new TRPCError({
+            message: "You cannot perform this action",
+            code: "UNAUTHORIZED",
+          });
+        }
+
+        const utapi = new UTApi();
+        await utapi.deleteFiles([imageKey]);
+      }
+    ),
 
   updateInviteCode: protectedProcedure
     .input(z.object({ serverId: z.uuid() }))
-    .mutation(async ({ input: { serverId } }) => {
+    .mutation(async ({ input: { serverId }, ctx: { id: userId } }) => {
+      const [serverUser] = await db
+        .select()
+        .from(serverUsers)
+        .where(
+          and(
+            eq(serverUsers.serverId, serverId),
+            eq(serverUsers.userId, userId)
+          )
+        );
+
+      if (serverUser.role !== "ADMIN") {
+        return new TRPCError({
+          message: "You cannot perform this action",
+          code: "UNAUTHORIZED",
+        });
+      }
+
       const newInviteCode = generateInviteCode();
       const [updatedServer] = await db
         .update(servers)
@@ -205,5 +246,22 @@ export const serverProcedure = createTRPCRouter({
         .where(eq(servers.id, serverId))
         .returning();
       return updatedServer;
+    }),
+
+  getManyMembers: protectedProcedure
+    .input(z.object({ serverId: z.string() }))
+    .query(async ({ input: { serverId } }) => {
+      const members = await db
+        .select({
+          ...getTableColumns(serverUsers),
+          user: {
+            ...getTableColumns(users),
+          },
+        })
+        .from(serverUsers)
+        .innerJoin(users, eq(users.id, serverUsers.userId))
+        .where(eq(serverUsers.serverId, serverId));
+
+      return members;
     }),
 });
