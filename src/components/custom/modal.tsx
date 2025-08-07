@@ -27,7 +27,7 @@ const Modal = ({ open, onClose, children, className }: ModalProps) => {
     <dialog
       ref={modalRef}
       className={cn(
-        "backdrop:backdrop-contrast-50 max-w-[90%] max-h-[500px] overflow-y-auto rounded-lg p-0 m-auto",
+        "backdrop:backdrop-contrast-50 max-w-[90%] w-[500px] max-h-[500px] overflow-y-auto rounded-lg p-0 m-auto focus:outline-none",
         className
       )}
       onClick={(e) => {
