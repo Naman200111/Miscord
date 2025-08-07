@@ -17,7 +17,7 @@ interface ModalProps {
   serverImageUrl?: string | null;
   name?: string;
   serverImageKey?: string | null;
-  serverId?: string;
+  serverId: string;
 }
 
 const CustomizeServerModal = ({
@@ -93,7 +93,7 @@ const CustomizeServerModal = ({
             <Button
               className="h-6 w-6 absolute right-2 top-0 bg-red-500 rounded-full cursor-pointer hover:bg-red-500"
               onClick={() =>
-                deleteServerImage.mutate({ imageKey: form.imageKey })
+                deleteServerImage.mutate({ imageKey: form.imageKey, serverId })
               }
             >
               <X />

@@ -12,6 +12,9 @@ const ChannelPage = async ({ params }: ChannelPageProps) => {
   const queryClient = getQueryClient();
 
   void queryClient.prefetchQuery(trpc.server.getOne.queryOptions({ serverId }));
+  void queryClient.prefetchQuery(
+    trpc.server.getManyMembers.queryOptions({ serverId })
+  );
   // void queryClient.prefetchQuery(trpc.channel.getOne.queryOptions({ channelId }));
 
   return (

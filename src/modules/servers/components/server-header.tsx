@@ -21,6 +21,7 @@ import { useState } from "react";
 import ServerLeaveDeletionModal from "./server-leave--deletion-modal";
 import CustomizeServerModal from "@/modules/home/components/customize-server-modal";
 import ServerInviteModal from "./server-invite-modal";
+import ServerManageMembersModal from "./server-manage-members-modal";
 
 const ServerHeader = ({
   name,
@@ -43,6 +44,7 @@ const ServerHeader = ({
   const [showDeletionModal, setShowDeletionModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [showManageMembersModal, setShowManageMembersModal] = useState(false);
 
   return (
     <>
@@ -66,7 +68,7 @@ const ServerHeader = ({
             </DropdownMenuItem>
           )}
           {!isMember && (
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setShowManageMembersModal(true)}>
               Manage Members
               <Users className="ml-auto" />
             </DropdownMenuItem>
@@ -126,6 +128,13 @@ const ServerHeader = ({
           inviteCode={inviteCode}
           serverId={serverId}
           canUpdateInviteCode={isAdmin}
+        />
+      ) : null}
+      {showManageMembersModal ? (
+        <ServerManageMembersModal
+          open={showManageMembersModal}
+          onClose={() => setShowManageMembersModal(false)}
+          serverId={serverId}
         />
       ) : null}
     </>

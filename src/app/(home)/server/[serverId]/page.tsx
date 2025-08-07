@@ -12,6 +12,9 @@ const ServerPage = async ({ params }: ServerPageProps) => {
   const queryClient = getQueryClient();
 
   void queryClient.prefetchQuery(trpc.server.getOne.queryOptions({ serverId }));
+  void queryClient.prefetchQuery(
+    trpc.server.getManyMembers.queryOptions({ serverId })
+  );
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
