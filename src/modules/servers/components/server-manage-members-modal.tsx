@@ -1,5 +1,5 @@
 import Modal from "@/components/custom/modal";
-// import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -89,7 +89,7 @@ const ServerManageMembersModalSuspense = ({
         queryClient.invalidateQueries(
           trpc.server.getManyMembers.queryOptions({ serverId })
         );
-        toast.message("Member roles changed.");
+        toast.message("Member roles changed");
       },
       onError: (error) => {
         toast.message(error.message || "Something went wrong");
@@ -146,8 +146,20 @@ const ServerManageMembersModalSuspense = ({
                 (member.role === "MEMBER" ||
                   (role === "ADMIN" && member.role === "MODERATOR")) ? (
                   <DropdownMenu>
-                    <DropdownMenuTrigger className="p-2 outline-none cursor-pointer">
-                      <EllipsisVerticalIcon size={16} />
+                    <DropdownMenuTrigger
+                      className="p-2 outline-none cursor-pointer"
+                      asChild
+                    >
+                      <Button
+                        disabled={
+                          performRoleUpdate.isPending ||
+                          performServerKick.isPending
+                        }
+                        size="icon"
+                        variant="ghost"
+                      >
+                        <EllipsisVerticalIcon size={16} />
+                      </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuSub>
