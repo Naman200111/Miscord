@@ -19,7 +19,9 @@
 6. manage member modal mobile issue
 6. manage member modal dropdown loading behing <dialog> box modal ✅
 6. add disable state when updating roles
-6. add kick user functionality
+6. add kick user functionality ✅
+6. add infinite scroll in manage members
+
 
 
 6. test server leaving functionality when you are not admin ✅

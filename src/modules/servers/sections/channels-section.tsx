@@ -9,6 +9,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Loader2Icon } from "lucide-react";
+import ErrorComponent from "@/components/custom/error-box";
 
 interface ChannelsSectionProps {
   serverId: string;
@@ -23,7 +24,11 @@ const ChannelsSkeleton = () => (
 export const ChannelsSection = ({ serverId }: ChannelsSectionProps) => {
   return (
     <Suspense fallback={<ChannelsSkeleton />}>
-      <ErrorBoundary fallback={<p>Oops...</p>}>
+      <ErrorBoundary
+        fallback={
+          <ErrorComponent message="You are no longer a part of this server" />
+        }
+      >
         <ChannelsSectionSuspense serverId={serverId} />
       </ErrorBoundary>
     </Suspense>

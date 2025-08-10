@@ -121,6 +121,13 @@ export const serverProcedure = createTRPCRouter({
             eq(serverUsers.serverId, serverId)
           )
         );
+
+      if (!serverDetails) {
+        throw new TRPCError({
+          message: "You are no a part of this server",
+          code: "BAD_REQUEST",
+        });
+      }
       return serverDetails;
     }),
 
@@ -209,7 +216,7 @@ export const serverProcedure = createTRPCRouter({
 
         if (serverUser.role !== "ADMIN") {
           return new TRPCError({
-            message: "You cannot perform this action",
+            message: "You You cannot perform this action.",
             code: "UNAUTHORIZED",
           });
         }
@@ -234,7 +241,7 @@ export const serverProcedure = createTRPCRouter({
 
       if (serverUser.role !== "ADMIN") {
         return new TRPCError({
-          message: "You cannot perform this action",
+          message: "You You cannot perform this action.",
           code: "UNAUTHORIZED",
         });
       }
@@ -309,14 +316,14 @@ export const serverProcedure = createTRPCRouter({
         const loggedInUserRole = serverUserDetails.role;
         if (loggedInUserRole === "MEMBER") {
           throw new TRPCError({
-            message: "Cannot perform this action",
+            message: "You cannot perform this action.",
             code: "UNAUTHORIZED",
           });
         }
 
         if (from === "MODERATOR" && loggedInUserRole === "MODERATOR") {
           throw new TRPCError({
-            message: "Cannot perform this action",
+            message: "You cannot perform this action.",
             code: "UNAUTHORIZED",
           });
         }
@@ -334,6 +341,81 @@ export const serverProcedure = createTRPCRouter({
           )
           .returning();
         return roleUpdate;
+      }
+    ),
+
+  serverKick: protectedProcedure
+    .input(
+      z.object({
+        kickedUserId: z.uuid(),
+        kickedUserRole: z.enum(["MEMBER", "MODERATOR", "ADMIN"]),
+        serverId: z.uuid(),
+      })
+    )
+    .mutation(
+      async ({
+        input: { kickedUserId, kickedUserRole, serverId },
+        ctx: { id: userId },
+      }) => {
+        const [serverUserDetails] = await db
+          .select()
+          .from(serverUsers)
+          .where(
+            and(
+              eq(serverUsers.serverId, serverId),
+              eq(serverUsers.userId, userId)
+            )
+          );
+
+        const [kickedServerUserDetails] = await db
+          .select()
+          .from(serverUsers)
+          .where(
+            and(
+              eq(serverUsers.serverId, serverId),
+              eq(serverUsers.userId, kickedUserId)
+            )
+          );
+
+        if (!kickedServerUserDetails) {
+          throw new TRPCError({
+            message: "No user found in the Server",
+            code: "BAD_REQUEST",
+          });
+        }
+
+        if (kickedServerUserDetails.role === "ADMIN") {
+          throw new TRPCError({
+            message: "Server Admin cannot be kicked from the server.",
+            code: "BAD_REQUEST",
+          });
+        }
+
+        const loggedInUserRole = serverUserDetails.role;
+        if (loggedInUserRole === "MEMBER") {
+          throw new TRPCError({
+            message: "You cannot perform this action.",
+            code: "UNAUTHORIZED",
+          });
+        }
+
+        if (kickedUserRole !== "MEMBER" && loggedInUserRole === "MODERATOR") {
+          throw new TRPCError({
+            message: "You cannot perform this action.",
+            code: "UNAUTHORIZED",
+          });
+        }
+
+        const userKicked = await db
+          .delete(serverUsers)
+          .where(
+            and(
+              eq(serverUsers.serverId, serverId),
+              eq(serverUsers.userId, kickedUserId)
+            )
+          )
+          .returning();
+        return userKicked;
       }
     ),
 });

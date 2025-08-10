@@ -1,5 +1,6 @@
 "use client";
 
+import ErrorComponent from "@/components/custom/error-box";
 import Input from "@/components/custom/input";
 import { Skeleton } from "@/components/custom/skeleton";
 import { ArrowLeftCircle, Hash, Plus, Smile } from "lucide-react";
@@ -23,7 +24,7 @@ export const ChannelMessagingSection = ({
 }) => {
   return (
     <Suspense fallback={<ChannelMessagingSectionSkeleton />}>
-      <ErrorBoundary fallback={<p>Oops...</p>}>
+      <ErrorBoundary fallback={<ErrorComponent />}>
         <ChannelMessagingSectionSuspense
           channelId={channelId}
           serverId={serverId}

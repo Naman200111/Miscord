@@ -89,7 +89,21 @@ const ServerManageMembersModalSuspense = ({
         queryClient.invalidateQueries(
           trpc.server.getManyMembers.queryOptions({ serverId })
         );
-        toast.message("Role updated");
+        toast.message("Member roles changed.");
+      },
+      onError: (error) => {
+        toast.message(error.message || "Something went wrong");
+      },
+    })
+  );
+
+  const performServerKick = useMutation(
+    trpc.server.serverKick.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          trpc.server.getManyMembers.queryOptions({ serverId })
+        );
+        toast.message("Member kicked from the server.");
       },
       onError: (error) => {
         toast.message(error.message || "Something went wrong");
@@ -100,7 +114,7 @@ const ServerManageMembersModalSuspense = ({
   return (
     <Modal open={open} onClose={onClose}>
       <div className="flex flex-col items-center">
-        <div className="text-2xl font-bold mb-4">Manage Members</div>
+        <div className="text-2xl font-bold mb-6">Manage Members</div>
         <div className="flex flex-col gap-4 w-[90%]">
           {members.map((member, index) => {
             const RoleBadge =
@@ -177,7 +191,15 @@ const ServerManageMembersModalSuspense = ({
                           </DropdownMenuItem>
                         </DropdownMenuSubContent>
                       </DropdownMenuSub>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() =>
+                          performServerKick.mutate({
+                            serverId,
+                            kickedUserId: member.userId,
+                            kickedUserRole: member.role,
+                          })
+                        }
+                      >
                         Kick <Brush size={16} />
                       </DropdownMenuItem>
                     </DropdownMenuContent>
