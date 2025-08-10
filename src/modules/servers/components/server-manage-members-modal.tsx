@@ -59,11 +59,9 @@ const ServerManageMembersModalSuspense = ({
     trpc.server.getManyMembers.queryOptions({ serverId })
   );
 
-  const modalContentRef = useRef<HTMLDivElement>(null);
-
   return (
     <Modal open={open} onClose={onClose}>
-      <div className="flex flex-col items-center" ref={modalContentRef}>
+      <div className="flex flex-col items-center">
         <div className="text-2xl font-bold mb-4">Manage Members</div>
         <div className="flex flex-col gap-4 w-[90%]">
           {members.map((member, index) => (
@@ -81,23 +79,18 @@ const ServerManageMembersModalSuspense = ({
                   {member.user.email}
                 </p>
               </div>
-              <DropdownMenu modal={false}>
-                <DropdownMenuTrigger>
-                  <EllipsisVerticalIcon
-                    size={16}
-                    className="focus:outline-none cursor-pointer"
-                  />
+              <DropdownMenu>
+                <DropdownMenuTrigger className="p-2 outline-none cursor-pointer">
+                  <EllipsisVerticalIcon size={16} />
                 </DropdownMenuTrigger>
-                <DropdownMenuPortal container={modalContentRef.current}>
-                  <DropdownMenuContent className="z-[10000]">
+                <DropdownMenuPortal>
+                  <DropdownMenuContent>
                     <DropdownMenuSub>
-                      <DropdownMenuSubTrigger>Kick</DropdownMenuSubTrigger>
-                      {/* <DropdownMenuPortal> */}
+                      <DropdownMenuSubTrigger>Role</DropdownMenuSubTrigger>
                       <DropdownMenuSubContent>
                         <DropdownMenuItem>Guest</DropdownMenuItem>
                         <DropdownMenuItem>Moderator</DropdownMenuItem>
                       </DropdownMenuSubContent>
-                      {/* </DropdownMenuPortal> */}
                     </DropdownMenuSub>
                     <DropdownMenuItem>
                       Kick <Brush size={16} />

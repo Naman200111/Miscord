@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
-import { useEffect, useRef } from "react";
 
 interface ModalProps {
   open: boolean;
@@ -10,44 +9,29 @@ interface ModalProps {
 }
 
 const Modal = ({ open, onClose, children, className }: ModalProps) => {
-  const modalRef = useRef<HTMLDialogElement>(null);
-
-  useEffect(() => {
-    if (modalRef && modalRef.current) {
-      const modalInstance = modalRef.current;
-      if (open) {
-        modalInstance.showModal();
-      } else {
-        modalInstance.close();
-      }
-    }
-  }, [open]);
+  if (!open) return null;
 
   return (
-    <dialog
-      ref={modalRef}
-      className={cn(
-        "backdrop:backdrop-contrast-50 max-w-[90%] w-[500px] max-h-[500px] overflow-y-auto rounded-lg p-0 m-auto focus:outline-none",
-        className
-      )}
-      onClick={(e) => {
-        const target = e.target as HTMLDialogElement;
-        if (target.nodeName === "DIALOG") {
-          modalRef.current?.close();
-          onClose();
-        }
-      }}
-    >
-      <div className="relative px-4 py-6 h-full">
-        <div
-          className="absolute right-1 top-1 hover:bg-muted rounded-full p-1 cursor-pointer"
+    <div className="fixed inset-0 z-50 flex items-center justify-center select-none">
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-[#2e2e2e]/50" />
+
+      {/* Content */}
+      <div
+        className={cn(
+          "relative max-w-[90%] w-[500px] max-h-[500px] overflow-y-auto rounded-lg bg-white dark:bg-neutral-900 p-0 shadow-lg",
+          className
+        )}
+      >
+        <button
           onClick={onClose}
+          className="absolute right-2 top-2 hover:bg-muted rounded-full p-1"
         >
-          <X size="16" />
-        </div>
-        {children}
+          <X size={16} />
+        </button>
+        <div className="px-4 py-6">{children}</div>
       </div>
-    </dialog>
+    </div>
   );
 };
 
