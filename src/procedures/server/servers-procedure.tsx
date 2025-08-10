@@ -264,4 +264,76 @@ export const serverProcedure = createTRPCRouter({
 
       return members;
     }),
+
+  roleUpdate: protectedProcedure
+    .input(
+      z.object({
+        receiverUserId: z.uuid(),
+        to: z.enum(["MEMBER", "MODERATOR"]),
+        from: z.enum(["MEMBER", "MODERATOR", "ADMIN"]),
+        serverId: z.uuid(),
+      })
+    )
+    .mutation(
+      async ({
+        input: { receiverUserId, to, from, serverId },
+        ctx: { id: userId },
+      }) => {
+        const [serverUserDetails] = await db
+          .select()
+          .from(serverUsers)
+          .where(
+            and(
+              eq(serverUsers.serverId, serverId),
+              eq(serverUsers.userId, userId)
+            )
+          );
+
+        const [receiverServerUserDetails] = await db
+          .select()
+          .from(serverUsers)
+          .where(
+            and(
+              eq(serverUsers.serverId, serverId),
+              eq(serverUsers.userId, receiverUserId)
+            )
+          );
+
+        if (!receiverServerUserDetails) {
+          throw new TRPCError({
+            message: "Receiver not a part of Server",
+            code: "BAD_REQUEST",
+          });
+        }
+
+        const loggedInUserRole = serverUserDetails.role;
+        if (loggedInUserRole === "MEMBER") {
+          throw new TRPCError({
+            message: "Cannot perform this action",
+            code: "UNAUTHORIZED",
+          });
+        }
+
+        if (from === "MODERATOR" && loggedInUserRole === "MODERATOR") {
+          throw new TRPCError({
+            message: "Cannot perform this action",
+            code: "UNAUTHORIZED",
+          });
+        }
+
+        const roleUpdate = await db
+          .update(serverUsers)
+          .set({
+            role: to,
+          })
+          .where(
+            and(
+              eq(serverUsers.serverId, serverId),
+              eq(serverUsers.userId, receiverUserId)
+            )
+          )
+          .returning();
+        return roleUpdate;
+      }
+    ),
 });

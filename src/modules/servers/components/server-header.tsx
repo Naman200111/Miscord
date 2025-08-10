@@ -30,6 +30,7 @@ const ServerHeader = ({
   serverImageUrl = "",
   serverImageKey = "",
   inviteCode = "",
+  userId,
 }: {
   name: string;
   role: "ADMIN" | "MODERATOR" | "MEMBER";
@@ -37,6 +38,7 @@ const ServerHeader = ({
   serverImageUrl?: string | null;
   serverImageKey?: string | null;
   inviteCode?: string;
+  userId: string;
 }) => {
   const isAdmin = role === "ADMIN";
   const isMember = role === "MEMBER";
@@ -135,6 +137,8 @@ const ServerHeader = ({
           open={showManageMembersModal}
           onClose={() => setShowManageMembersModal(false)}
           serverId={serverId}
+          role={role}
+          userId={userId}
         />
       ) : null}
     </>

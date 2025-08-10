@@ -12,12 +12,15 @@
 6. apply all permission checks on BE also ✅
 6. add invite people functionality ✅
 6. change the server create modal to use react-form-hook
-6. add manage members functionality
+6. add manage members functionality ✅
 6. add create channel functionality
 6. add Ctrl+K search functionality
 6. getting some weird issue on invite functionality ✅
 6. manage member modal mobile issue
 6. manage member modal dropdown loading behing <dialog> box modal ✅
+6. add disable state when updating roles
+6. add kick user functionality
+
 
 6. test server leaving functionality when you are not admin ✅
 6. check if user check needed while updating server settings ✅

@@ -57,6 +57,7 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
         serverImageUrl={data.server.imageUrl}
         serverImageKey={data.server.imageKey}
         inviteCode={data.server.inviteCode}
+        userId={data.userId}
       />
       <Button onClick={() => router.push(`/server/${serverId}/channel/123`)}>
         Click
