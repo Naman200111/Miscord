@@ -2,7 +2,7 @@ import { db } from "@/db/drizzle";
 import { servers, serverUsers, users } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import z from "zod";
-import { and, asc, eq, getTableColumns } from "drizzle-orm";
+import { and, asc, desc, eq, getTableColumns, lt, or } from "drizzle-orm";
 import { generateInviteCode } from "@/lib/utils";
 import { TRPCError } from "@trpc/server";
 import { UTApi } from "uploadthing/server";
@@ -256,9 +256,20 @@ export const serverProcedure = createTRPCRouter({
     }),
 
   getManyMembers: protectedProcedure
-    .input(z.object({ serverId: z.string() }))
-    .query(async ({ input: { serverId } }) => {
-      const members = await db
+    .input(
+      z.object({
+        serverId: z.string(),
+        limit: z.number(),
+        cursor: z
+          .object({
+            updatedAt: z.date(),
+            id: z.uuid(),
+          })
+          .nullish(),
+      })
+    )
+    .query(async ({ input: { serverId, limit, cursor } }) => {
+      let members = await db
         .select({
           ...getTableColumns(serverUsers),
           user: {
@@ -267,9 +278,37 @@ export const serverProcedure = createTRPCRouter({
         })
         .from(serverUsers)
         .innerJoin(users, eq(users.id, serverUsers.userId))
-        .where(eq(serverUsers.serverId, serverId));
+        .where(
+          and(
+            eq(serverUsers.serverId, serverId),
+            cursor
+              ? or(
+                  lt(serverUsers.updatedAt, cursor.updatedAt),
+                  and(
+                    eq(serverUsers.updatedAt, cursor.updatedAt),
+                    lt(serverUsers.id, cursor.id)
+                  )
+                )
+              : undefined
+          )
+        )
+        .orderBy(desc(serverUsers.updatedAt), desc(serverUsers.id))
+        .limit(limit + 1);
 
-      return members;
+      let nextCursor = null;
+
+      if (members.length === limit + 1) {
+        members = members.slice(0, -1);
+        nextCursor = {
+          updatedAt: members[members.length - 1].updatedAt,
+          id: members[members.length - 1].id,
+        };
+      }
+
+      return {
+        nextCursor,
+        members,
+      };
     }),
 
   roleUpdate: protectedProcedure

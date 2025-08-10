@@ -1,20 +1,21 @@
+import InfiniteScroll from "@/components/custom/infinite-scroll";
 import Modal from "@/components/custom/modal";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  // DropdownMenuPortal,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { DEFAULT_MEMBERS_FETCH_LIMIT } from "@/lib/constants";
 import { useTRPC } from "@/trpc/client";
 import {
   useMutation,
   useQueryClient,
-  useSuspenseQuery,
+  useSuspenseInfiniteQuery,
 } from "@tanstack/react-query";
 import {
   Brush,
@@ -79,15 +80,30 @@ const ServerManageMembersModalSuspense = ({
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
-  const { data: members } = useSuspenseQuery(
-    trpc.server.getManyMembers.queryOptions({ serverId })
-  );
+  const { data, isFetching, hasNextPage, fetchNextPage } =
+    useSuspenseInfiniteQuery(
+      trpc.server.getManyMembers.infiniteQueryOptions(
+        {
+          serverId,
+          limit: DEFAULT_MEMBERS_FETCH_LIMIT,
+        },
+        { getNextPageParam: (lastPage) => lastPage.nextCursor }
+      )
+    );
+
+  const members = (data.pages || []).flatMap((page) => page.members);
 
   const performRoleUpdate = useMutation(
     trpc.server.roleUpdate.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries(
-          trpc.server.getManyMembers.queryOptions({ serverId })
+          trpc.server.getManyMembers.infiniteQueryOptions(
+            {
+              serverId,
+              limit: DEFAULT_MEMBERS_FETCH_LIMIT,
+            },
+            { getNextPageParam: (lastPage) => lastPage.nextCursor }
+          )
         );
         toast.message("Member roles changed");
       },
@@ -101,7 +117,13 @@ const ServerManageMembersModalSuspense = ({
     trpc.server.serverKick.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries(
-          trpc.server.getManyMembers.queryOptions({ serverId })
+          trpc.server.getManyMembers.infiniteQueryOptions(
+            {
+              serverId,
+              limit: DEFAULT_MEMBERS_FETCH_LIMIT,
+            },
+            { getNextPageParam: (lastPage) => lastPage.nextCursor }
+          )
         );
         toast.message("Member kicked from the server.");
       },
@@ -220,6 +242,13 @@ const ServerManageMembersModalSuspense = ({
               </div>
             );
           })}
+
+          <InfiniteScroll
+            hasNextPage={hasNextPage}
+            isFetching={isFetching}
+            fetchNextPage={fetchNextPage}
+            manual
+          />
         </div>
       </div>
     </Modal>

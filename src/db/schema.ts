@@ -48,35 +48,29 @@ export const channels = pgTable("channels", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const serverUsers = pgTable(
-  "server_users",
-  {
-    role: serverRoles("role").notNull().default("MEMBER"),
-    userId: uuid("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    serverId: uuid("server_id")
-      .notNull()
-      .references(() => servers.id, { onDelete: "cascade" }),
+export const serverUsers = pgTable("server_users", {
+  id: uuid("id").defaultRandom().primaryKey().notNull(),
+  role: serverRoles("role").notNull().default("MEMBER"),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  serverId: uuid("server_id")
+    .notNull()
+    .references(() => servers.id, { onDelete: "cascade" }),
 
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  },
-  (t) => [primaryKey({ columns: [t.userId, t.serverId] })]
-);
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
-export const serverChannels = pgTable(
-  "server_channels",
-  {
-    channelId: uuid("channel_id")
-      .notNull()
-      .references(() => channels.id, { onDelete: "cascade" }),
-    serverId: uuid("server_id")
-      .notNull()
-      .references(() => servers.id, { onDelete: "cascade" }),
+export const serverChannels = pgTable("server_channels", {
+  id: uuid("server_channels_id").defaultRandom().primaryKey().notNull(),
+  channelId: uuid("channel_id")
+    .notNull()
+    .references(() => channels.id, { onDelete: "cascade" }),
+  serverId: uuid("server_id")
+    .notNull()
+    .references(() => servers.id, { onDelete: "cascade" }),
 
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  },
-  (t) => [primaryKey({ columns: [t.channelId, t.serverId] })]
-);
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});

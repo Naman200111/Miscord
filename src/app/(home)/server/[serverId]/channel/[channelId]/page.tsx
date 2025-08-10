@@ -1,4 +1,5 @@
 // import ChannelView from "@/modules/channels/views/channel-view";
+import { DEFAULT_MEMBERS_FETCH_LIMIT } from "@/lib/constants";
 import ServerView from "@/modules/servers/views/server-view";
 import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
@@ -12,8 +13,11 @@ const ChannelPage = async ({ params }: ChannelPageProps) => {
   const queryClient = getQueryClient();
 
   void queryClient.prefetchQuery(trpc.server.getOne.queryOptions({ serverId }));
-  void queryClient.prefetchQuery(
-    trpc.server.getManyMembers.queryOptions({ serverId })
+  void queryClient.prefetchInfiniteQuery(
+    trpc.server.getManyMembers.infiniteQueryOptions({
+      serverId,
+      limit: DEFAULT_MEMBERS_FETCH_LIMIT,
+    })
   );
   // void queryClient.prefetchQuery(trpc.channel.getOne.queryOptions({ channelId }));
 
