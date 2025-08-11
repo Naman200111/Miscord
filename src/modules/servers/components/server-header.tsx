@@ -22,6 +22,7 @@ import ServerLeaveDeletionModal from "./server-leave--deletion-modal";
 import CustomizeServerModal from "@/modules/home/components/customize-server-modal";
 import ServerInviteModal from "./server-invite-modal";
 import ServerManageMembersModal from "./server-manage-members-modal";
+import CustomizeChannelModal from "./customize-channel-modal";
 
 const ServerHeader = ({
   name,
@@ -43,10 +44,9 @@ const ServerHeader = ({
   const isAdmin = role === "ADMIN";
   const isMember = role === "MEMBER";
 
-  const [showDeletionModal, setShowDeletionModal] = useState(false);
-  const [showSettingsModal, setShowSettingsModal] = useState(false);
-  const [showInviteModal, setShowInviteModal] = useState(false);
-  const [showManageMembersModal, setShowManageMembersModal] = useState(false);
+  const [modalValue, setModalValue] = useState<
+    "delete" | "settings" | "invite" | "manage" | "create" | null
+  >(null);
 
   return (
     <>
@@ -58,32 +58,32 @@ const ServerHeader = ({
         <DropdownMenuContent align="center" className="w-56">
           <DropdownMenuItem
             className="text-indigo-500 dark:text-indigo-400"
-            onClick={() => setShowInviteModal(true)}
+            onClick={() => setModalValue("invite")}
           >
             Invite People
             <UserPlus className="ml-auto text-indigo-500 dark:text-indigo-400" />
           </DropdownMenuItem>
           {isAdmin && (
-            <DropdownMenuItem onClick={() => setShowSettingsModal(true)}>
+            <DropdownMenuItem onClick={() => setModalValue("settings")}>
               Server Settings
               <Settings className="ml-auto" />
             </DropdownMenuItem>
           )}
           {!isMember && (
-            <DropdownMenuItem onClick={() => setShowManageMembersModal(true)}>
+            <DropdownMenuItem onClick={() => setModalValue("manage")}>
               Manage Members
               <Users className="ml-auto" />
             </DropdownMenuItem>
           )}
           {!isMember && (
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setModalValue("create")}>
               Create Channel
               <CirclePlus className="ml-auto" />
             </DropdownMenuItem>
           )}
           {!isAdmin && (
             <DropdownMenuItem
-              onClick={() => setShowDeletionModal(true)}
+              onClick={() => setModalValue("delete")}
               className="text-red-400 dark:text-red-400"
             >
               Leave Server
@@ -95,7 +95,7 @@ const ServerHeader = ({
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="text-red-400 dark:text-red-400"
-                onClick={() => setShowDeletionModal(true)}
+                onClick={() => setModalValue("delete")}
               >
                 Delete Server
                 <Trash className="ml-auto text-red-400 dark:text-red-400" />
@@ -104,43 +104,56 @@ const ServerHeader = ({
           )}
         </DropdownMenuContent>
       </DropdownMenu>
-      {showDeletionModal ? (
+
+      {/* render modals */}
+      {modalValue === "delete" && (
         <ServerLeaveDeletionModal
-          open={showDeletionModal}
-          onClose={() => setShowDeletionModal(false)}
+          open={modalValue === "delete"}
+          onClose={() => setModalValue(null)}
           name={name}
           isAdmin={isAdmin}
           serverId={serverId}
         />
-      ) : null}
-      {showSettingsModal ? (
+      )}
+
+      {modalValue === "settings" && (
         <CustomizeServerModal
-          open={showSettingsModal}
-          onClose={() => setShowSettingsModal(false)}
+          open={modalValue === "settings"}
+          onClose={() => setModalValue(null)}
           name={name}
           serverImageUrl={serverImageUrl}
           serverImageKey={serverImageKey}
           serverId={serverId}
         />
-      ) : null}
-      {showInviteModal ? (
+      )}
+
+      {modalValue === "invite" && (
         <ServerInviteModal
-          open={showInviteModal}
-          onClose={() => setShowInviteModal(false)}
+          open={modalValue === "invite"}
+          onClose={() => setModalValue(null)}
           inviteCode={inviteCode}
           serverId={serverId}
           canUpdateInviteCode={isAdmin}
         />
-      ) : null}
-      {showManageMembersModal ? (
+      )}
+
+      {modalValue === "manage" && (
         <ServerManageMembersModal
-          open={showManageMembersModal}
-          onClose={() => setShowManageMembersModal(false)}
+          open={modalValue === "manage"}
+          onClose={() => setModalValue(null)}
           serverId={serverId}
           role={role}
           userId={userId}
         />
-      ) : null}
+      )}
+
+      {modalValue === "create" && (
+        <CustomizeChannelModal
+          open={modalValue === "create"}
+          modalType="Create"
+          onClose={() => setModalValue(null)}
+        />
+      )}
     </>
   );
 };

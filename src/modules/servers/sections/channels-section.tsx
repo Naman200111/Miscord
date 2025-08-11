@@ -64,9 +64,9 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
         inviteCode={data.server.inviteCode}
         userId={data.userId}
       />
-      <Button onClick={() => router.push(`/server/${serverId}/channel/123`)}>
+      {/* <Button onClick={() => router.push(`/server/${serverId}/channel/123`)}>
         Click
-      </Button>
+      </Button> */}
     </div>
   );
 };
