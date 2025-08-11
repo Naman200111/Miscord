@@ -42,7 +42,11 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
     trpc.server.getOne.queryOptions({ serverId })
   );
 
-  const router = useRouter();
+  // const { data: channels } = useSuspenseQuery(
+  //   trpc.channel.getMany.queryOptions({ serverId })
+  // );
+
+  // const router = useRouter();
 
   // to conditionally show pages
   const path = usePathname();
@@ -64,6 +68,12 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
         inviteCode={data.server.inviteCode}
         userId={data.userId}
       />
+
+      {/* <div className="h-[1px] bg-blue w-full"></div> */}
+
+      {/* Create channels ui */}
+      {/* {JSON.stringify(channels)} */}
+
       {/* <Button onClick={() => router.push(`/server/${serverId}/channel/123`)}>
         Click
       </Button> */}

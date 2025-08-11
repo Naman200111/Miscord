@@ -1,5 +1,5 @@
 import { db } from "@/db/drizzle";
-import { servers, serverUsers, users } from "@/db/schema";
+import { channels, servers, serverUsers, users } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import z from "zod";
 import { and, asc, desc, eq, getTableColumns, lt, or } from "drizzle-orm";
@@ -67,6 +67,23 @@ export const serverProcedure = createTRPCRouter({
         throw new TRPCError({
           message: "Failed to create server user entry",
           code: "NOT_FOUND",
+        });
+      }
+
+      const [createGeneralChannel] = await db
+        .insert(channels)
+        .values({
+          serverId: createServer.id,
+          userId,
+          type: "TEXT",
+          name: "general",
+        })
+        .returning();
+
+      if (!createGeneralChannel) {
+        throw new TRPCError({
+          message: "Failed to create general channel",
+          code: "INTERNAL_SERVER_ERROR",
         });
       }
 

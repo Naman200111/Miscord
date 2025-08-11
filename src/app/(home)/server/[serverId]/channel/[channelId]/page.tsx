@@ -19,6 +19,7 @@ const ChannelPage = async ({ params }: ChannelPageProps) => {
       limit: DEFAULT_MEMBERS_FETCH_LIMIT,
     })
   );
+
   // void queryClient.prefetchQuery(trpc.channel.getOne.queryOptions({ channelId }));
 
   return (

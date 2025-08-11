@@ -13,6 +13,9 @@ const ServerPage = async ({ params }: ServerPageProps) => {
   const queryClient = getQueryClient();
 
   void queryClient.prefetchQuery(trpc.server.getOne.queryOptions({ serverId }));
+  void queryClient.prefetchQuery(
+    trpc.channel.getMany.queryOptions({ serverId })
+  );
   void queryClient.prefetchInfiniteQuery(
     trpc.server.getManyMembers.infiniteQueryOptions({
       serverId,

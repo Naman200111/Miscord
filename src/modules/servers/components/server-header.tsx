@@ -152,6 +152,7 @@ const ServerHeader = ({
           open={modalValue === "create"}
           modalType="Create"
           onClose={() => setModalValue(null)}
+          serverId={serverId}
         />
       )}
     </>

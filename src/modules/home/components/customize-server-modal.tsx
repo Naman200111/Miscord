@@ -55,7 +55,7 @@ const CustomizeServerModal = ({
         toast.message(`Server ${serverId ? "Updated" : "Created"}`);
       },
       onError: () => {
-        toast.error(`Failed to ${serverId ? "Updated" : "Created"} server`);
+        toast.error(`Failed to ${serverId ? "Update" : "Create"} server`);
       },
     })
   );

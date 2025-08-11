@@ -23,6 +23,7 @@ interface CustomizeChannelModalProps {
   type?: "TEXT" | "AUDIO" | "VIDEO";
   open: boolean;
   onClose: () => void;
+  serverId: string;
 }
 
 const CustomizeChannelModal = ({
@@ -31,6 +32,7 @@ const CustomizeChannelModal = ({
   type,
   open,
   onClose,
+  serverId,
 }: CustomizeChannelModalProps) => {
   const trpc = useTRPC();
 
@@ -42,13 +44,15 @@ const CustomizeChannelModal = ({
     type: type || "TEXT",
   });
 
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-  const [create] = useMutation(
+  const createChannel = useMutation(
     trpc.channel.create.mutationOptions({
       onSuccess: () => {
         toast.message("Channel created");
-        // queryClient.invalidateQueries(trpc.channel.getMany.mutationOptions({ serverId }));
+        queryClient.invalidateQueries(
+          trpc.channel.getMany.queryOptions({ serverId })
+        );
       },
       onError: () => {
         toast.error("Something went wrong !!");
@@ -89,7 +93,7 @@ const CustomizeChannelModal = ({
           <Button
             size="sm"
             onClick={() => onClose()}
-            disabled={!form.name || !form.type}
+            disabled={!form.name || !form.type || createChannel.isPending}
             className="px-10"
           >
             Cancel
@@ -97,7 +101,7 @@ const CustomizeChannelModal = ({
           <Button
             size="sm"
             onClick={() => console.log(form)}
-            disabled={!form.name || !form.type}
+            disabled={!form.name || !form.type || createChannel.isPending}
             className="px-10"
           >
             Save
