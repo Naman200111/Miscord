@@ -1,5 +1,10 @@
-import { Input } from "@/components/ui/input";
+"use client";
+
+import { useState } from "react";
+
 import Modal from "@/components/custom/modal";
+
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -7,13 +12,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useTRPC } from "@/trpc/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface CustomizeChannelModalProps {
   modalType: "Edit" | "Create";
   name?: string;
-  type?: "text" | "audio" | "video";
+  type?: "TEXT" | "AUDIO" | "VIDEO";
   open: boolean;
   onClose: () => void;
 }
@@ -25,13 +32,29 @@ const CustomizeChannelModal = ({
   open,
   onClose,
 }: CustomizeChannelModalProps) => {
+  const trpc = useTRPC();
+
   const [form, setForm] = useState<{
     name: string | undefined;
-    type: "text" | "audio" | "video" | undefined;
+    type: "TEXT" | "AUDIO" | "VIDEO";
   }>({
     name,
-    type,
+    type: type || "TEXT",
   });
+
+  // const queryClient = useQueryClient();
+
+  const [create] = useMutation(
+    trpc.channel.create.mutationOptions({
+      onSuccess: () => {
+        toast.message("Channel created");
+        // queryClient.invalidateQueries(trpc.channel.getMany.mutationOptions({ serverId }));
+      },
+      onError: () => {
+        toast.error("Something went wrong !!");
+      },
+    })
+  );
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -47,7 +70,7 @@ const CustomizeChannelModal = ({
         <div className="w-full px-4 flex flex-col gap-2">
           <p>Channel Type</p>
           <Select
-            onValueChange={(val: "text" | "audio" | "video") =>
+            onValueChange={(val: "TEXT" | "AUDIO" | "VIDEO") =>
               setForm({ ...form, type: val })
             }
           >
@@ -63,7 +86,12 @@ const CustomizeChannelModal = ({
         </div>
 
         <div className="justify-center flex gap-4 w-full mt-4">
-          <Button size="sm" onClick={() => onClose()} className="px-10">
+          <Button
+            size="sm"
+            onClick={() => onClose()}
+            disabled={!form.name || !form.type}
+            className="px-10"
+          >
             Cancel
           </Button>
           <Button
