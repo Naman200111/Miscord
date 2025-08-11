@@ -46,6 +46,7 @@ export const channels = pgTable("channels", {
   serverId: uuid("server_id").references(() => servers.id, {
     onDelete: "cascade",
   }),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
