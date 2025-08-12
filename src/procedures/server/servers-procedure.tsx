@@ -34,7 +34,10 @@ export const serverProcedure = createTRPCRouter({
             code: "BAD_REQUEST",
           });
         }
-        return updateServer;
+        return {
+          ...updateServer,
+          serverId: updateServer.id,
+        };
       }
 
       const [createServer] = await db

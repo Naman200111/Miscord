@@ -23,6 +23,7 @@ import CustomizeServerModal from "@/modules/home/components/customize-server-mod
 import ServerInviteModal from "./server-invite-modal";
 import ServerManageMembersModal from "./server-manage-members-modal";
 import CustomizeChannelModal from "./customize-channel-modal";
+import { customizeChannelForm } from "@/types/types";
 
 const ServerHeader = ({
   name,
@@ -47,6 +48,11 @@ const ServerHeader = ({
   const [modalValue, setModalValue] = useState<
     "delete" | "settings" | "invite" | "manage" | "create" | null
   >(null);
+  const [form, setForm] = useState<customizeChannelForm>({
+    name: "",
+    type: "TEXT",
+    modalType: "Create",
+  });
 
   return (
     <>
@@ -150,9 +156,10 @@ const ServerHeader = ({
       {modalValue === "create" && (
         <CustomizeChannelModal
           open={modalValue === "create"}
-          modalType="Create"
           onClose={() => setModalValue(null)}
           serverId={serverId}
+          form={form}
+          setForm={setForm}
         />
       )}
     </>

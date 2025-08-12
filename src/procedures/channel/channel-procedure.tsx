@@ -6,16 +6,20 @@ import { and, eq } from "drizzle-orm";
 import z from "zod";
 
 export const channelProcedure = createTRPCRouter({
-  create: protectedProcedure
+  customize: protectedProcedure
     .input(
       z.object({
         name: z.string().nonempty(),
         type: z.enum(["TEXT", "AUDIO", "VIDEO"]),
         serverId: z.uuid().nonempty(),
+        channelId: z.uuid().nullish(),
       })
     )
     .mutation(
-      async ({ input: { name, type, serverId }, ctx: { id: userId } }) => {
+      async ({
+        input: { name, type, serverId, channelId },
+        ctx: { id: userId },
+      }) => {
         const [server] = await db
           .select()
           .from(servers)
@@ -32,6 +36,25 @@ export const channelProcedure = createTRPCRouter({
             message: "Channel name is reserved",
             code: "BAD_REQUEST",
           });
+        }
+
+        if (channelId) {
+          const [channel] = await db
+            .update(channels)
+            .set({ name, type })
+            .where(
+              and(eq(channels.serverId, serverId), eq(channels.id, channelId))
+            )
+            .returning();
+
+          if (!channel) {
+            throw new TRPCError({
+              message: "No Channel found !",
+              code: "BAD_REQUEST",
+            });
+          }
+
+          return channel;
         }
 
         const [createChannel] = await db

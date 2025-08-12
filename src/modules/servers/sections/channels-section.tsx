@@ -1,22 +1,35 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import ServerHeader from "../components/server-header";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Edit, Hash, Loader2Icon, Plus, Trash2 } from "lucide-react";
 import ErrorComponent from "@/components/custom/error-box";
-import { Input } from "@/components/ui/input";
+
+import { Hash, Loader2Icon, VideoIcon, Volume2Icon } from "lucide-react";
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "@/components/ui/command";
+import CustomizeChannelModal from "../components/customize-channel-modal";
+import SingularChannelSection from "./singular-channel-section";
+
+import { customizeChannelForm } from "@/types/types";
 
 interface ChannelsSectionProps {
   serverId: string;
 }
 
 const ChannelsSkeleton = () => (
-  <div className="h-full w-full sm:w-64 md:w-72 flex flex-col items-center justify-center bg-[#ececec] dark:bg-[#222222]">
+  <div className="h-full w-full sm:max-w-64 md:max-w-72 flex flex-col items-center justify-center bg-[#ececec] dark:bg-[#222222]">
     <Loader2Icon className="animate-spin" />
   </div>
 );
@@ -50,16 +63,23 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
   const audioChannels = channels.filter((channel) => channel.type === "AUDIO");
   const videoChannels = channels.filter((channel) => channel.type === "VIDEO");
 
-  // const router = useRouter();
-
   // to conditionally show pages
   const path = usePathname();
   const hasChannel = path.includes("channel");
 
+  const [open, setOpen] = useState(false);
+  const [openCustomizeChannelModal, setOpenCustomizeChannelModal] =
+    useState(false);
+  const [form, setForm] = useState<customizeChannelForm>({
+    name: "",
+    type: "TEXT",
+    modalType: "Create",
+  });
+
   return (
     <div
       className={cn(
-        "h-full w-full sm:max-w-64 md:max-w-72 flex flex-col gap-2 bg-[#ececec] dark:bg-[#222222] items-center",
+        "h-full w-full sm:max-w-64 md:max-w-72 flex flex-col gap-2 bg-[#ececec] dark:bg-[#222222] items-center select-none",
         hasChannel ? "hidden sm:flex" : ""
       )}
     >
@@ -74,102 +94,93 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
       />
 
       {/* Todo: change properly later */}
-      <Input
-        className="w-[100%] mx-4"
-        placeholder="Search channels / members [Ctrl+K]"
-      />
+      <div
+        className="flex items-center justify-between py-1 px-2 dark:bg-input/30 rounded-md m-2 w-[90%] border shadow-xs"
+        onClick={() => setOpen(true)}
+      >
+        <p>Search</p>
+        <p className="text-muted-foreground text-sm ml-auto">
+          Press{" "}
+          <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
+            <span className="text-xs">⌘</span>J
+          </kbd>
+        </p>
+      </div>
+
+      {/* Todo: move to a new file */}
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandInput placeholder="Search any type of channels or members here ...." />
+        <CommandList>
+          <CommandEmpty>No results found...</CommandEmpty>
+          <CommandGroup heading="Text Channels">
+            {textChannels.map((channel, index) => (
+              <CommandItem key={index}>
+                <Hash size={18} />
+                <span className="line-clamp-1">{channel.name}</span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+          <CommandSeparator />
+          <CommandGroup heading="Audio Channels">
+            {audioChannels.map((channel, index) => (
+              <CommandItem key={index}>
+                <Volume2Icon size={18} />
+                <span className="line-clamp-1">{channel.name}</span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+          <CommandSeparator />
+          <CommandGroup heading="Video Channels">
+            {videoChannels.map((channel, index) => (
+              <CommandItem key={index}>
+                <VideoIcon size={18} />
+                <span className="line-clamp-1">{channel.name}</span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
 
       {/* Render the channels */}
       <div className="flex flex-col gap-6 mt-4 w-[100%] px-2">
-        <div className="flex flex-col gap-2">
-          <div className="flex justify-between items-center">
-            <p className="text-sm text-muted-foreground">Text Channels</p>
-            <div className="p-1 rounded-full hover:bg-[#e5e5e5] dark:hover:bg-[#2e2e2e] text-muted-foreground">
-              <Plus size={16} />
-            </div>
-          </div>
-          {textChannels.map((channel, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center hover:bg-muted py-1 rounded-md"
-            >
-              <div className="text-muted-foreground flex gap-2 items-center px-1">
-                <Hash size={18} />
-                <span className="line-clamp-1">
-                  {/* Todo: breaking on longer texts */}
-                  asdnbassadasdsadsadsahdb asd sasdsa
-                </span>
-              </div>
-              <div className="flex">
-                <div className="p-[6px] rounded-full hover:bg-[#e5e5e5] dark:hover:bg-[#2e2e2e] text-muted-foreground">
-                  <Edit size={14} />
-                </div>
-                <div className="p-[6px] rounded-full hover:bg-[#e5e5e5] dark:hover:bg-[#2e2e2e] text-muted-foreground">
-                  <Trash2 size={14} />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="flex flex-col gap-2">
-          <div className="flex justify-between items-center">
-            <p className="text-sm text-muted-foreground">Audio Channels</p>
-            <div className="p-1 rounded-full hover:bg-[#e5e5e5] dark:hover:bg-[#2e2e2e] text-muted-foreground">
-              <Plus size={16} />
-            </div>
-          </div>
-          {audioChannels.map((channel, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center hover:bg-muted py-1 rounded-md"
-            >
-              <div className="text-muted-foreground flex gap-2 items-center">
-                <Hash size={20} />
-                <span className="line-clamp-1">{channel.name}</span>
-              </div>
-              <div className="flex">
-                <div className="p-[6px] rounded-full hover:bg-[#e5e5e5] dark:hover:bg-[#2e2e2e] text-muted-foreground">
-                  <Edit size={14} />
-                </div>
-                <div className="p-[6px] rounded-full hover:bg-[#e5e5e5] dark:hover:bg-[#2e2e2e] text-muted-foreground">
-                  <Trash2 size={14} />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="flex flex-col gap-2">
-          <div className="flex justify-between items-center">
-            <p className="text-sm text-muted-foreground">Video Channels</p>
-            <div className="p-1 rounded-full hover:bg-[#e5e5e5] dark:hover:bg-[#2e2e2e] text-muted-foreground">
-              <Plus size={16} />
-            </div>
-          </div>
-          {videoChannels.map((channel, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center hover:bg-muted py-1 rounded-md"
-            >
-              <div className="text-muted-foreground flex gap-2 items-center">
-                <Hash size={20} />
-                <span className="line-clamp-1">{channel.name}</span>
-              </div>
-              <div className="flex">
-                <div className="p-[6px] rounded-full hover:bg-[#e5e5e5] dark:hover:bg-[#2e2e2e] text-muted-foreground">
-                  <Edit size={14} />
-                </div>
-                <div className="p-[6px] rounded-full hover:bg-[#e5e5e5] dark:hover:bg-[#2e2e2e] text-muted-foreground">
-                  <Trash2 size={14} />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <SingularChannelSection
+          channelIcon={<Hash size={18} className="flex-shrink-0" />}
+          channels={textChannels}
+          heading="Text Channels"
+          onOpen={() => setOpenCustomizeChannelModal(true)}
+          type="TEXT"
+          role={data.role}
+          setForm={setForm}
+        />
+        <SingularChannelSection
+          channelIcon={<Volume2Icon size={18} className="flex-shrink-0" />}
+          channels={audioChannels}
+          heading="Audio Channels"
+          onOpen={() => setOpenCustomizeChannelModal(true)}
+          type="AUDIO"
+          role={data.role}
+          setForm={setForm}
+        />
+        <SingularChannelSection
+          channelIcon={<VideoIcon size={18} className="flex-shrink-0" />}
+          channels={videoChannels}
+          heading="Video Channels"
+          onOpen={() => setOpenCustomizeChannelModal(true)}
+          type="VIDEO"
+          role={data.role}
+          setForm={setForm}
+        />
       </div>
 
-      {/* <Button onClick={() => router.push(`/server/${serverId}/channel/123`)}>
-        Click
-      </Button> */}
+      {openCustomizeChannelModal && (
+        <CustomizeChannelModal
+          open={openCustomizeChannelModal}
+          form={form}
+          setForm={setForm}
+          onClose={() => setOpenCustomizeChannelModal(false)}
+          serverId={serverId}
+        />
+      )}
     </div>
   );
 };
