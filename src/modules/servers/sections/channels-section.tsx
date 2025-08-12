@@ -79,7 +79,7 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
   return (
     <div
       className={cn(
-        "h-full w-full sm:max-w-64 md:max-w-72 flex flex-col gap-2 bg-[#ececec] dark:bg-[#222222] items-center select-none",
+        "h-full w-full sm:w-64 md:w-72 flex flex-col gap-2 bg-[#ececec] dark:bg-[#222222] items-center select-none",
         hasChannel ? "hidden sm:flex" : ""
       )}
     >
@@ -94,17 +94,19 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
       />
 
       {/* Todo: change properly later */}
-      <div
-        className="flex items-center justify-between py-1 px-2 dark:bg-input/30 rounded-md m-2 w-[90%] border shadow-xs"
-        onClick={() => setOpen(true)}
-      >
-        <p>Search</p>
-        <p className="text-muted-foreground text-sm ml-auto">
-          Press{" "}
-          <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
-            <span className="text-xs">⌘</span>J
-          </kbd>
-        </p>
+      <div className="px-1 w-full cursor-pointer">
+        <div
+          className="flex items-center justify-between dark:bg-input/30 rounded-md w border shadow-xs py-1 px-2"
+          onClick={() => setOpen(true)}
+        >
+          <p>Search</p>
+          <p className="text-muted-foreground text-sm ml-auto">
+            Press{" "}
+            <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
+              <span className="text-xs">⌘</span>J
+            </kbd>
+          </p>
+        </div>
       </div>
 
       {/* Todo: move to a new file */}
@@ -142,7 +144,7 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
       </CommandDialog>
 
       {/* Render the channels */}
-      <div className="flex flex-col gap-6 mt-4 w-[100%] px-2">
+      <div className="flex flex-col gap-6 mt-4 w-[100%] px-2 overflow-auto no-scrollbar mb-4">
         <SingularChannelSection
           channelIcon={<Hash size={18} className="flex-shrink-0" />}
           channels={textChannels}
