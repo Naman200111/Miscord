@@ -19,7 +19,7 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import CustomizeChannelModal from "../components/customize-channel-modal";
+import CustomizeChannelModal from "../components/channel/customize-channel-modal";
 import SingularChannelSection from "./singular-channel-section";
 
 import { customizeChannelForm } from "@/types/types";
@@ -111,7 +111,7 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
 
       {/* Todo: move to a new file */}
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Search any type of channels or members here ...." />
+        <CommandInput placeholder="Type to search channels" />
         <CommandList>
           <CommandEmpty>No results found...</CommandEmpty>
           <CommandGroup heading="Text Channels">
@@ -153,6 +153,7 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
           type="TEXT"
           role={data.role}
           setForm={setForm}
+          serverId={serverId}
         />
         <SingularChannelSection
           channelIcon={<Volume2Icon size={18} className="flex-shrink-0" />}
@@ -162,6 +163,7 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
           type="AUDIO"
           role={data.role}
           setForm={setForm}
+          serverId={serverId}
         />
         <SingularChannelSection
           channelIcon={<VideoIcon size={18} className="flex-shrink-0" />}
@@ -171,6 +173,7 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
           type="VIDEO"
           role={data.role}
           setForm={setForm}
+          serverId={serverId}
         />
       </div>
 

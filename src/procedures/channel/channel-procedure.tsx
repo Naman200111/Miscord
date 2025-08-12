@@ -110,4 +110,71 @@ export const channelProcedure = createTRPCRouter({
 
       return serverChannels;
     }),
+
+  delete: protectedProcedure
+    .input(
+      z.object({
+        serverId: z.uuid().nonempty(),
+        channelId: z.uuid().nonempty(),
+      })
+    )
+    .mutation(
+      async ({ input: { serverId, channelId }, ctx: { id: userId } }) => {
+        const [server] = await db
+          .select()
+          .from(servers)
+          .where(eq(servers.id, serverId));
+        if (!server) {
+          throw new TRPCError({
+            message: "No server found !!",
+            code: "BAD_REQUEST",
+          });
+        }
+
+        const [channel] = await db
+          .select()
+          .from(channels)
+          .where(
+            and(eq(channels.serverId, serverId), eq(channels.id, channelId))
+          );
+
+        if (!channel) {
+          throw new TRPCError({
+            message: "No Channel found !!",
+            code: "BAD_REQUEST",
+          });
+        }
+
+        const [serverUser] = await db
+          .select()
+          .from(serverUsers)
+          .where(
+            and(
+              eq(serverUsers.serverId, serverId),
+              eq(serverUsers.userId, userId)
+            )
+          );
+
+        if (!serverUser || serverUser.role === "MEMBER") {
+          throw new TRPCError({
+            message: "User not part of server / cannot perform this action !!",
+            code: "UNAUTHORIZED",
+          });
+        }
+
+        if (channel.name === "general") {
+          throw new TRPCError({
+            message: "This channel cannot be deleted",
+            code: "BAD_REQUEST",
+          });
+        }
+
+        const [deleteChannel] = await db
+          .delete(channels)
+          .where(eq(channels.id, channelId))
+          .returning();
+
+        return deleteChannel;
+      }
+    ),
 });

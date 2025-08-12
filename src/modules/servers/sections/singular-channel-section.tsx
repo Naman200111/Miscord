@@ -1,3 +1,5 @@
+"use client";
+
 import { Edit, Plus, Trash2 } from "lucide-react";
 
 import {
@@ -7,6 +9,8 @@ import {
   customizeChannelOptions,
   customizeChannelForm,
 } from "@/types/types";
+import { useState } from "react";
+import ChannelDeletionModal from "../components/channel/channel-deletion-modal";
 
 interface SingularChannelSectionProps {
   heading: string;
@@ -16,6 +20,7 @@ interface SingularChannelSectionProps {
   role: channelRoles;
   channels: channel[];
   setForm: (form: customizeChannelForm) => void;
+  serverId: string;
 }
 
 const SingularChannelSection = ({
@@ -26,7 +31,13 @@ const SingularChannelSection = ({
   type,
   role,
   setForm,
+  serverId,
 }: SingularChannelSectionProps) => {
+  const [channelDeletionData, setChannelDeletionData] = useState({
+    name: "",
+    channelId: "",
+  });
+
   const handleCustomizeChannel = (
     modalType: customizeChannelOptions,
     type: channelType,
@@ -57,14 +68,14 @@ const SingularChannelSection = ({
       {channels.map((channel, index) => (
         <div
           key={index}
-          className="flex justify-between items-center hover:bg-muted py-1 rounded-md group"
+          className="flex justify-between items-center hover:bg-muted py-1 rounded-md"
         >
           <div className="text-muted-foreground flex gap-2 items-center px-1">
             {channelIcon}
             <span className="line-clamp-1">{channel.name}</span>
           </div>
           {channel.name !== "general" && role !== "MEMBER" && (
-            <div className="hidden group-hover:flex">
+            <div className="flex">
               <div
                 className="p-[6px] rounded-full hover:bg-[#e5e5e5] dark:hover:bg-[#2e2e2e] text-muted-foreground"
                 onClick={() =>
@@ -73,13 +84,30 @@ const SingularChannelSection = ({
               >
                 <Edit size={14} />
               </div>
-              <div className="p-[6px] rounded-full hover:bg-[#e5e5e5] dark:hover:bg-[#2e2e2e] text-muted-foreground">
+              <div
+                className="p-[6px] rounded-full hover:bg-[#e5e5e5] dark:hover:bg-[#2e2e2e] text-muted-foreground"
+                onClick={() =>
+                  setChannelDeletionData({
+                    channelId: channel.id,
+                    name: channel.name,
+                  })
+                }
+              >
                 <Trash2 size={14} />
               </div>
             </div>
           )}
         </div>
       ))}
+      {channelDeletionData.name && channelDeletionData.channelId && (
+        <ChannelDeletionModal
+          open={!!channelDeletionData.channelId}
+          onClose={() => setChannelDeletionData({ name: "", channelId: "" })}
+          serverId={serverId}
+          channelId={channelDeletionData.channelId}
+          name={channelDeletionData.name}
+        />
+      )}
     </div>
   );
 };

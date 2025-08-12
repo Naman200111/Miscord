@@ -22,7 +22,7 @@ import ServerLeaveDeletionModal from "./server-leave--deletion-modal";
 import CustomizeServerModal from "@/modules/home/components/customize-server-modal";
 import ServerInviteModal from "./server-invite-modal";
 import ServerManageMembersModal from "./server-manage-members-modal";
-import CustomizeChannelModal from "./customize-channel-modal";
+import CustomizeChannelModal from "./channel/customize-channel-modal";
 import { customizeChannelForm } from "@/types/types";
 
 const ServerHeader = ({
