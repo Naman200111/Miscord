@@ -3,6 +3,8 @@
 import ErrorComponent from "@/components/custom/error-box";
 import Input from "@/components/custom/input";
 import { Skeleton } from "@/components/custom/skeleton";
+import { useTRPC } from "@/trpc/client";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowLeftCircle, Hash, Plus, Smile } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Suspense } from "react";
@@ -42,8 +44,17 @@ const ChannelMessagingSectionSuspense = ({
   serverId: string;
 }) => {
   const router = useRouter();
+  const trpc = useTRPC();
 
-  const channelName = "general";
+  const { data } = useSuspenseQuery(
+    trpc.channel.getOne.queryOptions(
+      // Todo: fix this as channelId can be undefined
+      { serverId, channelId },
+      { enabled: !!channelId }
+    )
+  );
+
+  const channelName = data.name;
 
   return !channelId ? (
     <div className="h-full w-full justify-center items-center text-center hidden sm:flex bg-[#e5e5e5] dark:bg-[#2e2e2e]">

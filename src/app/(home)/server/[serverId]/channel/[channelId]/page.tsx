@@ -20,7 +20,9 @@ const ChannelPage = async ({ params }: ChannelPageProps) => {
     })
   );
 
-  // void queryClient.prefetchQuery(trpc.channel.getOne.queryOptions({ channelId }));
+  void queryClient.prefetchQuery(
+    trpc.channel.getOne.queryOptions({ serverId, channelId })
+  );
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

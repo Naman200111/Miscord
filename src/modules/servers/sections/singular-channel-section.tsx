@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Edit, Plus, Trash2 } from "lucide-react";
 
 import {
@@ -9,7 +11,7 @@ import {
   customizeChannelOptions,
   customizeChannelForm,
 } from "@/types/types";
-import { useState } from "react";
+
 import ChannelDeletionModal from "../components/channel/channel-deletion-modal";
 
 interface SingularChannelSectionProps {
@@ -33,6 +35,8 @@ const SingularChannelSection = ({
   setForm,
   serverId,
 }: SingularChannelSectionProps) => {
+  const router = useRouter();
+
   const [channelDeletionData, setChannelDeletionData] = useState({
     name: "",
     channelId: "",
@@ -69,6 +73,11 @@ const SingularChannelSection = ({
         <div
           key={index}
           className="flex justify-between items-center hover:bg-muted py-1 rounded-md"
+          onClick={() => {
+            if (channel.type === "TEXT") {
+              router.push(`/server/${serverId}/channel/${channel.id}`);
+            }
+          }}
         >
           <div className="text-muted-foreground flex gap-2 items-center px-1">
             {channelIcon}

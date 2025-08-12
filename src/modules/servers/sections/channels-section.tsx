@@ -5,7 +5,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import ServerHeader from "../components/server-header";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import ErrorComponent from "@/components/custom/error-box";
 
@@ -50,6 +50,7 @@ export const ChannelsSection = ({ serverId }: ChannelsSectionProps) => {
 
 const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
   const trpc = useTRPC();
+  const router = useRouter();
 
   const { data } = useSuspenseQuery(
     trpc.server.getOne.queryOptions({ serverId })
@@ -116,7 +117,12 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
           <CommandEmpty>No results found...</CommandEmpty>
           <CommandGroup heading="Text Channels">
             {textChannels.map((channel, index) => (
-              <CommandItem key={index}>
+              <CommandItem
+                key={index}
+                onSelect={() => {
+                  router.push(`/server/${serverId}/channel/${channel.id}`);
+                }}
+              >
                 <Hash size={18} />
                 <span className="line-clamp-1">{channel.name}</span>
               </CommandItem>

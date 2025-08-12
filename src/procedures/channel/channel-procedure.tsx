@@ -71,6 +71,56 @@ export const channelProcedure = createTRPCRouter({
       }
     ),
 
+  getOne: protectedProcedure
+    .input(
+      z.object({
+        serverId: z.uuid().nonempty(),
+        channelId: z.uuid().nonempty(),
+      })
+    )
+    .query(async ({ input: { serverId, channelId }, ctx: { id: userId } }) => {
+      const [server] = await db
+        .select()
+        .from(servers)
+        .where(eq(servers.id, serverId));
+      if (!server) {
+        throw new TRPCError({ message: "No server found", code: "NOT_FOUND" });
+      }
+
+      const [serverUserDetails] = await db
+        .select()
+        .from(serverUsers)
+        .where(
+          and(
+            eq(serverUsers.serverId, serverId),
+            eq(serverUsers.userId, userId)
+          )
+        );
+
+      if (!serverUserDetails) {
+        throw new TRPCError({
+          message: "User not in the server !!",
+          code: "UNAUTHORIZED",
+        });
+      }
+
+      const [channel] = await db
+        .select()
+        .from(channels)
+        .where(
+          and(eq(channels.serverId, serverId), eq(channels.id, channelId))
+        );
+
+      if (!channel) {
+        throw new TRPCError({
+          message: "No Channel found !!",
+          code: "BAD_REQUEST",
+        });
+      }
+
+      return channel;
+    }),
+
   getMany: protectedProcedure
     .input(
       z.object({
