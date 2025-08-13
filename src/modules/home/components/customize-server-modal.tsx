@@ -1,6 +1,6 @@
 "use client";
 
-import Input from "@/components/custom/input";
+import { Input } from "@/components/ui/input";
 import Modal from "@/components/custom/modal";
 import { toast } from "sonner";
 import { UploadButton } from "@/lib/uploadthing";

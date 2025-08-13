@@ -55,7 +55,7 @@ const CustomizeChannelModal = ({
     <Modal open={open} onClose={onClose}>
       <div className="w-full h-full flex flex-col items-center gap-4">
         <p className="text-2xl font-bold mb-4">{form.modalType} Channel</p>
-        <div className="w-full px-4 flex flex-col gap-2">
+        <div className="w-full sm:px-4 flex flex-col gap-2">
           <p>Channel Name</p>
           <Input
             onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -63,7 +63,7 @@ const CustomizeChannelModal = ({
             value={form.name}
           ></Input>
         </div>
-        <div className="w-full px-4 flex flex-col gap-2">
+        <div className="w-full sm:px-4 flex flex-col gap-2">
           <p>Channel Type</p>
           <Select
             onValueChange={(val: channelType) =>
@@ -82,12 +82,12 @@ const CustomizeChannelModal = ({
           </Select>
         </div>
 
-        <div className="justify-center flex gap-4 w-full mt-4">
+        <div className="justify-center flex gap-4 w-full mt-4 min-w-0">
           <Button
             size="sm"
             onClick={() => onClose()}
             disabled={!form.name || !form.type || customizeChannel.isPending}
-            className="px-10"
+            className="sm:px-10 min-w-0"
           >
             Cancel
           </Button>
@@ -102,7 +102,7 @@ const CustomizeChannelModal = ({
               })
             }
             disabled={!form.name || !form.type || customizeChannel.isPending}
-            className="px-10"
+            className="sm:px-10 min-w-0"
           >
             Save
           </Button>

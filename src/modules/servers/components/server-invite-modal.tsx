@@ -1,4 +1,4 @@
-import Input from "@/components/custom/input";
+import { Input } from "@/components/ui/input";
 import Modal from "@/components/custom/modal";
 import { Button } from "@/components/ui/button";
 import { APP_URL } from "@/lib/constants";
@@ -49,11 +49,11 @@ const ServerInviteModal = ({
           <div className="font-semibold text-sm text-indigo-400">
             SERVER INVITE LINK
           </div>
-          <div className="flex w-full gap-4 items-center">
+          <div className="flex items-center w-full gap-2">
             <Input disabled value={inviteUrl} className="flex-1" />
             <Copy
-              size={18}
-              className="cursor-pointer"
+              size={16}
+              className="cursor-pointer flex-shrink-0"
               onClick={() => {
                 navigator.clipboard?.writeText(inviteUrl);
                 toast.message("Copied to clipboard");
@@ -69,7 +69,7 @@ const ServerInviteModal = ({
             <RefreshCwIcon
               size={18}
               className={cn(
-                "text-foreground",
+                "text-foreground flex-shrink-0",
                 updateServer.isPending ? "animate-spin" : ""
               )}
             />

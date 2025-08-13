@@ -136,8 +136,10 @@ const ServerManageMembersModalSuspense = ({
   return (
     <Modal open={open} onClose={onClose}>
       <div className="flex flex-col items-center">
-        <div className="text-2xl font-bold mb-6">Manage Members</div>
-        <div className="flex flex-col gap-4 w-[90%]">
+        <div className="text-xl sm:text-2xl font-bold mb-6 line-clamp-1">
+          Manage Members
+        </div>
+        <div className="flex flex-col gap-4 w-full sm:px-6">
           {members.map((member, index) => {
             const RoleBadge =
               member.role === "ADMIN" ? (
@@ -156,11 +158,12 @@ const ServerManageMembersModalSuspense = ({
                     alt="Avatar"
                   />
                 </div>
-                <div className="flex flex-col text-sm flex-1">
+                <div className="flex flex-col text-sm min-w-0">
                   <p className="line-clamp-1 flex gap-2 items-center">
-                    {member.user.name} {RoleBadge}
+                    <span className="line-clamp-1">{member.user.name}</span>
+                    <span className="flex-shrink-0">{RoleBadge}</span>
                   </p>
-                  <p className="text-muted-foreground line-clamp-1">
+                  <p className="text-muted-foreground line-clamp-1 min-w-0">
                     {member.user.email}
                   </p>
                 </div>
@@ -169,7 +172,7 @@ const ServerManageMembersModalSuspense = ({
                   (role === "ADMIN" && member.role === "MODERATOR")) ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger
-                      className="p-2 outline-none cursor-pointer"
+                      className="p-2 outline-none cursor-pointer ml-auto"
                       asChild
                     >
                       <Button

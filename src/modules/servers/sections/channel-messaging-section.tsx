@@ -1,7 +1,7 @@
 "use client";
 
 import ErrorComponent from "@/components/custom/error-box";
-import Input from "@/components/custom/input";
+import { Input } from "@/components/ui/input";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowLeftCircle, Hash, Loader2Icon, Plus, Smile } from "lucide-react";
@@ -62,14 +62,14 @@ const ChannelMessagingSectionSuspense = ({
       </div>
       <div className="w-full flex-1 rounded-none bg-[#e5e5e5] dark:bg-[#2e2e2e] flex flex-col-reverse gap-2">
         <div className="flex items-center mx-2 sm:px-4 my-6 border rounded-md bg-muted">
-          <button className="cursor-pointer bg-muted-foreground rounded-full ml-2">
+          <button className="cursor-pointer bg-muted-foreground rounded-full ml-2 sm:ml-1">
             <Plus size={22} className="text-background" />
           </button>
           <Input
-            className="my-2 focus:outline-none flex-1 border-0"
+            className="my-2 focus:outline-none flex-1 border-0 mx-2"
             placeholder={`Message #${channelName}`}
           />
-          <button className="cursor-pointer rounded-full mr-2">
+          <button className="cursor-pointer rounded-full mr-2 sm:mr-1">
             <Smile />
           </button>
         </div>

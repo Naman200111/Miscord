@@ -235,7 +235,7 @@ export const serverProcedure = createTRPCRouter({
           );
 
         if (serverUser.role !== "ADMIN") {
-          return new TRPCError({
+          throw new TRPCError({
             message: "You You cannot perform this action.",
             code: "UNAUTHORIZED",
           });
@@ -260,7 +260,7 @@ export const serverProcedure = createTRPCRouter({
         );
 
       if (serverUser.role !== "ADMIN") {
-        return new TRPCError({
+        throw new TRPCError({
           message: "You You cannot perform this action.",
           code: "UNAUTHORIZED",
         });
