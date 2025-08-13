@@ -11,7 +11,13 @@ const ServerView = ({
   return (
     <div className="flex flex-1 w-full h-full">
       <ChannelsSection serverId={serverId} />
-      <ChannelMessagingSection serverId={serverId} channelId={channelId} />
+      {!channelId ? (
+        <div className="h-full w-full justify-center items-center text-center hidden sm:flex bg-[#e5e5e5] dark:bg-[#2e2e2e]">
+          Select a channel, to view conversions ☺
+        </div>
+      ) : (
+        <ChannelMessagingSection serverId={serverId} channelId={channelId} />
+      )}
     </div>
   );
 };

@@ -21,7 +21,7 @@ export const ChannelMessagingSection = ({
   channelId,
   serverId,
 }: {
-  channelId?: string;
+  channelId: string;
   serverId: string;
 }) => {
   return (
@@ -40,27 +40,19 @@ const ChannelMessagingSectionSuspense = ({
   channelId,
   serverId,
 }: {
-  channelId?: string;
+  channelId: string;
   serverId: string;
 }) => {
   const router = useRouter();
   const trpc = useTRPC();
 
   const { data } = useSuspenseQuery(
-    trpc.channel.getOne.queryOptions(
-      // Todo: fix this as channelId can be undefined
-      { serverId, channelId },
-      { enabled: !!channelId }
-    )
+    trpc.channel.getOne.queryOptions({ serverId, channelId })
   );
 
   const channelName = data.name;
 
-  return !channelId ? (
-    <div className="h-full w-full justify-center items-center text-center hidden sm:flex bg-[#e5e5e5] dark:bg-[#2e2e2e]">
-      Select a channel, to view conversions ☺
-    </div>
-  ) : (
+  return (
     <div className="h-full w-full flex-col items-center flex">
       <div className="w-full h-12 rounded-none bg-[#e5e5e5] dark:bg-[#2e2e2e] shadow z-1 px-4 flex gap-2 items-center">
         <ArrowLeftCircle

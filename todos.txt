@@ -15,7 +15,7 @@
 6. add manage members functionality ✅
 6. add create channel functionality ✅
 6. create show channels ui ✅
-6. add delete channels ui + functionality
+6. add delete channels ui + functionality ✅
 6. add Ctrl+K search functionality
 6. getting some weird issue on invite functionality ✅
 6. manage member modal mobile issue 
