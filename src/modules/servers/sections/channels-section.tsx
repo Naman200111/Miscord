@@ -1,28 +1,21 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { KeyboardEvent, Suspense, useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import ServerHeader from "../components/server-header";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import ErrorComponent from "@/components/custom/error-box";
 
 import { Hash, Loader2Icon, VideoIcon, Volume2Icon } from "lucide-react";
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "@/components/ui/command";
+
 import CustomizeChannelModal from "../components/channel/customize-channel-modal";
 import SingularChannelSection from "./singular-channel-section";
 
 import { customizeChannelForm } from "@/types/types";
+import ChannelCommandDialog from "../components/channel/channel-command-dialog";
 
 interface ChannelsSectionProps {
   serverId: string;
@@ -50,7 +43,6 @@ export const ChannelsSection = ({ serverId }: ChannelsSectionProps) => {
 
 const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
   const trpc = useTRPC();
-  const router = useRouter();
 
   const { data } = useSuspenseQuery(
     trpc.server.getOne.queryOptions({ serverId })
@@ -77,6 +69,17 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
     modalType: "Create",
   });
 
+  useEffect(() => {
+    const handleSearchKeyClick = (e: globalThis.KeyboardEvent) => {
+      e.preventDefault();
+      if (e.key.toLowerCase() === "k" && (e.ctrlKey || e.metaKey)) {
+        setOpen(true);
+      }
+    };
+    document.addEventListener("keydown", handleSearchKeyClick);
+    return () => removeEventListener("keydown", handleSearchKeyClick);
+  }, []);
+
   return (
     <div
       className={cn(
@@ -94,8 +97,7 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
         userId={data.userId}
       />
 
-      {/* Todo: change properly later */}
-      <div className="px-1 w-full cursor-pointer">
+      <div className="px-2 w-full cursor-pointer">
         <div
           className="flex items-center justify-between dark:bg-input/30 rounded-md w border shadow-xs py-1 px-2"
           onClick={() => setOpen(true)}
@@ -104,50 +106,21 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
           <p className="text-muted-foreground text-sm ml-auto">
             Press{" "}
             <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
-              <span className="text-xs">⌘</span>J
+              <span className="text-[10px]">⌘</span>
+              <span className="text-xs">K</span>
             </kbd>
           </p>
         </div>
       </div>
 
-      {/* Todo: move to a new file */}
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type to search channels" />
-        <CommandList>
-          <CommandEmpty>No results found...</CommandEmpty>
-          <CommandGroup heading="Text Channels">
-            {textChannels.map((channel, index) => (
-              <CommandItem
-                key={index}
-                onSelect={() => {
-                  router.push(`/server/${serverId}/channel/${channel.id}`);
-                }}
-              >
-                <Hash size={18} />
-                <span className="line-clamp-1">{channel.name}</span>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-          <CommandSeparator />
-          <CommandGroup heading="Audio Channels">
-            {audioChannels.map((channel, index) => (
-              <CommandItem key={index}>
-                <Volume2Icon size={18} />
-                <span className="line-clamp-1">{channel.name}</span>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-          <CommandSeparator />
-          <CommandGroup heading="Video Channels">
-            {videoChannels.map((channel, index) => (
-              <CommandItem key={index}>
-                <VideoIcon size={18} />
-                <span className="line-clamp-1">{channel.name}</span>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </CommandList>
-      </CommandDialog>
+      <ChannelCommandDialog
+        open={open}
+        setOpen={setOpen}
+        textChannels={textChannels}
+        audioChannels={audioChannels}
+        videoChannels={videoChannels}
+        serverId={serverId}
+      />
 
       {/* Render the channels */}
       <div className="flex flex-col gap-6 mt-4 w-[100%] px-2 overflow-auto no-scrollbar mb-4">

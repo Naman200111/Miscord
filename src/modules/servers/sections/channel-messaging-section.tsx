@@ -2,18 +2,16 @@
 
 import ErrorComponent from "@/components/custom/error-box";
 import Input from "@/components/custom/input";
-import { Skeleton } from "@/components/custom/skeleton";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowLeftCircle, Hash, Plus, Smile } from "lucide-react";
+import { ArrowLeftCircle, Hash, Loader2Icon, Plus, Smile } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 const ChannelMessagingSectionSkeleton = () => (
-  <div className="h-full w-full flex flex-col items-center">
-    <Skeleton className="w-full h-12 rounded-none bg-[#ebebeb] dark:bg-[#2e2e2e] shadow-2xl" />
-    <Skeleton className="w-full flex-1 rounded-none bg-[#ebebeb] dark:bg-[#2e2e2e]" />
+  <div className="h-full w-full flex flex-col items-center justify-center">
+    <Loader2Icon className="animate-spin" />
   </div>
 );
 

@@ -16,7 +16,7 @@
 6. add create channel functionality ✅
 6. create show channels ui ✅
 6. add delete channels ui + functionality ✅
-6. add Ctrl+K search functionality
+6. add Ctrl+K search functionality ✅
 6. getting some weird issue on invite functionality ✅
 6. manage member modal mobile issue 
 6. manage member modal dropdown loading behing <dialog> box modal ✅
@@ -25,7 +25,7 @@
 6. add kick user functionality ✅
 6. add infinite scroll in manage members ✅
 
-
+Error: Refresh page /server/123/channel/456 -> sever client html different error
 
 6. test server leaving functionality when you are not admin ✅
 6. check if user check needed while updating server settings ✅
