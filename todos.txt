@@ -26,7 +26,7 @@
 6. add infinite scroll in manage members ✅
 6. unable to edit channel names and editing also opens the channel, preventDefault absent ✅
 
-Error: Refresh page /server/123/channel/456 -> sever client html different error
+Error: Refresh page /server/123/channel/456 -> sever client html different error ✅
 
 6. test server leaving functionality when you are not admin ✅
 6. check if user check needed while updating server settings ✅

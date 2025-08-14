@@ -1,4 +1,3 @@
-// import ChannelView from "@/modules/channels/views/channel-view";
 import { DEFAULT_MEMBERS_FETCH_LIMIT } from "@/lib/constants";
 import ServerView from "@/modules/servers/views/server-view";
 import { getQueryClient, trpc } from "@/trpc/server";
@@ -18,6 +17,9 @@ const ChannelPage = async ({ params }: ChannelPageProps) => {
       serverId,
       limit: DEFAULT_MEMBERS_FETCH_LIMIT,
     })
+  );
+  void queryClient.prefetchQuery(
+    trpc.channel.getMany.queryOptions({ serverId })
   );
 
   void queryClient.prefetchQuery(
