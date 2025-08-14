@@ -24,6 +24,7 @@
 6. sometimes 2 times same user entry goes in db
 6. add kick user functionality ✅
 6. add infinite scroll in manage members ✅
+6. unable to edit channel names and editing also opens the channel, preventDefault absent ✅
 
 Error: Refresh page /server/123/channel/456 -> sever client html different error
 

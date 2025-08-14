@@ -87,20 +87,27 @@ const SingularChannelSection = ({
             <div className="flex">
               <div
                 className="p-[6px] rounded-full hover:bg-[#e5e5e5] dark:hover:bg-[#2e2e2e] text-muted-foreground"
-                onClick={() =>
-                  handleCustomizeChannel("Edit", type, channel.name, channel.id)
-                }
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCustomizeChannel(
+                    "Edit",
+                    type,
+                    channel.name,
+                    channel.id
+                  );
+                }}
               >
                 <Edit size={14} />
               </div>
               <div
                 className="p-[6px] rounded-full hover:bg-[#e5e5e5] dark:hover:bg-[#2e2e2e] text-muted-foreground"
-                onClick={() =>
+                onClick={(e) => {
+                  e.stopPropagation();
                   setChannelDeletionData({
                     channelId: channel.id,
                     name: channel.name,
-                  })
-                }
+                  });
+                }}
               >
                 <Trash2 size={14} />
               </div>

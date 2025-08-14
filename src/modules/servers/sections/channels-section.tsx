@@ -71,8 +71,9 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
 
   useEffect(() => {
     const handleSearchKeyClick = (e: globalThis.KeyboardEvent) => {
-      e.preventDefault();
       if (e.key.toLowerCase() === "k" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        e.stopPropagation();
         setOpen(true);
       }
     };
