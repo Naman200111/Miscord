@@ -30,6 +30,18 @@ Error: Refresh page /server/123/channel/456 -> sever client html different error
 6. test server leaving functionality when you are not admin ✅
 6. check if user check needed while updating server settings ✅
 
+// to implement messaging system
+1. establish socket io connection with emit and listen
+2. create single message component (user, message)
+3. creation of messages table
+4. insertion, edit and delete procedure
+5. adding option to edit and delete, with proper modals
+6. optimistic message rendering with grey color and post saving to db -> convert it to normal
+7. adding failed tooltip on message if not able to save to db
+8. 
+
+
+6. selecting channel should highlight it
 6. show message instantly to user sending it in grey, once send remove grey
 if failed show -> icon something which on hover can say failed messagee
 

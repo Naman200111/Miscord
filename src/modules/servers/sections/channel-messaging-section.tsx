@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Hash, Loader2Icon, Plus, SendHorizonal, Smile } from "lucide-react";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import ChannelHeader from "../components/channel/channel-header";
+import { socket } from "@/lib/socket";
 
 const ChannelMessagingSectionSkeleton = () => (
   <div className="h-full w-full flex flex-col items-center justify-center">
@@ -43,6 +44,9 @@ const ChannelMessagingSectionSuspense = ({
 }) => {
   const trpc = useTRPC();
 
+  // get logged in user details
+  // const {} = getUser()
+
   const { data } = useSuspenseQuery(
     trpc.channel.getOne.queryOptions({ serverId, channelId })
   );
@@ -50,6 +54,42 @@ const ChannelMessagingSectionSuspense = ({
   const channelName = data.name;
 
   const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<any>([]);
+
+  useEffect(() => {
+    const listener = (msgData: {
+      msg: string;
+      userId: string;
+      channelId: string;
+      serverId: string;
+      timestamp: Date;
+    }) => {
+      console.log("received message data as", msgData);
+      console.log(channelId, msgData.channelId);
+      if (channelId === msgData.channelId) {
+        setMessages((prev) => {
+          return [...prev, msgData];
+        });
+      }
+    };
+    socket.on(`chat:message`, (msgData) => listener(msgData));
+    // socket.on('error:sending', (msg) => handleErrorInSending(msgData));
+
+    return () => {
+      socket.off(`chat:message`, (msgData) => listener(msgData));
+      // socket.off('error:sending', (msg) => handleErrorInSending(msgData));
+    };
+  }, [channelId]);
+
+  const sendMessage = (msgData: {
+    message: string;
+    channelId: string;
+    serverId: string;
+  }) => {
+    if (msgData.message?.trim() === "") return;
+    socket.emit(`chat:message`, msgData);
+    setMessage("");
+  };
 
   return (
     <div className="h-full w-full flex-col items-center flex">
@@ -64,13 +104,28 @@ const ChannelMessagingSectionSuspense = ({
               placeholder={`Message #${channelName}`}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key.toLowerCase() === "enter") {
+                  sendMessage({
+                    message,
+                    channelId,
+                    serverId,
+                    // userId
+                  });
+                }
+              }}
             />
             {message && (
               <div
                 className="absolute right-2 hover:bg-muted p-2 rounded-full"
                 onClick={(e) => {
                   // Implement send functionality
-                  // sendMessage(message);
+                  sendMessage({
+                    message,
+                    channelId,
+                    serverId,
+                    // userId
+                  });
                   e.stopPropagation();
                 }}
               >
@@ -81,6 +136,11 @@ const ChannelMessagingSectionSuspense = ({
           <button className="cursor-pointer rounded-full mr-2 sm:mr-1">
             <Smile />
           </button>
+        </div>
+        <div>
+          {messages.map((msg: any, index) => (
+            <p key={index}>{JSON.stringify(msg)}</p>
+          ))}
         </div>
         <div className="flex flex-col gap-2 p-4">
           <div className="w-20 h-20 p-2 rounded-full flex justify-center items-center bg-[#ececec] dark:bg-[#222222]">
