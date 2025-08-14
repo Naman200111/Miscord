@@ -143,9 +143,9 @@ const ServerManageMembersModalSuspense = ({
           {members.map((member, index) => {
             const RoleBadge =
               member.role === "ADMIN" ? (
-                <ShieldCheck size={18} />
+                <ShieldCheck size={18} className="text-rose-400" />
               ) : member.role === "MODERATOR" ? (
-                <ShieldAlert size={18} />
+                <ShieldAlert size={18} className="text-indigo-400" />
               ) : (
                 <Shield size={18} />
               );
@@ -223,7 +223,7 @@ const ServerManageMembersModalSuspense = ({
                             {member.role === "MODERATOR" ? (
                               <Check className="ml-auto" />
                             ) : (
-                              <ShieldAlert className="ml-auto" />
+                              <ShieldAlert className="ml-auto text-indigo-400" />
                             )}
                           </DropdownMenuItem>
                         </DropdownMenuSubContent>

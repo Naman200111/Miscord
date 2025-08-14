@@ -11,7 +11,6 @@
 6. make sidebar color different from messaging side, when in mobile difficult to see ✅
 6. apply all permission checks on BE also ✅
 6. add invite people functionality ✅
-6. change the server create modal to use react-form-hook
 6. add manage members functionality ✅
 6. add create channel functionality ✅
 6. create show channels ui ✅
@@ -21,10 +20,10 @@
 6. manage member modal mobile issue ✅
 6. manage member modal dropdown loading behing <dialog> box modal ✅
 6. add disable state when updating roles ✅
-6. sometimes 2 times same user entry goes in db
 6. add kick user functionality ✅
 6. add infinite scroll in manage members ✅
 6. unable to edit channel names and editing also opens the channel, preventDefault absent ✅
+6. sometimes 2 times same user entry goes in db
 
 Error: Refresh page /server/123/channel/456 -> sever client html different error ✅
 
