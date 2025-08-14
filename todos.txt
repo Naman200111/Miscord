@@ -29,6 +29,11 @@ Error: Refresh page /server/123/channel/456 -> sever client html different error
 
 6. test server leaving functionality when you are not admin ✅
 6. check if user check needed while updating server settings ✅
+
+6. show message instantly to user sending it in grey, once send remove grey
+if failed show -> icon something which on hover can say failed messagee
+
+6. should add rate limiting on messaging, i think to avoid spamming
 6. handle timeout and retry in upload thing uploading
 
 #white shades : f7f7f7 > ececec 
