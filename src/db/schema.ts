@@ -1,11 +1,4 @@
-import {
-  pgEnum,
-  pgTable,
-  primaryKey,
-  text,
-  timestamp,
-  uuid,
-} from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 // enums
 export const serverRoles = pgEnum("server_roles", [
@@ -73,6 +66,23 @@ export const serverChannels = pgTable("server_channels", {
   serverId: uuid("server_id")
     .notNull()
     .references(() => servers.id, { onDelete: "cascade" }),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const messages = pgTable("messages", {
+  id: uuid("message_id").defaultRandom().primaryKey().notNull(),
+  msg: text("message").notNull(),
+  channelId: uuid("channel_id")
+    .notNull()
+    .references(() => channels.id, { onDelete: "cascade" }),
+  serverId: uuid("server_id")
+    .notNull()
+    .references(() => servers.id, { onDelete: "cascade" }),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

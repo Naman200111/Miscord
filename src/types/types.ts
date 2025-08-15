@@ -18,3 +18,15 @@ export interface channel {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface messageData {
+  id?: string;
+  msg: string;
+  channelId: string;
+  serverId: string;
+  userId: string;
+  state?: "pending" | "success" | "error";
+  createdAt?: Date;
+  updatedAt?: Date;
+  temp_id?: string;
+}

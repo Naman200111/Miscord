@@ -30,6 +30,8 @@ Error: Refresh page /server/123/channel/456 -> sever client html different error
 6. test server leaving functionality when you are not admin ✅
 6. check if user check needed while updating server settings ✅
 
+-- add a message in channel A when other person has channel B opened -> the other user open channel A to found no available updated message
+
 // to implement messaging system
 1. establish socket io connection with emit and listen
 2. create single message component (user, message)

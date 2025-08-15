@@ -1,3 +1,6 @@
+import { db } from "@/db/drizzle";
+import { messages } from "@/db/schema";
+import { messageData } from "@/types/types";
 import { NextApiRequest } from "next";
 import { Server } from "socket.io";
 
@@ -11,21 +14,36 @@ export default function handler(req: NextApiRequest, res) {
     io.on("connection", (socket) => {
       console.log("Connection Built Successfully");
 
-      socket.on(`chat:message`, (msgData) => {
-        const { channelId, serverId, userId } = msgData;
+      socket.on(`chat:message`, async (msgData: messageData) => {
+        const { channelId, serverId, userId, msg, temp_id } = msgData;
+
+        try {
+          console.log("adding message to db");
+          socket.emit(`chat:message`, msgData);
+
+          const [addMessage] = await db
+            .insert(messages)
+            .values({ channelId, serverId, userId, msg })
+            .returning();
+
+          console.log("message add to db");
+          io.emit(`chat:message`, {
+            userId: addMessage.userId,
+            channelId: addMessage.channelId,
+            serverId: addMessage.serverId,
+            updatedAt: addMessage.updatedAt,
+            msg: addMessage.msg,
+            state: "success",
+            temp_id,
+          });
+
+          console.log("message emitted to everyone");
+        } catch {
+          console.log("error here");
+          socket.emit(`error:sending`, { ...msgData, state: "error" });
+        }
 
         // todo: add rate limiting
-
-        // insertion in db table (messages) => channelId, serverId, userId, message
-        // on failure emit a message to sender only using socket.emit ('error:sending')
-
-        io.emit(`chat:message`, {
-          message: msgData.message,
-          userId,
-          channelId,
-          serverId,
-          timestamp: new Date(), // maybe from db entry is betteer
-        });
       });
 
       socket.on("disconnect", () => {

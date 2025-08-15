@@ -58,7 +58,7 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
 
   // to conditionally show pages
   const path = usePathname();
-  const hasChannel = path.includes("channel");
+  const hasChannel = path?.includes("channel");
 
   const [open, setOpen] = useState(false);
   const [openCustomizeChannelModal, setOpenCustomizeChannelModal] =

@@ -1,14 +1,30 @@
 "use client";
 
+import { v4 as uuid } from "uuid";
+
 import ErrorComponent from "@/components/custom/error-box";
 import { Input } from "@/components/ui/input";
 import { useTRPC } from "@/trpc/client";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { Hash, Loader2Icon, Plus, SendHorizonal, Smile } from "lucide-react";
-import { Suspense, useEffect, useState } from "react";
+import {
+  useSuspenseInfiniteQuery,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
+import {
+  AlertTriangle,
+  Hash,
+  Loader2Icon,
+  Plus,
+  SendHorizonal,
+  Smile,
+} from "lucide-react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import ChannelHeader from "../components/channel/channel-header";
 import { socket } from "@/lib/socket";
+import { messageData } from "@/types/types";
+import { cn } from "@/lib/utils";
+import { DEFAULT_MESSAGES_LIMIT } from "@/lib/constants";
+import InfiniteScroll from "@/components/custom/infinite-scroll";
 
 const ChannelMessagingSectionSkeleton = () => (
   <div className="h-full w-full flex flex-col items-center justify-center">
@@ -44,55 +60,86 @@ const ChannelMessagingSectionSuspense = ({
 }) => {
   const trpc = useTRPC();
 
-  // get logged in user details
-  // const {} = getUser()
+  const { data: currentUser } = useSuspenseQuery(
+    trpc.user.getCurrentUser.queryOptions()
+  );
 
   const { data } = useSuspenseQuery(
     trpc.channel.getOne.queryOptions({ serverId, channelId })
   );
 
+  const {
+    data: messagePages,
+    isFetching,
+    hasNextPage,
+    fetchNextPage,
+  } = useSuspenseInfiniteQuery(
+    trpc.message.getMany.infiniteQueryOptions(
+      { serverId, channelId, limit: DEFAULT_MESSAGES_LIMIT },
+      { getNextPageParam: (lastPage) => lastPage.nextCursor }
+    )
+  );
+
   const channelName = data.name;
+  const messagesList = (messagePages.pages || []).flatMap(
+    (page) => page.messageList
+  );
 
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<any>([]);
+  const [messages, setMessages] = useState<messageData[]>(messagesList);
 
-  useEffect(() => {
-    const listener = (msgData: {
-      msg: string;
-      userId: string;
-      channelId: string;
-      serverId: string;
-      timestamp: Date;
-    }) => {
+  const listener = useCallback(
+    (msgData: messageData) => {
       console.log("received message data as", msgData);
-      console.log(channelId, msgData.channelId);
       if (channelId === msgData.channelId) {
+        console.log("setting messages in state");
         setMessages((prev) => {
-          return [...prev, msgData];
+          const restPrev = prev.filter(
+            (msg) => msg.temp_id !== msgData.temp_id
+          );
+          return [...restPrev, msgData];
         });
       }
-    };
-    socket.on(`chat:message`, (msgData) => listener(msgData));
-    // socket.on('error:sending', (msg) => handleErrorInSending(msgData));
+    },
+    [channelId]
+  );
+
+  const handleErrorInSending = useCallback(
+    (msgData: messageData) => {
+      if (channelId === msgData.channelId) {
+        setMessages((prev) => {
+          const restPrev = prev.filter(
+            (msg) => msg.temp_id !== msgData.temp_id
+          );
+          return [...restPrev, msgData];
+        });
+      }
+    },
+    [channelId]
+  );
+
+  useEffect(() => {
+    socket.on(`chat:message`, (msgData: messageData) => listener(msgData));
+    socket.on("error:sending", (msgData: messageData) =>
+      handleErrorInSending(msgData)
+    );
 
     return () => {
-      socket.off(`chat:message`, (msgData) => listener(msgData));
-      // socket.off('error:sending', (msg) => handleErrorInSending(msgData));
+      socket.off(`chat:message`, (msgData: messageData) => listener(msgData));
+      socket.off("error:sending", (msgData: messageData) =>
+        handleErrorInSending(msgData)
+      );
     };
-  }, [channelId]);
+  }, [listener, handleErrorInSending]);
 
-  const sendMessage = (msgData: {
-    message: string;
-    channelId: string;
-    serverId: string;
-  }) => {
-    if (msgData.message?.trim() === "") return;
+  const sendMessage = (msgData: messageData) => {
+    if (msgData.msg?.trim() === "") return;
     socket.emit(`chat:message`, msgData);
     setMessage("");
   };
 
   return (
-    <div className="h-full w-full flex-col items-center flex">
+    <div className="h-full w-full flex-col items-center flex overflow-auto no-scrollbar">
       <ChannelHeader name={channelName} serverId={serverId} />
       <div className="w-full flex-1 rounded-none bg-[#e5e5e5] dark:bg-[#2e2e2e] flex flex-col-reverse gap-2">
         <div className="flex items-center mx-2 sm:px-4 my-6 border rounded-md bg-muted">
@@ -105,12 +152,15 @@ const ChannelMessagingSectionSuspense = ({
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={(e) => {
+                const temp_id = uuid();
                 if (e.key.toLowerCase() === "enter") {
                   sendMessage({
-                    message,
+                    msg: message,
                     channelId,
                     serverId,
-                    // userId
+                    userId: currentUser.id,
+                    state: "pending",
+                    temp_id,
                   });
                 }
               }}
@@ -119,12 +169,15 @@ const ChannelMessagingSectionSuspense = ({
               <div
                 className="absolute right-2 hover:bg-muted p-2 rounded-full"
                 onClick={(e) => {
+                  const temp_id = uuid();
                   // Implement send functionality
                   sendMessage({
-                    message,
+                    msg: message,
                     channelId,
                     serverId,
-                    // userId
+                    userId: currentUser.id,
+                    state: "pending",
+                    temp_id,
                   });
                   e.stopPropagation();
                 }}
@@ -138,9 +191,31 @@ const ChannelMessagingSectionSuspense = ({
           </button>
         </div>
         <div>
-          {messages.map((msg: any, index) => (
-            <p key={index}>{JSON.stringify(msg)}</p>
-          ))}
+          {messages.map((msgData, index) => {
+            const { msg, state } = msgData;
+            return (
+              <p
+                className={cn(
+                  state && state !== "success" ? "text-gray-400" : ""
+                )}
+                key={index}
+              >
+                {msg}
+                {state === "error" && (
+                  <span className="text-rose-500">
+                    <AlertTriangle size={16} />
+                    Failed !
+                  </span>
+                )}
+              </p>
+            );
+          })}
+          <InfiniteScroll
+            isFetching={isFetching}
+            hasNextPage={hasNextPage}
+            fetchNextPage={fetchNextPage}
+            manual
+          />
         </div>
         <div className="flex flex-col gap-2 p-4">
           <div className="w-20 h-20 p-2 rounded-full flex justify-center items-center bg-[#ececec] dark:bg-[#222222]">
