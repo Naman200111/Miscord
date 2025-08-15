@@ -1,30 +1,29 @@
 "use client";
 
+import { Suspense, useCallback, useEffect, useState } from "react";
+import { socket } from "@/lib/socket";
 import { v4 as uuid } from "uuid";
+import { ErrorBoundary } from "react-error-boundary";
+
+import { DEFAULT_MESSAGES_LIMIT } from "@/lib/constants";
 
 import ErrorComponent from "@/components/custom/error-box";
+import InfiniteScroll from "@/components/custom/infinite-scroll";
+
 import { Input } from "@/components/ui/input";
+
 import { useTRPC } from "@/trpc/client";
 import {
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import {
-  AlertTriangle,
-  Hash,
-  Loader2Icon,
-  Plus,
-  SendHorizonal,
-  Smile,
-} from "lucide-react";
-import { Suspense, useCallback, useEffect, useState } from "react";
-import { ErrorBoundary } from "react-error-boundary";
+
+import { Hash, Loader2Icon, Plus, SendHorizonal, Smile } from "lucide-react";
+
 import ChannelHeader from "../components/channel/channel-header";
-import { socket } from "@/lib/socket";
+import MessageBox from "../components/channel/messages/message-box";
+
 import { messageData } from "@/types/types";
-import { cn } from "@/lib/utils";
-import { DEFAULT_MESSAGES_LIMIT } from "@/lib/constants";
-import InfiniteScroll from "@/components/custom/infinite-scroll";
 
 const ChannelMessagingSectionSkeleton = () => (
   <div className="h-full w-full flex flex-col items-center justify-center">
@@ -90,9 +89,7 @@ const ChannelMessagingSectionSuspense = ({
 
   const listener = useCallback(
     (msgData: messageData) => {
-      console.log("received message data as", msgData);
       if (channelId === msgData.channelId) {
-        console.log("setting messages in state");
         setMessages((prev) => {
           const restPrev = prev.filter(
             (msg) => msg.temp_id !== msgData.temp_id
@@ -118,6 +115,10 @@ const ChannelMessagingSectionSuspense = ({
     [channelId]
   );
 
+  // useEffect(() => {
+  //   setMessages(messagesList);
+  // }, [messagesList]);
+
   useEffect(() => {
     socket.on(`chat:message`, (msgData: messageData) => listener(msgData));
     socket.on("error:sending", (msgData: messageData) =>
@@ -139,7 +140,7 @@ const ChannelMessagingSectionSuspense = ({
   };
 
   return (
-    <div className="h-full w-full flex-col items-center flex overflow-auto no-scrollbar">
+    <div className="h-full w-full flex-col items-center flex overflow-auto no-scrollbar min-w-[400px]">
       <ChannelHeader name={channelName} serverId={serverId} />
       <div className="w-full flex-1 rounded-none bg-[#e5e5e5] dark:bg-[#2e2e2e] flex flex-col-reverse gap-2">
         <div className="flex items-center mx-2 sm:px-4 my-6 border rounded-md bg-muted">
@@ -167,10 +168,9 @@ const ChannelMessagingSectionSuspense = ({
             />
             {message && (
               <div
-                className="absolute right-2 hover:bg-muted p-2 rounded-full"
+                className="absolute right-2 cursor-pointer bg-muted p-2 rounded-full"
                 onClick={(e) => {
                   const temp_id = uuid();
-                  // Implement send functionality
                   sendMessage({
                     msg: message,
                     channelId,
@@ -191,25 +191,14 @@ const ChannelMessagingSectionSuspense = ({
           </button>
         </div>
         <div>
-          {messages.map((msgData, index) => {
-            const { msg, state } = msgData;
-            return (
-              <p
-                className={cn(
-                  state && state !== "success" ? "text-gray-400" : ""
-                )}
-                key={index}
-              >
-                {msg}
-                {state === "error" && (
-                  <span className="text-rose-500">
-                    <AlertTriangle size={16} />
-                    Failed !
-                  </span>
-                )}
-              </p>
-            );
-          })}
+          {messages.map((msgData, index) => (
+            <MessageBox
+              key={index}
+              msgData={msgData}
+              currentUser={currentUser}
+            />
+          ))}
+          {/* Todo: fix not working properly */}
           <InfiniteScroll
             isFetching={isFetching}
             hasNextPage={hasNextPage}

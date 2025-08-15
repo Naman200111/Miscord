@@ -1,8 +1,8 @@
 import { db } from "@/db/drizzle";
-import { channels, messages, servers, serverUsers } from "@/db/schema";
+import { channels, messages, servers, serverUsers, users } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { and, desc, eq, lt, or } from "drizzle-orm";
+import { and, asc, desc, eq, getTableColumns, gt, lt, or } from "drizzle-orm";
 import z from "zod";
 
 export const messageProcedure = createTRPCRouter({
@@ -14,7 +14,7 @@ export const messageProcedure = createTRPCRouter({
         limit: z.number().min(1).max(100),
         cursor: z
           .object({
-            updatedAt: z.date(),
+            createdAt: z.date(),
             id: z.uuid(),
           })
           .nullish(),
@@ -68,30 +68,34 @@ export const messageProcedure = createTRPCRouter({
         }
 
         let messageList = await db
-          .select()
+          .select({
+            ...getTableColumns(messages),
+            // sender: { ...getTableColumns(users) },
+          })
           .from(messages)
+          // .innerJoin(users, eq(users.id, messages.userId))
           .where(
             and(
               eq(messages.channelId, channelId),
               cursor
                 ? or(
-                    lt(messages.updatedAt, cursor.updatedAt),
+                    gt(messages.createdAt, cursor.createdAt),
                     and(
-                      eq(messages.updatedAt, cursor.updatedAt),
-                      lt(messages.id, cursor.id)
+                      eq(messages.createdAt, cursor.createdAt),
+                      gt(messages.id, cursor.id)
                     )
                   )
                 : undefined
             )
           )
-          .orderBy(desc(messages.updatedAt), desc(messages.id))
+          .orderBy(asc(messages.createdAt), asc(messages.id))
           .limit(limit + 1);
         let nextCursor = null;
 
         if (messageList.length === limit + 1) {
           messageList = messageList.slice(0, -1);
           nextCursor = {
-            updatedAt: messageList[messageList.length - 1].updatedAt,
+            updatedAt: messageList[messageList.length - 1].createdAt,
             id: messageList[messageList.length - 1].id,
           };
         }

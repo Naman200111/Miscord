@@ -30,3 +30,13 @@ export interface messageData {
   updatedAt?: Date;
   temp_id?: string;
 }
+
+export interface User {
+  id: string;
+  clerkId: string;
+  imageUrl: string | null;
+  name: string;
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

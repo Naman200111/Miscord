@@ -1,6 +1,6 @@
 const ErrorComponent = ({ message }: { message?: string }) => {
   return (
-    <div className="flex flex-col items-center justify-center bg-background text-center p-8 rounded-lg max-w-[90%] w-[500px]">
+    <div className="flex flex-col items-center justify-center bg-background text-center p-8 rounded-lg w-full">
       <div className="text-6xl mb-4">💥</div>
 
       <h1 className="text-2xl font-bold mb-2">Well, that is awkward.</h1>
