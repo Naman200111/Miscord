@@ -24,6 +24,7 @@ import ChannelHeader from "../components/channel/channel-header";
 import MessageBox from "../components/channel/messages/message-box";
 
 import { messageData } from "@/types/types";
+import { cn } from "@/lib/utils";
 
 const ChannelMessagingSectionSkeleton = () => (
   <div className="h-full w-full flex flex-col items-center justify-center">
@@ -142,7 +143,7 @@ const ChannelMessagingSectionSuspense = ({
   };
 
   return (
-    <div className="h-full w-full flex-col items-center flex overflow-auto no-scrollbar min-w-[400px]">
+    <div className="h-full w-full flex-col items-center flex overflow-y-auto no-scrollbar">
       <ChannelHeader name={channelName} serverId={serverId} />
       <div className="w-full flex-1 rounded-none bg-[#e5e5e5] dark:bg-[#2e2e2e] flex flex-col-reverse gap-2">
         <div className="flex items-center mx-2 sm:px-4 my-6 border rounded-md bg-muted">
@@ -151,6 +152,7 @@ const ChannelMessagingSectionSuspense = ({
           </button>
           <div className="relative my-2 focus:outline-none flex-1 border-0 mx-2 flex items-center">
             <Input
+              className="w-[90%]"
               placeholder={`Message #${channelName}`}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -161,32 +163,39 @@ const ChannelMessagingSectionSuspense = ({
                     msg: message,
                     channelId,
                     serverId,
-                    userId: currentUser.id,
+                    userId: currentUser.user.id,
                     state: "pending",
                     temp_id,
+                    imageUrl: currentUser.user.imageUrl,
+                    role: currentUser.serverUser.role,
+                    name: currentUser.user.name,
                   });
                 }
               }}
             />
-            {message && (
-              <div
-                className="absolute right-2 cursor-pointer bg-muted p-2 rounded-full"
-                onClick={(e) => {
-                  const temp_id = uuid();
-                  sendMessage({
-                    msg: message,
-                    channelId,
-                    serverId,
-                    userId: currentUser.id,
-                    state: "pending",
-                    temp_id,
-                  });
-                  e.stopPropagation();
-                }}
-              >
-                <SendHorizonal size={16} />
-              </div>
-            )}
+            <div
+              className={cn(
+                "absolute right-2 cursor-pointer bg-muted",
+                !message ? "text-gray-500 pointer-events-none" : ""
+              )}
+              onClick={(e) => {
+                const temp_id = uuid();
+                sendMessage({
+                  msg: message,
+                  channelId,
+                  serverId,
+                  userId: currentUser.user.id,
+                  state: "pending",
+                  temp_id,
+                  imageUrl: currentUser.user.imageUrl,
+                  role: currentUser.serverUser.role,
+                  name: currentUser.user.name,
+                });
+                e.stopPropagation();
+              }}
+            >
+              <SendHorizonal size={16} />
+            </div>
           </div>
           <button className="cursor-pointer rounded-full mr-2 sm:mr-1">
             <Smile />
@@ -194,11 +203,7 @@ const ChannelMessagingSectionSuspense = ({
         </div>
         <div>
           {messages.map((msgData, index) => (
-            <MessageBox
-              key={index}
-              msgData={msgData}
-              currentUser={currentUser}
-            />
+            <MessageBox key={index} msgData={msgData} />
           ))}
           {/* Todo: fix not working properly */}
           <InfiniteScroll

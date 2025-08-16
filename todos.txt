@@ -35,7 +35,7 @@ try reducing procedure for faster working
 
 // to implement messaging system
 1. establish socket io connection with emit and listen ✅
-2. create single message component (user, message) (in progress)
+2. create single message component (user, message) (in progress) ✅
 3. creation of messages table ✅
 4. insertion, edit and delete procedure
 5. adding option to edit and delete, with proper modals
@@ -45,8 +45,8 @@ try reducing procedure for faster working
 
 
 6. selecting channel should highlight it
-6. show message instantly to user sending it in grey, once send remove grey
-if failed show -> icon something which on hover can say failed messagee
+6. show message instantly to user sending it in grey, once send remove grey ✅
+if failed show -> icon something which on hover can say failed messagee  ✅
 
 6. should add rate limiting on messaging, i think to avoid spamming
 6. handle timeout and retry in upload thing uploading

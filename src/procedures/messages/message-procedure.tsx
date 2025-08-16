@@ -2,7 +2,7 @@ import { db } from "@/db/drizzle";
 import { channels, messages, servers, serverUsers, users } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { and, asc, desc, eq, getTableColumns, gt, lt, or } from "drizzle-orm";
+import { and, asc, eq, getTableColumns, gt, or } from "drizzle-orm";
 import z from "zod";
 
 export const messageProcedure = createTRPCRouter({
@@ -70,10 +70,19 @@ export const messageProcedure = createTRPCRouter({
         let messageList = await db
           .select({
             ...getTableColumns(messages),
-            // sender: { ...getTableColumns(users) },
+            imageUrl: users.imageUrl,
+            name: users.name,
+            role: serverUsers.role,
           })
           .from(messages)
-          // .innerJoin(users, eq(users.id, messages.userId))
+          .innerJoin(users, eq(users.id, messages.userId))
+          .innerJoin(
+            serverUsers,
+            and(
+              eq(serverUsers.userId, userId),
+              eq(serverUsers.serverId, serverId)
+            )
+          )
           .where(
             and(
               eq(messages.channelId, channelId),

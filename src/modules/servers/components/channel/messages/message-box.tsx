@@ -1,17 +1,24 @@
 import { cn } from "@/lib/utils";
-import { messageData, User } from "@/types/types";
-import { AlertTriangle } from "lucide-react";
+import { messageData } from "@/types/types";
+import { AlertTriangle, ShieldAlert, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 
 interface MessageBoxProps {
   msgData: messageData;
-  currentUser: User;
 }
 
-const MessageBox = ({ msgData, currentUser }: MessageBoxProps) => {
-  const { msg, state, updatedAt } = msgData;
-  const { name, imageUrl = "/user-placeholder.svg" } = currentUser;
+const MessageBox = ({ msgData }: MessageBoxProps) => {
+  const {
+    msg,
+    state,
+    updatedAt,
+    imageUrl = "/user-placeholder.svg",
+    role = "MEMBER",
+    name,
+  } = msgData;
+
+  console.log(msgData, "msgData");
 
   // TODO: here need current user and user who sent the message
   const messageTime = updatedAt && new Date(updatedAt);
@@ -24,10 +31,26 @@ const MessageBox = ({ msgData, currentUser }: MessageBoxProps) => {
         </div>
         <div>
           <p className="flex gap-3 items-center">
-            <span className="line-clamp-1">{name}</span>
+            <span className="line-clamp-1 flex items-center gap-1">
+              {name}
+              {role === "ADMIN" ? (
+                <ShieldCheck size={18} className="text-rose-400" />
+              ) : role === "MODERATOR" ? (
+                <ShieldAlert size={18} className="text-indigo-400" />
+              ) : (
+                <></>
+              )}
+            </span>
+
             {messageTime && (
               <span className="text-muted-foreground line-clamp-1 text-sm">
                 {messageTime?.toLocaleString()}
+              </span>
+            )}
+            {state === "error" && (
+              <span className="text-rose-500 flex gap-1 items-center text-xs p-1 rounded-md bg-muted">
+                <AlertTriangle size={12} />
+                Failed !
               </span>
             )}
           </p>
@@ -35,12 +58,6 @@ const MessageBox = ({ msgData, currentUser }: MessageBoxProps) => {
             className={cn(state && state !== "success" ? "text-gray-400" : "")}
           >
             {msg}
-            {state === "error" && (
-              <span className="text-rose-500">
-                <AlertTriangle size={16} />
-                Failed !
-              </span>
-            )}
           </p>
         </div>
       </div>

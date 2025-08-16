@@ -1,11 +1,23 @@
 import { db } from "@/db/drizzle";
-import { users } from "@/db/schema";
+import { serverUsers, users } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
-import { eq } from "drizzle-orm";
+import { eq, getTableColumns } from "drizzle-orm";
+import z from "zod";
 
 export const userProcedure = createTRPCRouter({
   getCurrentUser: protectedProcedure.query(async ({ ctx: { id: userId } }) => {
-    const [user] = await db.select().from(users).where(eq(users.id, userId));
+    const [user] = await db
+      .select({
+        user: {
+          ...getTableColumns(users),
+        },
+        serverUser: {
+          ...getTableColumns(serverUsers),
+        },
+      })
+      .from(users)
+      .innerJoin(serverUsers, eq(serverUsers.userId, userId))
+      .where(eq(users.id, userId));
     return user;
   }),
 });

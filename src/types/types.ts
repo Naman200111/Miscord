@@ -29,6 +29,9 @@ export interface messageData {
   createdAt?: Date;
   updatedAt?: Date;
   temp_id?: string;
+  role: channelRoles;
+  imageUrl: string | null;
+  name: string;
 }
 
 export interface User {

@@ -33,6 +33,9 @@ export default function handler(req: NextApiRequest, res) {
             serverId: addMessage.serverId,
             updatedAt: addMessage.updatedAt,
             msg: addMessage.msg,
+            role: msgData.role || "MEMBER",
+            imageUrl: msgData.imageUrl,
+            name: msgData.name,
             state: "success",
             temp_id,
           });
