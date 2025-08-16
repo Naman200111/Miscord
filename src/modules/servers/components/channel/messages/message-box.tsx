@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { messageData, User } from "@/types/types";
 import { AlertTriangle } from "lucide-react";
 import Image from "next/image";
+import React from "react";
 
 interface MessageBoxProps {
   msgData: messageData;
@@ -13,7 +14,7 @@ const MessageBox = ({ msgData, currentUser }: MessageBoxProps) => {
   const { name, imageUrl = "/user-placeholder.svg" } = currentUser;
 
   // TODO: here need current user and user who sent the message
-  console.log(updatedAt, "updatedAt");
+  const messageTime = updatedAt && new Date(updatedAt);
 
   return (
     <div className="w-full hover:bg-muted py-4 px-2 overflow-hidden">
@@ -22,12 +23,11 @@ const MessageBox = ({ msgData, currentUser }: MessageBoxProps) => {
           <Image src={imageUrl as string} alt="L" fill />
         </div>
         <div>
-          <p className="flex gap-3">
+          <p className="flex gap-3 items-center">
             <span className="line-clamp-1">{name}</span>
-            {updatedAt && (
-              <span className="text-muted-foreground line-clamp-1">
-                {/* todo: fix date */}
-                {updatedAt.toString()}
+            {messageTime && (
+              <span className="text-muted-foreground line-clamp-1 text-sm">
+                {messageTime?.toLocaleString()}
               </span>
             )}
           </p>

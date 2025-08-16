@@ -67,6 +67,7 @@ const ChannelMessagingSectionSuspense = ({
     trpc.channel.getOne.queryOptions({ serverId, channelId })
   );
 
+  // todo: see what is wrong here
   const {
     data: messagePages,
     isFetching,
@@ -89,6 +90,7 @@ const ChannelMessagingSectionSuspense = ({
 
   const listener = useCallback(
     (msgData: messageData) => {
+      console.log(typeof msgData.updatedAt, "type of updated at from server ");
       if (channelId === msgData.channelId) {
         setMessages((prev) => {
           const restPrev = prev.filter(
