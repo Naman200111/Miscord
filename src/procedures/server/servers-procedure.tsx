@@ -282,7 +282,7 @@ export const serverProcedure = createTRPCRouter({
         limit: z.number(),
         cursor: z
           .object({
-            updatedAt: z.date(),
+            createdAt: z.date(),
             id: z.uuid(),
           })
           .nullish(),
@@ -303,16 +303,16 @@ export const serverProcedure = createTRPCRouter({
             eq(serverUsers.serverId, serverId),
             cursor
               ? or(
-                  lt(serverUsers.updatedAt, cursor.updatedAt),
+                  lt(serverUsers.createdAt, cursor.createdAt),
                   and(
-                    eq(serverUsers.updatedAt, cursor.updatedAt),
+                    eq(serverUsers.createdAt, cursor.createdAt),
                     lt(serverUsers.id, cursor.id)
                   )
                 )
               : undefined
           )
         )
-        .orderBy(desc(serverUsers.updatedAt), desc(serverUsers.id))
+        .orderBy(desc(serverUsers.createdAt), desc(serverUsers.id))
         .limit(limit + 1);
 
       let nextCursor = null;
@@ -320,7 +320,7 @@ export const serverProcedure = createTRPCRouter({
       if (members.length === limit + 1) {
         members = members.slice(0, -1);
         nextCursor = {
-          updatedAt: members[members.length - 1].updatedAt,
+          createdAt: members[members.length - 1].createdAt,
           id: members[members.length - 1].id,
         };
       }

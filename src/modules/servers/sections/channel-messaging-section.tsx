@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { socket } from "@/lib/socket";
 import { v4 as uuid } from "uuid";
 import { ErrorBoundary } from "react-error-boundary";
@@ -68,7 +68,6 @@ const ChannelMessagingSectionSuspense = ({
     trpc.channel.getOne.queryOptions({ serverId, channelId })
   );
 
-  // todo: see what is wrong here
   const {
     data: messagePages,
     isFetching,
@@ -82,8 +81,9 @@ const ChannelMessagingSectionSuspense = ({
   );
 
   const channelName = data.name;
-  const messagesList = (messagePages.pages || []).flatMap(
-    (page) => page.messageList
+  const messagesList = useMemo(
+    () => (messagePages.pages || []).flatMap((page) => page.messageList),
+    [messagePages]
   );
 
   const [message, setMessage] = useState("");
@@ -118,9 +118,9 @@ const ChannelMessagingSectionSuspense = ({
     [channelId]
   );
 
-  // useEffect(() => {
-  //   setMessages(messagesList);
-  // }, [messagesList]);
+  useEffect(() => {
+    setMessages(messagesList);
+  }, [messagesList]);
 
   useEffect(() => {
     socket.on(`chat:message`, (msgData: messageData) => listener(msgData));
@@ -210,7 +210,7 @@ const ChannelMessagingSectionSuspense = ({
             isFetching={isFetching}
             hasNextPage={hasNextPage}
             fetchNextPage={fetchNextPage}
-            manual
+            // manual
           />
         </div>
         <div className="flex flex-col gap-2 p-4">

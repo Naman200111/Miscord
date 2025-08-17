@@ -3,4 +3,4 @@ export const APP_URL =
 
 export const DEFAULT_MEMBERS_FETCH_LIMIT = 10;
 // todo fix later
-export const DEFAULT_MESSAGES_LIMIT = 90;
+export const DEFAULT_MESSAGES_LIMIT = 5;

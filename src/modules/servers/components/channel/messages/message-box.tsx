@@ -18,8 +18,6 @@ const MessageBox = ({ msgData }: MessageBoxProps) => {
     name,
   } = msgData;
 
-  console.log(msgData, "msgData");
-
   // TODO: here need current user and user who sent the message
   const messageTime = updatedAt && new Date(updatedAt);
 

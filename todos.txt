@@ -38,9 +38,9 @@ try reducing procedure for faster working
 2. create single message component (user, message) (in progress) ✅
 3. creation of messages table ✅
 4. insertion, edit and delete procedure
-5. adding option to edit and delete, with proper modals
+5. adding option to edit and delete, with proper modals -- ui
 6. optimistic message rendering with grey color and post saving to db -> convert it to normal ✅
-7. adding failed tooltip on message if not able to save to db 
+7. adding failed tooltip on message if not able to save to db ✅
 8. ui design fixes for mobile
 
 

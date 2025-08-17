@@ -102,11 +102,12 @@ export const messageProcedure = createTRPCRouter({
         let nextCursor = null;
 
         if (messageList.length === limit + 1) {
-          messageList = messageList.slice(0, -1);
           nextCursor = {
-            updatedAt: messageList[messageList.length - 1].createdAt,
+            createdAt: messageList[messageList.length - 1].createdAt,
             id: messageList[messageList.length - 1].id,
           };
+          // todo: check why this works and not doing this before setting nextcursor
+          messageList = messageList.slice(0, -1);
         }
 
         return {
