@@ -50,7 +50,7 @@ const ChannelHeader = ({
         <p>{name}</p>
         <div
           className={cn(
-            "ml-auto rounded-md px-3 hidden sm:block",
+            "ml-auto rounded-md px-3 hidden md:block",
             socketConnected ? "bg-emerald-700" : "bg-yellow-600"
           )}
         >
@@ -63,7 +63,7 @@ const ChannelHeader = ({
       </div>
       <div
         className={cn(
-          "p-1 mx-auto w-[60%] sm:hidden text-center rounded-bl-2xl rounded-br-2xl rounded-t-sm",
+          "p-1 mx-auto w-[60%] md:hidden text-center rounded-bl-2xl rounded-br-2xl rounded-t-sm",
           socketConnected ? "bg-emerald-700" : "bg-yellow-600"
         )}
       >

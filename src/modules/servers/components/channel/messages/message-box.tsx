@@ -44,7 +44,7 @@ const MessageBox = ({
     userId === loggedInUser || loggedInUserRole === "ADMIN";
 
   return (
-    <div className="w-full hover:bg-muted py-4 px-2 overflow-hidden">
+    <div className="w-full hover:bg-muted py-4 px-2 md:px-6 overflow-hidden">
       <div className="flex gap-3 w-full">
         <div className="min-w-10 h-10 relative overflow-hidden rounded-full mt-1">
           <Image src={imageUrl as string} alt="L" fill />
@@ -52,7 +52,7 @@ const MessageBox = ({
         <div className="flex-1">
           <p className="flex gap-3 items-center">
             <span className="line-clamp-1 flex items-center gap-1">
-              {name}
+              <span className="line-clamp-1">{name}</span>
               {role === "ADMIN" ? (
                 <ShieldCheck size={18} className="text-rose-400" />
               ) : role === "MODERATOR" ? (

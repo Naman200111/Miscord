@@ -22,7 +22,7 @@ interface ChannelsSectionProps {
 }
 
 const ChannelsSkeleton = () => (
-  <div className="h-full w-full sm:max-w-64 md:max-w-72 flex flex-col items-center justify-center bg-[#ececec] dark:bg-[#222222]">
+  <div className="h-full w-full sm:w-72 md:w-92 flex flex-col items-center justify-center bg-[#ececec] dark:bg-[#222222]">
     <Loader2Icon className="animate-spin" />
   </div>
 );
@@ -84,7 +84,7 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
   return (
     <div
       className={cn(
-        "h-full w-full sm:w-64 md:w-72 flex flex-col gap-2 bg-[#ececec] dark:bg-[#222222] items-center select-none",
+        "h-full w-full sm:w-72 md:w-92 flex flex-col gap-2 bg-[#ececec] dark:bg-[#222222] items-center select-none",
         hasChannel ? "hidden sm:flex" : ""
       )}
     >
