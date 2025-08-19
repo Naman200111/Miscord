@@ -79,7 +79,7 @@ export const messageProcedure = createTRPCRouter({
           .innerJoin(
             serverUsers,
             and(
-              eq(serverUsers.userId, userId),
+              eq(serverUsers.userId, users.id),
               eq(serverUsers.serverId, serverId)
             )
           )

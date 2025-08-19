@@ -1,14 +1,34 @@
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { messageData } from "@/types/types";
-import { AlertTriangle, ShieldAlert, ShieldCheck } from "lucide-react";
+import { channelRoles, messageData } from "@/types/types";
+import {
+  AlertTriangle,
+  EditIcon,
+  EllipsisVertical,
+  ShieldAlert,
+  ShieldCheck,
+  Trash2,
+} from "lucide-react";
 import Image from "next/image";
 import React from "react";
 
 interface MessageBoxProps {
   msgData: messageData;
+  loggedInUser: string;
+  loggedInUserRole: channelRoles;
 }
 
-const MessageBox = ({ msgData }: MessageBoxProps) => {
+const MessageBox = ({
+  msgData,
+  loggedInUser,
+  loggedInUserRole,
+}: MessageBoxProps) => {
   const {
     msg,
     state,
@@ -16,10 +36,12 @@ const MessageBox = ({ msgData }: MessageBoxProps) => {
     imageUrl = "/user-placeholder.svg",
     role = "MEMBER",
     name,
+    userId,
   } = msgData;
 
-  // TODO: here need current user and user who sent the message
   const messageTime = updatedAt && new Date(updatedAt);
+  const canEditMessage =
+    userId === loggedInUser || loggedInUserRole === "ADMIN";
 
   return (
     <div className="w-full hover:bg-muted py-4 px-2 overflow-hidden">
@@ -27,7 +49,7 @@ const MessageBox = ({ msgData }: MessageBoxProps) => {
         <div className="min-w-10 h-10 relative overflow-hidden rounded-full mt-1">
           <Image src={imageUrl as string} alt="L" fill />
         </div>
-        <div>
+        <div className="flex-1">
           <p className="flex gap-3 items-center">
             <span className="line-clamp-1 flex items-center gap-1">
               {name}
@@ -58,6 +80,28 @@ const MessageBox = ({ msgData }: MessageBoxProps) => {
             {msg}
           </p>
         </div>
+        {canEditMessage && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="rounded-full bg-inherit cursor-pointer outline-none"
+              >
+                <EllipsisVertical size={16} className="text-muted-foreground" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>
+                <EditIcon size={16} /> Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Trash2 size={16} />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </div>
   );

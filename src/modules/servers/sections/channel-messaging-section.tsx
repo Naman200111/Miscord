@@ -203,9 +203,13 @@ const ChannelMessagingSectionSuspense = ({
         </div>
         <div>
           {messages.map((msgData, index) => (
-            <MessageBox key={index} msgData={msgData} />
+            <MessageBox
+              key={index}
+              msgData={msgData}
+              loggedInUser={currentUser.user.id}
+              loggedInUserRole={currentUser.serverUser.role}
+            />
           ))}
-          {/* Todo: fix not working properly */}
           <InfiniteScroll
             isFetching={isFetching}
             hasNextPage={hasNextPage}

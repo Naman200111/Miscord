@@ -2,7 +2,6 @@ import { db } from "@/db/drizzle";
 import { serverUsers, users } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { eq, getTableColumns } from "drizzle-orm";
-import z from "zod";
 
 export const userProcedure = createTRPCRouter({
   getCurrentUser: protectedProcedure.query(async ({ ctx: { id: userId } }) => {
