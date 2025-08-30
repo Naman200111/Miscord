@@ -5,6 +5,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { socket } from "@/lib/socket";
 import { cn } from "@/lib/utils";
 import { channelRoles, messageData } from "@/types/types";
 import {
@@ -14,9 +16,10 @@ import {
   ShieldAlert,
   ShieldCheck,
   Trash2,
+  X,
 } from "lucide-react";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 
 interface MessageBoxProps {
   msgData: messageData;
@@ -38,6 +41,9 @@ const MessageBox = ({
     name,
     userId,
   } = msgData;
+  const [message, setMessage] = useState(msg);
+
+  const [isEditing, setIsEditing] = useState(false);
 
   const messageTime = updatedAt && new Date(updatedAt);
   const canEditMessage =
@@ -74,11 +80,46 @@ const MessageBox = ({
               </span>
             )}
           </p>
-          <p
-            className={cn(state && state !== "success" ? "text-gray-400" : "")}
-          >
-            {msg}
-          </p>
+          {!isEditing && (
+            <p
+              className={cn(
+                state && state !== "success" ? "text-gray-400" : ""
+              )}
+            >
+              {msg}
+            </p>
+          )}
+          {isEditing && (
+            <div className="w-full flex justify-between gap-2 mt-2">
+              <div className="relative w-full">
+                <Input
+                  value={message}
+                  className="bg-accent"
+                  onChange={(e) => setMessage(e.target.value)}
+                />
+                <div
+                  className="absolute bg-rose-500 rounded-full p-[3px] top-[-6px] right-[-4px]"
+                  onClick={() => {
+                    setIsEditing(false);
+                    setMessage(msg);
+                  }}
+                >
+                  <X size={12} className="text-white" />
+                </div>
+              </div>
+              <Button
+                className="bg-indigo-400 text-foreground hover:bg-indigo-400 cursor-pointer"
+                onClick={() => {
+                  if (message === "") return;
+                  socket.emit(`chat:message`, { ...msgData, msg: message });
+                  console.log({ ...msgData, msg: message }, "msgData");
+                  setIsEditing(false);
+                }}
+              >
+                Save
+              </Button>
+            </div>
+          )}
         </div>
         {canEditMessage && (
           <DropdownMenu>
@@ -92,7 +133,7 @@ const MessageBox = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsEditing(true)}>
                 <EditIcon size={16} /> Edit
               </DropdownMenuItem>
               <DropdownMenuItem>

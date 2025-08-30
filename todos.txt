@@ -44,6 +44,12 @@ Error: Refresh page /server/123/channel/456 -> sever client html different error
 10. adding file attachments support
 
 
+on editing message: 
+1. realtime update (with error, and gray content)
+2. time updated and (edited) written on ui
+3. on edit click -> auto focus on input
+4. on click enter -> should trigger save of editing
+
 
 bugs: 
 -- if failed show -> icon something which on hover can say failed messagee  ✅

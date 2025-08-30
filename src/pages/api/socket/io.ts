@@ -1,6 +1,7 @@
 import { db } from "@/db/drizzle";
 import { messages } from "@/db/schema";
 import { messageData } from "@/types/types";
+import { eq } from "drizzle-orm";
 import { NextApiRequest } from "next";
 import { Server } from "socket.io";
 
@@ -15,24 +16,35 @@ export default function handler(req: NextApiRequest, res) {
       console.log("Connection Built Successfully");
 
       socket.on(`chat:message`, async (msgData: messageData) => {
-        const { channelId, serverId, userId, msg, temp_id } = msgData;
+        const { channelId, serverId, userId, msg, temp_id, id } = msgData;
+        console.log(msgData, "msgData");
 
         try {
           console.log("adding message to db");
           socket.emit(`chat:message`, msgData);
 
-          const [addMessage] = await db
-            .insert(messages)
-            .values({ channelId, serverId, userId, msg })
-            .returning();
+          let customizeMessage;
+          if (id) {
+            [customizeMessage] = await db
+              .update(messages)
+              .set({ msg })
+              .where(eq(messages.id, id))
+              .returning();
+            console.log("message updated in db");
+          } else {
+            [customizeMessage] = await db
+              .insert(messages)
+              .values({ channelId, serverId, userId, msg })
+              .returning();
+            console.log("message added to db");
+          }
 
-          console.log("message add to db");
           io.emit(`chat:message`, {
-            userId: addMessage.userId,
-            channelId: addMessage.channelId,
-            serverId: addMessage.serverId,
-            updatedAt: addMessage.updatedAt,
-            msg: addMessage.msg,
+            userId: customizeMessage.userId,
+            channelId: customizeMessage.channelId,
+            serverId: customizeMessage.serverId,
+            updatedAt: customizeMessage.updatedAt,
+            msg: customizeMessage.msg,
             role: msgData.role || "MEMBER",
             imageUrl: msgData.imageUrl,
             name: msgData.name,
