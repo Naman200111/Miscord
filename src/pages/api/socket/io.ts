@@ -44,12 +44,14 @@ export default function handler(req: NextApiRequest, res) {
             channelId: customizeMessage.channelId,
             serverId: customizeMessage.serverId,
             updatedAt: customizeMessage.updatedAt,
+            createdAt: customizeMessage.createdAt,
             msg: customizeMessage.msg,
             role: msgData.role || "MEMBER",
             imageUrl: msgData.imageUrl,
             name: msgData.name,
             state: "success",
             temp_id,
+            id,
           });
 
           console.log("message emitted to everyone");

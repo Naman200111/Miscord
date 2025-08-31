@@ -44,10 +44,21 @@ const MessageBox = ({
   const [message, setMessage] = useState(msg);
 
   const [isEditing, setIsEditing] = useState(false);
+  const isEdited =
+    msgData.updatedAt &&
+    msgData.createdAt &&
+    msgData.updatedAt > msgData.createdAt;
 
   const messageTime = updatedAt && new Date(updatedAt);
-  const canEditMessage =
+  const canEditMessage = userId === loggedInUser;
+  const canDeleteMessage =
     userId === loggedInUser || loggedInUserRole === "ADMIN";
+
+  const onEditSave = () => {
+    if (message === "") return;
+    socket.emit(`chat:message`, { ...msgData, msg: message });
+    setIsEditing(false);
+  };
 
   return (
     <div className="w-full hover:bg-muted py-4 px-2 md:px-6 overflow-hidden">
@@ -87,6 +98,9 @@ const MessageBox = ({
               )}
             >
               {msg}
+              {isEdited && (
+                <span className="text-muted-foreground text-sm">(edited)</span>
+              )}
             </p>
           )}
           {isEditing && (
@@ -96,6 +110,13 @@ const MessageBox = ({
                   value={message}
                   className="bg-accent"
                   onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key.toLowerCase() === "enter") {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      onEditSave();
+                    }
+                  }}
                 />
                 <div
                   className="absolute bg-rose-500 rounded-full p-[3px] top-[-6px] right-[-4px]"
@@ -109,19 +130,14 @@ const MessageBox = ({
               </div>
               <Button
                 className="bg-indigo-400 text-foreground hover:bg-indigo-400 cursor-pointer"
-                onClick={() => {
-                  if (message === "") return;
-                  socket.emit(`chat:message`, { ...msgData, msg: message });
-                  console.log({ ...msgData, msg: message }, "msgData");
-                  setIsEditing(false);
-                }}
+                onClick={onEditSave}
               >
                 Save
               </Button>
             </div>
           )}
         </div>
-        {canEditMessage && (
+        {canDeleteMessage && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -133,9 +149,11 @@ const MessageBox = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => setIsEditing(true)}>
-                <EditIcon size={16} /> Edit
-              </DropdownMenuItem>
+              {canEditMessage && (
+                <DropdownMenuItem onClick={() => setIsEditing(true)}>
+                  <EditIcon size={16} /> Edit
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem>
                 <Trash2 size={16} />
                 Delete

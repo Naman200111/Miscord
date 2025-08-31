@@ -91,13 +91,17 @@ const ChannelMessagingSectionSuspense = ({
 
   const listener = useCallback(
     (msgData: messageData) => {
-      console.log(typeof msgData.updatedAt, "type of updated at from server ");
       if (channelId === msgData.channelId) {
         setMessages((prev) => {
-          const restPrev = prev.filter(
-            (msg) => msg.temp_id !== msgData.temp_id
-          );
-          return [...restPrev, msgData];
+          return prev.map((prevMsg) => {
+            if (prevMsg.id && msgData.id === prevMsg.id) {
+              return msgData;
+            }
+            if (prevMsg.temp_id && msgData.temp_id === prevMsg.temp_id) {
+              return msgData;
+            }
+            return prevMsg;
+          });
         });
       }
     },
@@ -108,10 +112,16 @@ const ChannelMessagingSectionSuspense = ({
     (msgData: messageData) => {
       if (channelId === msgData.channelId) {
         setMessages((prev) => {
-          const restPrev = prev.filter(
-            (msg) => msg.temp_id !== msgData.temp_id
-          );
-          return [...restPrev, msgData];
+          console.log(prev, "prev messages");
+          return prev.map((prevMsg) => {
+            if (prevMsg.id && msgData.id === prevMsg.id) {
+              return msgData;
+            }
+            if (prevMsg.temp_id && msgData.temp_id === prevMsg.temp_id) {
+              return msgData;
+            }
+            return prevMsg;
+          });
         });
       }
     },
