@@ -20,7 +20,7 @@ const Modal = ({ open, onClose, children, className }: ModalProps) => {
       <div
         className={cn(
           "relative max-w-[90%] w-[500px] max-h-[500px] overflow-y-auto rounded-lg bg-white dark:bg-neutral-900 p-0 shadow-lg",
-          className
+          className,
         )}
       >
         <button

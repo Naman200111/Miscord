@@ -16,7 +16,7 @@ export default function handler(req: NextApiRequest, res) {
       console.log("Connection Built Successfully");
 
       socket.on(`chat:message`, async (msgData: messageData) => {
-        const { channelId, serverId, userId, msg, temp_id, id } = msgData;
+        const { channelId, serverId, userId, msg, id } = msgData;
         console.log(msgData, "msgData");
 
         try {
@@ -24,7 +24,13 @@ export default function handler(req: NextApiRequest, res) {
           socket.emit(`chat:message`, msgData);
 
           let customizeMessage;
-          if (id) {
+
+          const [existingMessage] = await db
+            .select()
+            .from(messages)
+            .where(eq(messages.id, id));
+
+          if (existingMessage) {
             [customizeMessage] = await db
               .update(messages)
               .set({ msg })
@@ -40,18 +46,17 @@ export default function handler(req: NextApiRequest, res) {
           }
 
           io.emit(`chat:message`, {
+            id,
             userId: customizeMessage.userId,
             channelId: customizeMessage.channelId,
             serverId: customizeMessage.serverId,
             updatedAt: customizeMessage.updatedAt,
             createdAt: customizeMessage.createdAt,
             msg: customizeMessage.msg,
-            role: msgData.role || "MEMBER",
+            role: msgData.role,
             imageUrl: msgData.imageUrl,
             name: msgData.name,
             state: "success",
-            temp_id,
-            id,
           });
 
           console.log("message emitted to everyone");

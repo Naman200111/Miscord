@@ -93,35 +93,17 @@ const ChannelMessagingSectionSuspense = ({
     (msgData: messageData) => {
       if (channelId === msgData.channelId) {
         setMessages((prev) => {
-          return prev.map((prevMsg) => {
-            if (prevMsg.id && msgData.id === prevMsg.id) {
-              return msgData;
-            }
-            if (prevMsg.temp_id && msgData.temp_id === prevMsg.temp_id) {
-              return msgData;
-            }
-            return prevMsg;
-          });
-        });
-      }
-    },
-    [channelId],
-  );
-
-  const handleErrorInSending = useCallback(
-    (msgData: messageData) => {
-      if (channelId === msgData.channelId) {
-        setMessages((prev) => {
-          console.log(prev, "prev messages");
-          return prev.map((prevMsg) => {
-            if (prevMsg.id && msgData.id === prevMsg.id) {
-              return msgData;
-            }
-            if (prevMsg.temp_id && msgData.temp_id === prevMsg.temp_id) {
-              return msgData;
-            }
-            return prevMsg;
-          });
+          const exists = prev.some((m) => m.id === msgData.id);
+          if (exists) {
+            return prev.map((prevMsg) => {
+              if (prevMsg.id && msgData.id === prevMsg.id) {
+                return msgData;
+              }
+              return prevMsg;
+            });
+          } else {
+            return [...prev, msgData];
+          }
         });
       }
     },
@@ -134,19 +116,31 @@ const ChannelMessagingSectionSuspense = ({
 
   useEffect(() => {
     socket.on(`chat:message`, (msgData: messageData) => listener(msgData));
-    socket.on("error:sending", (msgData: messageData) =>
-      handleErrorInSending(msgData),
-    );
+    socket.on("error:sending", (msgData: messageData) => listener(msgData));
+  }, [listener]);
 
-    return () => {
-      socket.off(`chat:message`, (msgData: messageData) => listener(msgData));
-      socket.off("error:sending", (msgData: messageData) =>
-        handleErrorInSending(msgData),
-      );
+  // return () => {
+  //   socket.off(`chat:message`, (msgData: messageData) => listener(msgData));
+  //   socket.off("error:sending", (msgData: messageData) =>
+  //     handleErrorInSending(msgData),
+  //   );
+  // };
+  // }, [listener, handleErrorInSending]);
+
+  const createAndSendMessage = () => {
+    const id = uuid();
+    const msgData = {
+      id,
+      msg: message,
+      channelId,
+      serverId,
+      userId: currentUser.user.id,
+      state: "pending",
+      imageUrl: currentUser.user.imageUrl,
+      role: currentUser.serverUser.role,
+      name: currentUser.user.name,
     };
-  }, [listener, handleErrorInSending]);
 
-  const sendMessage = (msgData: messageData) => {
     if (msgData.msg?.trim() === "") return;
     socket.emit(`chat:message`, msgData);
     setMessage("");
@@ -162,19 +156,8 @@ const ChannelMessagingSectionSuspense = ({
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => {
-              const temp_id = uuid();
               if (e.key.toLowerCase() === "enter") {
-                sendMessage({
-                  msg: message,
-                  channelId,
-                  serverId,
-                  userId: currentUser.user.id,
-                  state: "pending",
-                  temp_id,
-                  imageUrl: currentUser.user.imageUrl,
-                  role: currentUser.serverUser.role,
-                  name: currentUser.user.name,
-                });
+                createAndSendMessage();
               }
             }}
           />
@@ -184,18 +167,7 @@ const ChannelMessagingSectionSuspense = ({
               !message ? "text-gray-500 pointer-events-none" : "",
             )}
             onClick={(e) => {
-              const temp_id = uuid();
-              sendMessage({
-                msg: message,
-                channelId,
-                serverId,
-                userId: currentUser.user.id,
-                state: "pending",
-                temp_id,
-                imageUrl: currentUser.user.imageUrl,
-                role: currentUser.serverUser.role,
-                name: currentUser.user.name,
-              });
+              createAndSendMessage();
               e.stopPropagation();
             }}
           >

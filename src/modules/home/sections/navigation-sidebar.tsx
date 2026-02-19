@@ -20,7 +20,7 @@ const NavigationSidebarSection = () => {
 
   const trpc = useTRPC();
   const { data: serversList } = useSuspenseQuery(
-    trpc.server.getMany.queryOptions()
+    trpc.server.getMany.queryOptions(),
   );
 
   return (
@@ -39,7 +39,7 @@ const NavigationSidebarSection = () => {
               <div
                 className={cn(
                   "absolute top-[10px] invisible group-hover:visible h-1 group-hover:h-5 duration-100 bg-indigo-400 w-[2px] rounded-tr-2xl rounded-br-2xl",
-                  server.id === activeServerId ? "visible h-5" : ""
+                  server.id === activeServerId ? "visible h-5" : "",
                 )}
               ></div>
               <SidebarButton

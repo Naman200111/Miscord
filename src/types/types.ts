@@ -20,7 +20,7 @@ export interface channel {
 }
 
 export interface messageData {
-  id?: string;
+  id: string;
   msg: string;
   channelId: string;
   serverId: string;
@@ -28,7 +28,6 @@ export interface messageData {
   state?: "pending" | "success" | "error";
   createdAt?: Date;
   updatedAt?: Date;
-  temp_id?: string;
   role: channelRoles;
   imageUrl: string | null;
   name: string;

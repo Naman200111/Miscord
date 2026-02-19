@@ -20,6 +20,11 @@ enhancements
 -- add video call support
 -- should add rate limiting on messaging, i think to avoid spamming
 
+learnings :
+1. working of intersection observer
+2. working on socket io learnings & simplify if possible
+
+
 #white shades : f7f7f7 > ececec 
 #white hover: e5e5e5
 
