@@ -40,7 +40,7 @@ const ChannelHeader = ({
   }, []);
 
   return (
-    <div className="flex flex-col w-full bg-[#e5e5e5] dark:bg-[#2e2e2e] z-1">
+    <div className="flex flex-col w-full bg-[#e5e5e5] dark:bg-[#2e2e2e] z-1 sticky top-0">
       <div className="h-12 rounded-none px-4 flex gap-2 items-center shadow">
         <ArrowLeftCircle
           onClick={() => router.push(`/server/${serverId}`)}
@@ -51,7 +51,7 @@ const ChannelHeader = ({
         <div
           className={cn(
             "ml-auto rounded-md px-3 hidden md:block",
-            socketConnected ? "bg-emerald-700" : "bg-yellow-600"
+            socketConnected ? "bg-emerald-700" : "bg-yellow-600",
           )}
         >
           <p>
@@ -64,7 +64,7 @@ const ChannelHeader = ({
       <div
         className={cn(
           "p-1 mx-auto w-[60%] md:hidden text-center rounded-bl-2xl rounded-br-2xl rounded-t-sm",
-          socketConnected ? "bg-emerald-700" : "bg-yellow-600"
+          socketConnected ? "bg-emerald-700" : "bg-yellow-600",
         )}
       >
         {socketConnected ? (

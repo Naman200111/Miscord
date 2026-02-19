@@ -18,7 +18,7 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 
-import { Hash, Loader2Icon, Plus, SendHorizonal, Smile } from "lucide-react";
+import { Hash, Loader2Icon, SendHorizonal } from "lucide-react";
 
 import ChannelHeader from "../components/channel/channel-header";
 import MessageBox from "../components/channel/messages/message-box";
@@ -61,11 +61,11 @@ const ChannelMessagingSectionSuspense = ({
   const trpc = useTRPC();
 
   const { data: currentUser } = useSuspenseQuery(
-    trpc.user.getCurrentUser.queryOptions()
+    trpc.user.getCurrentUser.queryOptions(),
   );
 
   const { data } = useSuspenseQuery(
-    trpc.channel.getOne.queryOptions({ serverId, channelId })
+    trpc.channel.getOne.queryOptions({ serverId, channelId }),
   );
 
   const {
@@ -76,14 +76,14 @@ const ChannelMessagingSectionSuspense = ({
   } = useSuspenseInfiniteQuery(
     trpc.message.getMany.infiniteQueryOptions(
       { serverId, channelId, limit: DEFAULT_MESSAGES_LIMIT },
-      { getNextPageParam: (lastPage) => lastPage.nextCursor }
-    )
+      { getNextPageParam: (lastPage) => lastPage.nextCursor },
+    ),
   );
 
   const channelName = data.name;
   const messagesList = useMemo(
     () => (messagePages.pages || []).flatMap((page) => page.messageList),
-    [messagePages]
+    [messagePages],
   );
 
   const [message, setMessage] = useState("");
@@ -105,7 +105,7 @@ const ChannelMessagingSectionSuspense = ({
         });
       }
     },
-    [channelId]
+    [channelId],
   );
 
   const handleErrorInSending = useCallback(
@@ -125,7 +125,7 @@ const ChannelMessagingSectionSuspense = ({
         });
       }
     },
-    [channelId]
+    [channelId],
   );
 
   useEffect(() => {
@@ -135,13 +135,13 @@ const ChannelMessagingSectionSuspense = ({
   useEffect(() => {
     socket.on(`chat:message`, (msgData: messageData) => listener(msgData));
     socket.on("error:sending", (msgData: messageData) =>
-      handleErrorInSending(msgData)
+      handleErrorInSending(msgData),
     );
 
     return () => {
       socket.off(`chat:message`, (msgData: messageData) => listener(msgData));
       socket.off("error:sending", (msgData: messageData) =>
-        handleErrorInSending(msgData)
+        handleErrorInSending(msgData),
       );
     };
   }, [listener, handleErrorInSending]);
@@ -156,40 +156,14 @@ const ChannelMessagingSectionSuspense = ({
     <div className="h-full w-full flex-col items-center flex overflow-y-auto no-scrollbar">
       <ChannelHeader name={channelName} serverId={serverId} />
       <div className="w-full flex-1 rounded-none bg-[#e5e5e5] dark:bg-[#2e2e2e] flex flex-col-reverse gap-2">
-        <div className="flex items-center mx-2 sm:px-4 my-6 border rounded-md bg-muted">
-          <button className="cursor-pointer bg-muted-foreground rounded-full ml-2 sm:ml-1">
-            <Plus size={22} className="text-background" />
-          </button>
-          <div className="relative my-2 focus:outline-none flex-1 border-0 mx-2 flex items-center">
-            <Input
-              className="w-[90%]"
-              placeholder={`Message #${channelName}`}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyDown={(e) => {
-                const temp_id = uuid();
-                if (e.key.toLowerCase() === "enter") {
-                  sendMessage({
-                    msg: message,
-                    channelId,
-                    serverId,
-                    userId: currentUser.user.id,
-                    state: "pending",
-                    temp_id,
-                    imageUrl: currentUser.user.imageUrl,
-                    role: currentUser.serverUser.role,
-                    name: currentUser.user.name,
-                  });
-                }
-              }}
-            />
-            <div
-              className={cn(
-                "absolute right-2 cursor-pointer bg-muted",
-                !message ? "text-gray-500 pointer-events-none" : ""
-              )}
-              onClick={(e) => {
-                const temp_id = uuid();
+        <div className="mx-2 sm:pr-4 my-6 border rounded-md bg-muted flex items-center gap-4">
+          <Input
+            placeholder={`Message #${channelName}`}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => {
+              const temp_id = uuid();
+              if (e.key.toLowerCase() === "enter") {
                 sendMessage({
                   msg: message,
                   channelId,
@@ -201,17 +175,34 @@ const ChannelMessagingSectionSuspense = ({
                   role: currentUser.serverUser.role,
                   name: currentUser.user.name,
                 });
-                e.stopPropagation();
-              }}
-            >
-              <SendHorizonal size={16} />
-            </div>
+              }
+            }}
+          />
+          <div
+            className={cn(
+              "cursor-pointer bg-muted",
+              !message ? "text-gray-500 pointer-events-none" : "",
+            )}
+            onClick={(e) => {
+              const temp_id = uuid();
+              sendMessage({
+                msg: message,
+                channelId,
+                serverId,
+                userId: currentUser.user.id,
+                state: "pending",
+                temp_id,
+                imageUrl: currentUser.user.imageUrl,
+                role: currentUser.serverUser.role,
+                name: currentUser.user.name,
+              });
+              e.stopPropagation();
+            }}
+          >
+            <SendHorizonal size={16} />
           </div>
-          <button className="cursor-pointer rounded-full mr-2 sm:mr-1">
-            <Smile />
-          </button>
         </div>
-        <div>
+        <div className="flex-1">
           {messages.map((msgData, index) => (
             <MessageBox
               key={index}

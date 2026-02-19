@@ -1,70 +1,23 @@
-1. uploadthing error handling ✅
-2. server hover side white tag ✅
-3. server create modal design ✅
-4. improve visual appearance ✅
-5. create tooltip ✅
-6. create second side -- work on creating dropdown and more on second page ✅
-6. create individual server page ✅
-6. add server settings -> to update and change server name and image ✅
-6. improve ui performance with skeletons ✅
-6. make 3 pages mobile friendly ✅
-6. make sidebar color different from messaging side, when in mobile difficult to see ✅
-6. apply all permission checks on BE also ✅
-6. add invite people functionality ✅
-6. add manage members functionality ✅
-6. add create channel functionality ✅
-6. create show channels ui ✅
-6. add delete channels ui + functionality ✅
-6. add Ctrl+K search functionality ✅
-6. getting some weird issue on invite functionality ✅
-6. manage member modal mobile issue ✅
-6. manage member modal dropdown loading behing <dialog> box modal ✅
-6. add disable state when updating roles ✅
-6. add kick user functionality ✅
-6. add infinite scroll in manage members ✅
-6. unable to edit channel names and editing also opens the channel, preventDefault absent ✅
-6. sometimes 2 times same user entry goes in db
+1. message : add, edit (show edited tag) & delete support in sync (on delete show "This message was deleted")
+2. remove emoji & file addition support in messages
+3. popover on member role icons
+4. sanity
 
-Error: Refresh page /server/123/channel/456 -> sever client html different error ✅
-
-6. test server leaving functionality when you are not admin ✅
-6. check if user check needed while updating server settings ✅
-
-// to implement messaging system
-1. establish socket io connection with emit and listen ✅
-2. create single message component (user, message) (in progress) ✅
-3. creation of messages table ✅
-4. insertion, edit and delete procedure
-5. adding option to edit and delete, with proper modals -- ui
-6. optimistic message rendering with grey color and post saving to db -> convert it to normal ✅
-6. show message instantly to user sending it in grey, once send remove grey ✅
-7. adding failed tooltip on message if not able to save to db ✅
+5. optimistic message rendering with grey color and post saving to db -> convert it to normal (check logic & try to improve)
+6. show message instantly to user sending it in grey, once send remove grey
+7. adding failed tooltip on message if not able to save to db (test it)
 8. ui design fixes for mobile
-9. adding emoji reactions
-10. adding file attachments support
-
-
-on editing message: 
-1. realtime update (with error, and gray content) ✅
-2. time updated and (edited) written on ui (added code -> but message has no updated at)
-3. show (edited) on ui (not working)
-4. on click enter -> should trigger save of editing ✅
-
-on deleting message:
-1. add deleting modal
-2. on delete, removed from db
-3. show (this message deleted on ui)
+9. comment audio channel support (i will not built it)
 
 
 bugs: 
--- if failed show -> icon something which on hover can say failed messagee  ✅
--- handle timeout and retry in upload thing uploading
--- /server/d9aff859-38d2-40fc-ac1e-9a7d7614f69e fails when a new user joins a server via invite
--- /server/123/channel/345 fails when opened directly
+-- handle timeout and retry in upload thing uploading (check what is happening)
+-- /server/d9aff859-38d2-40fc-ac1e-9a7d7614f69e fails when a new user joins a server via invite (test it)
+-- /server/123/channel/345 fails when opened directly (check it)
 
 
 enhancements
--- try reducing procedure for faster working
+-- add video call support
 -- should add rate limiting on messaging, i think to avoid spamming
 
 #white shades : f7f7f7 > ececec 
