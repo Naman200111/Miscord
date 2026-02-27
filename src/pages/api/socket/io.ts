@@ -33,7 +33,7 @@ export default function handler(req: NextApiRequest, res) {
           if (existingMessage) {
             [customizeMessage] = await db
               .update(messages)
-              .set({ msg })
+              .set({ msg, updatedAt: new Date() })
               .where(eq(messages.id, id))
               .returning();
             console.log("message updated in db");

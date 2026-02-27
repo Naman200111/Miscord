@@ -6,9 +6,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { socket } from "@/lib/socket";
 import { cn } from "@/lib/utils";
+import { useTRPC } from "@/trpc/client";
 import { channelRoles, messageData } from "@/types/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   AlertTriangle,
   EditIcon,
@@ -20,17 +27,20 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
+import { toast } from "sonner";
 
 interface MessageBoxProps {
   msgData: messageData;
   loggedInUser: string;
   loggedInUserRole: channelRoles;
+  // deleteMessage: () => {};
 }
 
 const MessageBox = ({
   msgData,
   loggedInUser,
   loggedInUserRole,
+  // deleteMessage,
 }: MessageBoxProps) => {
   const {
     msg,
@@ -40,10 +50,30 @@ const MessageBox = ({
     role = "MEMBER",
     name,
     userId,
+    id,
   } = msgData;
   const [message, setMessage] = useState(msg);
-
+  const [isDeleted, setIsDeleted] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  const deleteMessage = useMutation(
+    trpc.message.delete.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(
+          trpc.message.getOne.queryOptions({ id: data.id }),
+        );
+        setIsDeleted(true);
+        toast.message("Message deleted");
+      },
+      onError: () => {
+        toast.message("Failed to delete message");
+      },
+    }),
+  );
+
   const isEdited =
     msgData.updatedAt &&
     msgData.createdAt &&
@@ -71,9 +101,19 @@ const MessageBox = ({
             <span className="line-clamp-1 flex items-center gap-1">
               <span className="line-clamp-1">{name}</span>
               {role === "ADMIN" ? (
-                <ShieldCheck size={18} className="text-rose-400" />
+                <Tooltip>
+                  <TooltipTrigger>
+                    <ShieldCheck size={18} className="text-rose-400" />
+                  </TooltipTrigger>
+                  <TooltipContent>Admin</TooltipContent>
+                </Tooltip>
               ) : role === "MODERATOR" ? (
-                <ShieldAlert size={18} className="text-indigo-400" />
+                <Tooltip>
+                  <TooltipTrigger>
+                    <ShieldAlert size={18} className="text-indigo-400" />
+                  </TooltipTrigger>
+                  <TooltipContent>Moderator</TooltipContent>
+                </Tooltip>
               ) : (
                 <></>
               )}
@@ -94,12 +134,12 @@ const MessageBox = ({
           {!isEditing && (
             <p
               className={cn(
-                state && state !== "success" ? "text-gray-400" : ""
+                state && state !== "success" ? "text-gray-400" : "",
               )}
             >
               {msg}
-              {isEdited && (
-                <span className="text-muted-foreground text-sm">(edited)</span>
+              {isEdited && !isDeleted && (
+                <span className="text-muted-foreground text-sm"> (edited)</span>
               )}
             </p>
           )}
@@ -154,7 +194,10 @@ const MessageBox = ({
                   <EditIcon size={16} /> Edit
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => deleteMessage.mutate({ id })}
+                disabled={deleteMessage.isPending}
+              >
                 <Trash2 size={16} />
                 Delete
               </DropdownMenuItem>

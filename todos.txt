@@ -1,13 +1,8 @@
 1. message : add, edit (show edited tag) & delete support in sync (on delete show "This message was deleted")
-2. remove emoji & file addition support in messages
-3. popover on member role icons
-4. sanity
-
-5. optimistic message rendering with grey color and post saving to db -> convert it to normal (check logic & try to improve)
-6. show message instantly to user sending it in grey, once send remove grey
-7. adding failed tooltip on message if not able to save to db (test it)
+3. sanity
+4. pagination works opposite
+5. work on cleaned message updates for crud operations on multiple machine
 8. ui design fixes for mobile
-9. comment audio channel support (i will not built it)
 
 
 bugs: 

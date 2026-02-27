@@ -45,11 +45,11 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
   const trpc = useTRPC();
 
   const { data } = useSuspenseQuery(
-    trpc.server.getOne.queryOptions({ serverId })
+    trpc.server.getOne.queryOptions({ serverId }),
   );
 
   const { data: channels } = useSuspenseQuery(
-    trpc.channel.getMany.queryOptions({ serverId })
+    trpc.channel.getMany.queryOptions({ serverId }),
   );
 
   const textChannels = channels.filter((channel) => channel.type === "TEXT");
@@ -85,7 +85,7 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
     <div
       className={cn(
         "h-full w-full sm:w-72 md:w-92 flex flex-col gap-2 bg-[#ececec] dark:bg-[#222222] items-center select-none",
-        hasChannel ? "hidden sm:flex" : ""
+        hasChannel ? "hidden sm:flex" : "",
       )}
     >
       <ServerHeader
@@ -135,7 +135,8 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
           setForm={setForm}
           serverId={serverId}
         />
-        <SingularChannelSection
+        {/* Audio channels => Future scope */}
+        {/* <SingularChannelSection
           channelIcon={<Volume2Icon size={18} className="flex-shrink-0" />}
           channels={audioChannels}
           heading="Audio Channels"
@@ -144,8 +145,9 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
           role={data.role}
           setForm={setForm}
           serverId={serverId}
-        />
-        <SingularChannelSection
+        /> */}
+        {/* Video channels =>? Future scope  */}
+        {/* <SingularChannelSection
           channelIcon={<VideoIcon size={18} className="flex-shrink-0" />}
           channels={videoChannels}
           heading="Video Channels"
@@ -154,7 +156,7 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
           role={data.role}
           setForm={setForm}
           serverId={serverId}
-        />
+        /> */}
       </div>
 
       {openCustomizeChannelModal && (

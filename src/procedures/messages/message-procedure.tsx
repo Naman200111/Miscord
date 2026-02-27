@@ -18,7 +18,7 @@ export const messageProcedure = createTRPCRouter({
             id: z.uuid(),
           })
           .nullish(),
-      })
+      }),
     )
     .query(
       async ({
@@ -42,8 +42,8 @@ export const messageProcedure = createTRPCRouter({
           .where(
             and(
               eq(serverUsers.serverId, serverId),
-              eq(serverUsers.userId, userId)
-            )
+              eq(serverUsers.userId, userId),
+            ),
           );
 
         if (!serverUserDetails) {
@@ -57,7 +57,7 @@ export const messageProcedure = createTRPCRouter({
           .select()
           .from(channels)
           .where(
-            and(eq(channels.serverId, serverId), eq(channels.id, channelId))
+            and(eq(channels.serverId, serverId), eq(channels.id, channelId)),
           );
 
         if (!channel) {
@@ -80,8 +80,8 @@ export const messageProcedure = createTRPCRouter({
             serverUsers,
             and(
               eq(serverUsers.userId, users.id),
-              eq(serverUsers.serverId, serverId)
-            )
+              eq(serverUsers.serverId, serverId),
+            ),
           )
           .where(
             and(
@@ -91,11 +91,11 @@ export const messageProcedure = createTRPCRouter({
                     gt(messages.createdAt, cursor.createdAt),
                     and(
                       eq(messages.createdAt, cursor.createdAt),
-                      gt(messages.id, cursor.id)
-                    )
+                      gt(messages.id, cursor.id),
+                    ),
                   )
-                : undefined
-            )
+                : undefined,
+            ),
           )
           .orderBy(asc(messages.createdAt), asc(messages.id))
           .limit(limit + 1);
@@ -114,6 +114,51 @@ export const messageProcedure = createTRPCRouter({
           nextCursor,
           messageList,
         };
-      }
+      },
     ),
+  getOne: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().nonempty(),
+      }),
+    )
+    .query(async ({ input: { id: messageId } }) => {
+      const [message] = await db
+        .select()
+        .from(messages)
+        .where(eq(messages.id, messageId));
+      return message;
+    }),
+  delete: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().nonempty(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const { id: messageId } = input;
+      const [message] = await db
+        .select()
+        .from(messages)
+        .where(eq(messages.id, messageId));
+
+      console.log(message, "message");
+      if (!message) {
+        throw new TRPCError({
+          message: "This message does not exist.",
+          code: "NOT_FOUND",
+        });
+      }
+
+      const [updatedMessage] = await db
+        .update(messages)
+        .set({
+          msg: "This message was deleted",
+          isDeleted: true,
+        })
+        .where(eq(messages.id, message.id))
+        .returning();
+
+      return updatedMessage;
+    }),
 });

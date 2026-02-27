@@ -54,7 +54,7 @@ const ChannelHeader = ({
             socketConnected ? "bg-emerald-700" : "bg-yellow-600",
           )}
         >
-          <p>
+          <p className="text-white">
             {socketConnected
               ? "Live: Real-time updates"
               : "Pending: Polling every 1sec"}
@@ -67,11 +67,11 @@ const ChannelHeader = ({
           socketConnected ? "bg-emerald-700" : "bg-yellow-600",
         )}
       >
-        {socketConnected ? (
-          <p className="text-clamp-1">Live: Real-time updates</p>
-        ) : (
-          <p className="text-clamp-1">Pending: Polling every 1sec</p>
-        )}
+        <p className="text-clamp-1 text-white">
+          {socketConnected
+            ? "Live: Real-time updates"
+            : "Pending: Polling every 1sec"}
+        </p>
       </div>
     </div>
   );

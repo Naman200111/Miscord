@@ -31,6 +31,7 @@ export interface messageData {
   role: channelRoles;
   imageUrl: string | null;
   name: string;
+  isDeleted?: boolean;
 }
 
 export interface User {

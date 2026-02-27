@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input";
 
 import { useTRPC } from "@/trpc/client";
 import {
+  useMutation,
+  useQueryClient,
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from "@tanstack/react-query";
@@ -25,6 +27,7 @@ import MessageBox from "../components/channel/messages/message-box";
 
 import { messageData } from "@/types/types";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 const ChannelMessagingSectionSkeleton = () => (
   <div className="h-full w-full flex flex-col items-center justify-center">
@@ -59,6 +62,7 @@ const ChannelMessagingSectionSuspense = ({
   serverId: string;
 }) => {
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
   const { data: currentUser } = useSuspenseQuery(
     trpc.user.getCurrentUser.queryOptions(),
@@ -81,43 +85,80 @@ const ChannelMessagingSectionSuspense = ({
   );
 
   const channelName = data.name;
-  const messagesList = useMemo(
+  const serverMessagesList = useMemo(
     () => (messagePages.pages || []).flatMap((page) => page.messageList),
     [messagePages],
   );
 
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<messageData[]>(messagesList);
+  const [liveMessages, setLiveMessages] = useState<messageData[]>([]);
 
-  const listener = useCallback(
-    (msgData: messageData) => {
-      if (channelId === msgData.channelId) {
-        setMessages((prev) => {
-          const exists = prev.some((m) => m.id === msgData.id);
-          if (exists) {
-            return prev.map((prevMsg) => {
-              if (prevMsg.id && msgData.id === prevMsg.id) {
-                return msgData;
-              }
-              return prevMsg;
-            });
-          } else {
-            return [...prev, msgData];
-          }
-        });
-      }
+  // const listener = useCallback(
+  //   (msgData: messageData) => {
+  //     if (channelId === msgData.channelId) {
+  //       setMessages((prev) => {
+  //         const exists = prev.some((m) => m.id === msgData.id);
+  //         if (exists) {
+  //           return prev.map((prevMsg) => {
+  //             if (prevMsg.id && msgData.id === prevMsg.id) {
+  //               return msgData;
+  //             }
+  //             return prevMsg;
+  //           });
+  //         } else {
+  //           return [...prev, msgData];
+  //         }
+  //       });
+  //     }
+  //   },
+  //   [channelId],
+  // );
+
+  // useEffect(() => {
+  //   setMessages(messagesList);
+  // }, [messagesList]);
+
+  // useEffect(() => {
+  //   const handler = (msgData: messageData) => handleIncomingMessage(msgData);
+  //   socket.on(`chat:message`, handler);
+  //   socket.on("error:sending", handler);
+
+  //   return () => {
+  //     socket.off(`chat:message`, handler);
+  //     socket.off("error:sending", handler);
+  //   };
+  // }, [handleIncomingMessage]);
+
+  const handleIncomingMessage = useCallback(
+    (incomingMessage: messageData) => {
+      if (incomingMessage.channelId !== channelId) return;
+
+      setLiveMessages((previousMessages) => {
+        const alreadyExists = previousMessages.some(
+          (message) => message.id === incomingMessage.id,
+        );
+
+        if (alreadyExists) {
+          return previousMessages.map((message) =>
+            message.id === incomingMessage.id ? incomingMessage : message,
+          );
+        }
+
+        return [...previousMessages, incomingMessage];
+      });
     },
     [channelId],
   );
 
   useEffect(() => {
-    setMessages(messagesList);
-  }, [messagesList]);
+    socket.on("chat:message", handleIncomingMessage);
+    socket.on("error:sending", handleIncomingMessage);
 
-  useEffect(() => {
-    socket.on(`chat:message`, (msgData: messageData) => listener(msgData));
-    socket.on("error:sending", (msgData: messageData) => listener(msgData));
-  }, [listener]);
+    return () => {
+      socket.off("chat:message", handleIncomingMessage);
+      socket.off("error:sending", handleIncomingMessage);
+    };
+  }, [handleIncomingMessage]);
 
   // return () => {
   //   socket.off(`chat:message`, (msgData: messageData) => listener(msgData));
@@ -126,6 +167,17 @@ const ChannelMessagingSectionSuspense = ({
   //   );
   // };
   // }, [listener, handleErrorInSending]);
+
+  const messages = useMemo(() => {
+    const combined = [...serverMessagesList, ...liveMessages];
+    const uniqueMap = new Map<string, messageData>();
+
+    combined.forEach((message) => {
+      uniqueMap.set(message.id, message);
+    });
+
+    return Array.from(uniqueMap.values());
+  }, [serverMessagesList, liveMessages]);
 
   const createAndSendMessage = () => {
     const id = uuid();
@@ -146,6 +198,18 @@ const ChannelMessagingSectionSuspense = ({
     setMessage("");
   };
 
+  // const deleteMessage = useMutation(
+  //   trpc.message.delete.mutationOptions({
+  //     onSuccess: (data) => {
+  //       queryClient.invalidateQueries(trpc.message.getOne.queryOptions({id: data.id}))
+  //       toast.message("Message deleted");
+  //     },
+  //     onError: () => {
+  //       toast.message("Failed to delete message");
+  //     },
+  //   }),
+  // );
+
   return (
     <div className="h-full w-full flex-col items-center flex overflow-y-auto no-scrollbar">
       <ChannelHeader name={channelName} serverId={serverId} />
@@ -153,6 +217,7 @@ const ChannelMessagingSectionSuspense = ({
         <div className="mx-2 sm:pr-4 my-6 border rounded-md bg-muted flex items-center gap-4">
           <Input
             placeholder={`Message #${channelName}`}
+            className="rounded-l-md rounded-r-none border-none"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => {
@@ -175,12 +240,13 @@ const ChannelMessagingSectionSuspense = ({
           </div>
         </div>
         <div className="flex-1">
-          {messages.map((msgData, index) => (
+          {messages.map((msgData) => (
             <MessageBox
-              key={index}
+              key={msgData.id}
               msgData={msgData}
               loggedInUser={currentUser.user.id}
               loggedInUserRole={currentUser.serverUser.role}
+              // deleteMessage={deleteMessage}
             />
           ))}
           <InfiniteScroll
