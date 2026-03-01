@@ -17,7 +17,7 @@ interface ModalProps {
   serverImageUrl?: string | null;
   name?: string;
   serverImageKey?: string | null;
-  serverId: string;
+  serverId?: string;
 }
 
 const CustomizeServerModal = ({
@@ -45,7 +45,7 @@ const CustomizeServerModal = ({
         queryClient.invalidateQueries(trpc.server.getMany.queryOptions());
         if (serverId) {
           queryClient.invalidateQueries(
-            trpc.server.getOne.queryOptions({ serverId })
+            trpc.server.getOne.queryOptions({ serverId }),
           );
         }
 
@@ -57,7 +57,7 @@ const CustomizeServerModal = ({
       onError: () => {
         toast.error(`Failed to ${serverId ? "Update" : "Create"} server`);
       },
-    })
+    }),
   );
 
   const deleteServerImage = useMutation(
@@ -69,7 +69,7 @@ const CustomizeServerModal = ({
       onError: () => {
         toast.error("Failed to remove image");
       },
-    })
+    }),
   );
 
   return (
@@ -93,7 +93,10 @@ const CustomizeServerModal = ({
             <Button
               className="h-6 w-6 absolute right-2 top-0 bg-red-500 rounded-full cursor-pointer hover:bg-red-500"
               onClick={() =>
-                deleteServerImage.mutate({ imageKey: form.imageKey, serverId })
+                deleteServerImage.mutate({
+                  imageKey: form.imageKey,
+                  serverId: serverId!,
+                })
               }
             >
               <X />

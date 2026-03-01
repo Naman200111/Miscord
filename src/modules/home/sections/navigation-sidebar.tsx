@@ -34,8 +34,8 @@ const NavigationSidebarSection = () => {
         />
         <div className="h-[1px] mx-1 my-3 bg-[#373738] dark:bg-[#eaeaea] w-[50%]"></div>
         <div className=" overflow-auto no-scrollbar w-full flex-1 flex flex-col gap-3">
-          {serversList.map(({ server }, index) => (
-            <div key={index} className="group relative">
+          {serversList.map(({ server, id }) => (
+            <div key={id} className="group relative">
               <div
                 className={cn(
                   "absolute top-[10px] invisible group-hover:visible h-1 group-hover:h-5 duration-100 bg-indigo-400 w-[2px] rounded-tr-2xl rounded-br-2xl",
@@ -46,7 +46,7 @@ const NavigationSidebarSection = () => {
                 imageUrl={server.imageUrl}
                 name={server.name}
                 className="mx-auto"
-                key={index}
+                key={id}
                 tooltipLabel={server.name}
                 onClick={() => {
                   router.push(`/server/${server.id}`);

@@ -76,8 +76,8 @@ const CustomizeChannelModal = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="TEXT">Text</SelectItem>
-              <SelectItem value="AUDIO">Audio</SelectItem>
-              <SelectItem value="VIDEO">Video</SelectItem>
+              {/* <SelectItem value="AUDIO">Audio</SelectItem>
+              <SelectItem value="VIDEO">Video</SelectItem> */}
             </SelectContent>
           </Select>
         </div>

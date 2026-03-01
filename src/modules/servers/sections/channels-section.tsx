@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import ErrorComponent from "@/components/custom/error-box";
 
-import { Hash, Loader2Icon, VideoIcon, Volume2Icon } from "lucide-react";
+import { Hash, Loader2Icon} from "lucide-react";
 
 import CustomizeChannelModal from "../components/channel/customize-channel-modal";
 import SingularChannelSection from "./singular-channel-section";
@@ -53,8 +53,8 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
   );
 
   const textChannels = channels.filter((channel) => channel.type === "TEXT");
-  const audioChannels = channels.filter((channel) => channel.type === "AUDIO");
-  const videoChannels = channels.filter((channel) => channel.type === "VIDEO");
+  // const audioChannels = channels.filter((channel) => channel.type === "AUDIO");
+  // const videoChannels = channels.filter((channel) => channel.type === "VIDEO");
 
   // to conditionally show pages
   const path = usePathname();
@@ -118,8 +118,8 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
         open={open}
         setOpen={setOpen}
         textChannels={textChannels}
-        audioChannels={audioChannels}
-        videoChannels={videoChannels}
+        // audioChannels={audioChannels}
+        // videoChannels={videoChannels}
         serverId={serverId}
       />
 

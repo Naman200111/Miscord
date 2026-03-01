@@ -18,16 +18,16 @@ interface ChannelCommandDialogProps {
   setOpen: (val: boolean) => void;
   serverId: string;
   textChannels: channel[];
-  audioChannels: channel[];
-  videoChannels: channel[];
+  // audioChannels: channel[];
+  // videoChannels: channel[];
 }
 
 const ChannelCommandDialog = ({
   open,
   setOpen,
   textChannels,
-  audioChannels,
-  videoChannels,
+  // audioChannels,
+  // videoChannels,
   serverId,
 }: ChannelCommandDialogProps) => {
   const router = useRouter();
@@ -51,15 +51,15 @@ const ChannelCommandDialog = ({
           ))}
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="Audio Channels">
+        {/* <CommandGroup heading="Audio Channels">
           {audioChannels.map((channel, index) => (
             <CommandItem key={index}>
               <Volume2Icon size={18} />
               <span className="line-clamp-1">{channel.name}</span>
             </CommandItem>
           ))}
-        </CommandGroup>
-        <CommandSeparator />
+        </CommandGroup> */}
+        {/* <CommandSeparator />
         <CommandGroup heading="Video Channels">
           {videoChannels.map((channel, index) => (
             <CommandItem key={index}>
@@ -67,7 +67,7 @@ const ChannelCommandDialog = ({
               <span className="line-clamp-1">{channel.name}</span>
             </CommandItem>
           ))}
-        </CommandGroup>
+        </CommandGroup> */}
       </CommandList>
     </CommandDialog>
   );
