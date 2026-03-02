@@ -47,14 +47,14 @@ const ChannelHeader = ({
           className="mr-2 flex-shrink-0"
         />
         <Hash size={22} className="flex-shrink-0" />
-        <p>{name}</p>
+        <p className="line-clamp-1">{name}</p>
         <div
           className={cn(
             "ml-auto rounded-md px-3 hidden md:block",
             socketConnected ? "bg-emerald-700" : "bg-yellow-600",
           )}
         >
-          <p className="text-white">
+          <p className="text-white line-clamp-1">
             {socketConnected
               ? "Live: Real-time updates"
               : "Pending: Polling every 1sec"}

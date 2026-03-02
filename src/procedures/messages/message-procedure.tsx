@@ -2,7 +2,7 @@ import { db } from "@/db/drizzle";
 import { channels, messages, servers, serverUsers, users } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { and, asc, eq, getTableColumns, gt, or } from "drizzle-orm";
+import { and, asc, desc, eq, getTableColumns, gt, lt, or } from "drizzle-orm";
 import z from "zod";
 
 export const messageProcedure = createTRPCRouter({
@@ -88,7 +88,7 @@ export const messageProcedure = createTRPCRouter({
               eq(messages.channelId, channelId),
               cursor
                 ? or(
-                    gt(messages.createdAt, cursor.createdAt),
+                    lt(messages.createdAt, cursor.createdAt),
                     and(
                       eq(messages.createdAt, cursor.createdAt),
                       gt(messages.id, cursor.id),
@@ -97,7 +97,7 @@ export const messageProcedure = createTRPCRouter({
                 : undefined,
             ),
           )
-          .orderBy(asc(messages.createdAt), asc(messages.id))
+          .orderBy(desc(messages.createdAt), asc(messages.id))
           .limit(limit + 1);
         let nextCursor = null;
 
@@ -108,6 +108,7 @@ export const messageProcedure = createTRPCRouter({
           };
           // todo: check why this works and not doing this before setting nextcursor
           messageList = messageList.slice(0, -1);
+          messageList = messageList.reverse();
         }
 
         return {
