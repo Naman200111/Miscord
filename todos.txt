@@ -1,14 +1,14 @@
-1. message : add, edit (show edited tag) & delete support in sync (on delete show "This message was deleted")
+1. message : delete support in sync (on delete show "This message was deleted")
 3. sanity
-4. pagination works opposite
+4. scroll down the page in overflow msg condition
 5. work on cleaned message updates for crud operations on multiple machine
-8. ui design fixes for mobile
+6. improve load times & using LLM to find breaking issues & imporve loading experience
 
 
 bugs: 
--- handle timeout and retry in upload thing uploading (check what is happening)
 -- /server/d9aff859-38d2-40fc-ac1e-9a7d7614f69e fails when a new user joins a server via invite (test it)
 -- /server/123/channel/345 fails when opened directly (check it)
+Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
 
 
 enhancements

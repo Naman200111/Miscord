@@ -86,7 +86,7 @@ const ChannelMessagingSectionSuspense = ({
 
   const channelName = data.name;
   const serverMessagesList = useMemo(
-    () => (messagePages.pages || []).flatMap((page) => page.messageList),
+    () => (messagePages.pages.reverse() || []).flatMap((page) => page.messageList),
     [messagePages],
   );
 
@@ -213,40 +213,39 @@ const ChannelMessagingSectionSuspense = ({
   return (
     <div className="h-full w-full flex-col items-center flex bg-[#e5e5e5] dark:bg-[#2e2e2e]">
       <ChannelHeader name={channelName} serverId={serverId} />
-      <div className="h-full w-full bg-[#e5e5e5] dark:bg-[#2e2e2e]">
-        <div className="overflow-y-scroll no-scrollbar h-full">
-          <div className="flex flex-col gap-2 p-4">
-            <div className="w-20 h-20 p-2 rounded-full flex justify-center items-center bg-[#ececec] dark:bg-[#222222]">
-              <Hash size={50} />
-            </div>
-            <div className="text-3xl font-bold">Welcome to #{channelName}</div>
-            <div className="text-md text-muted-foreground">
-              This is the start of #{channelName} channel
-            </div>
+      <div className="w-full h-full bg-[#e5e5e5] dark:bg-[#2e2e2e] overflow-y-scroll no-scrollbar flex flex-col">
+        <div className="p-5 mt-auto">
+          <div className="w-15 h-15 md:w-20 md:h-20 p-2 mb-2 rounded-full flex justify-center items-center bg-[#ececec] dark:bg-[#222222]">
+            <Hash size={40} />
           </div>
-            <div className="mt-auto">
-              <InfiniteScroll
-                isFetching={isFetching}
-                hasNextPage={hasNextPage}
-                fetchNextPage={fetchNextPage}
-                manual
-              />
-              {messages.map((msgData) => (
-                <MessageBox
-                  key={msgData.id}
-                  msgData={msgData}
-                  loggedInUser={currentUser.user.id}
-                  loggedInUserRole={currentUser.serverUser.role}
-                  // deleteMessage={deleteMessage}
-                />
-              ))}
-            </div>
+          <div className="text-xl md:text-3xl font-bold mb-1">
+            Welcome to #{channelName}
+          </div>
+          <div className="text-sm md:text-md text-muted-foreground">
+            This is the start of #{channelName} channel
+          </div>
+        </div>
+        <div>
+          <InfiniteScroll
+            isFetching={isFetching}
+            hasNextPage={hasNextPage}
+            fetchNextPage={fetchNextPage}
+            manual
+          />
+          {messages.map((msgData) => (
+            <MessageBox
+              key={msgData.id}
+              msgData={msgData}
+              loggedInUser={currentUser.user.id}
+              loggedInUserRole={currentUser.serverUser.role}
+            />
+          ))}
         </div>
       </div>
-      <div className="bg-[#e5e5e5] dark:bg-[#2e2e2e] w-full p-2 sm:pr-4 border-t flex items-center gap-4">
+      <div className="bg-[#e5e5e5] dark:bg-[#2e2e2e] w-full p-2 sm:pr-4 border-t flex items-center gap-4 relative">
         <Input
           placeholder={`Message #${channelName}`}
-          className="rounded-l-md rounded-r-none border-none"
+          className="rounded-md border-none"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={(e) => {
@@ -257,7 +256,7 @@ const ChannelMessagingSectionSuspense = ({
         />
         <div
           className={cn(
-            "cursor-pointer bg-muted",
+            "cursor-pointer absolute right-7 p-2",
             !message ? "text-gray-500 pointer-events-none" : "",
           )}
           onClick={(e) => {

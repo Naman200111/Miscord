@@ -97,7 +97,7 @@ const MessageBox = ({
           <Image src={imageUrl as string} alt="L" fill />
         </div>
         <div className="flex-1">
-          <p className="flex gap-3 items-center">
+          <p className="flex flex-col mb-2 md:m-0 md:gap-3 md:flex-row md:items-center">
             <span className="line-clamp-1 flex items-center gap-1">
               <span className="line-clamp-1">{name}</span>
               {role === "ADMIN" ? (
@@ -120,7 +120,7 @@ const MessageBox = ({
             </span>
 
             {messageTime && (
-              <span className="text-muted-foreground line-clamp-1 text-sm">
+              <span className="text-muted-foreground line-clamp-1 text-xs">
                 {messageTime?.toLocaleString()}
               </span>
             )}

@@ -108,9 +108,9 @@ export const messageProcedure = createTRPCRouter({
           };
           // todo: check why this works and not doing this before setting nextcursor
           messageList = messageList.slice(0, -1);
-          messageList = messageList.reverse();
         }
-
+        
+        messageList = messageList.reverse();
         return {
           nextCursor,
           messageList,
