@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miscord — Code Review</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --surface2: #1a1e29;
+    --border: #242836;
+    --red: #ff4757;
+    --orange: #ff8c42;
+    --yellow: #ffd166;
+    --green: #06d6a0;
+    --blue: #4cc9f0;
+    --purple: #7c3aed;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --accent: #ff4757;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  .header {
+    padding: 48px 48px 32px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(255,71,87,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .header-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--red);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header-tag::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--red);
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  h1 {
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 8px;
+  }
+
+  h1 span { color: var(--red); }
+
+  .header-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 16px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .header-meta span { display: flex; align-items: center; gap: 6px; }
+
+  /* Score bar */
+  .score-section {
+    padding: 32px 48px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .score-card {
+    flex: 1;
+    min-width: 140px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .score-card:hover { border-color: var(--muted); }
+
+  .score-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .score-number {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .score-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .score-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+    width: 0;
+  }
+
+  /* Main content */
+  .main { padding: 32px 48px; max-width: 1100px; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+    width: fit-content;
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    padding: 8px 18px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.18s;
+    font-family: 'Syne', sans-serif;
+  }
+
+  .tab:hover { color: var(--text); }
+
+  .tab.active {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Issue cards */
+  .section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    margin-top: 28px;
+  }
+
+  .section-title:first-child { margin-top: 0; }
+
+  .issue {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid;
+    border-radius: 0 10px 10px 0;
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .issue:hover { background: var(--surface2); transform: translateX(2px); }
+
+  .issue-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .issue-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .badge-critical { background: rgba(255,71,87,0.15); color: var(--red); border: 1px solid rgba(255,71,87,0.3); }
+  .badge-high { background: rgba(255,140,66,0.15); color: var(--orange); border: 1px solid rgba(255,140,66,0.3); }
+  .badge-medium { background: rgba(255,209,102,0.15); color: var(--yellow); border: 1px solid rgba(255,209,102,0.3); }
+  .badge-low { background: rgba(6,214,160,0.15); color: var(--green); border: 1px solid rgba(6,214,160,0.3); }
+
+  .issue-file {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .issue-body {
+    display: none;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .issue.open .issue-body { display: block; }
+
+  .issue-desc {
+    font-size: 14px;
+    color: #94a3b8;
+    line-height: 1.65;
+    margin-bottom: 14px;
+  }
+
+  .code-block {
+    background: #090b10;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+    white-space: pre;
+    margin-bottom: 10px;
+  }
+
+  .code-block .bad { color: var(--red); }
+  .code-block .good { color: var(--green); }
+  .code-block .comment { color: var(--muted); }
+  .code-block .keyword { color: var(--blue); }
+  .code-block .str { color: var(--yellow); }
+
+  .fix-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  .fix-label.problem { color: var(--red); }
+  .fix-label.solution { color: var(--green); }
+
+  .chevron {
+    color: var(--muted);
+    font-size: 12px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .issue.open .chevron { transform: rotate(90deg); }
+
+  /* Priority colors for border-left */
+  .p-critical { border-left-color: var(--red); }
+  .p-high { border-left-color: var(--orange); }
+  .p-medium { border-left-color: var(--yellow); }
+  .p-low { border-left-color: var(--green); }
+
+  /* Summary tab */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+  }
+
+  .summary-card h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .summary-card ul {
+    list-style: none;
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.9;
+  }
+
+  .summary-card ul li::before { content: '→ '; color: var(--muted); }
+
+  .checklist { list-style: none; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: #94a3b8;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist .icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+  @media (max-width: 640px) {
+    .header, .score-section, .main { padding-left: 20px; padding-right: 20px; }
+    .header { padding-top: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-tag">Code Review Report</div>
+  <h1>Miscord <span>Review</span></h1>
+  <div class="header-meta">
+    <span>📁 Next.js + tRPC + Drizzle + Socket.io</span>
+    <span>🔐 Auth: Clerk</span>
+    <span>🗄️ DB: Neon Postgres</span>
+    <span>📦 Upload: UploadThing</span>
+  </div>
+</div>
+
+<div class="score-section" id="scores">
+  <div class="score-card">
+    <div class="score-label">Security</div>
+    <div class="score-number" style="color:var(--red)">4<span style="font-size:18px;color:var(--muted)">/10</span></div>
+    <div class="score-bar"><div class="score-fill" data-width="40" style="background:var(--red)"></div></div>
+  </div>
+  <div class="score-card">
+    <div class="score-label">Bugs & Correctness</div>
+    <div class="score-number" style="color:var(--orange)">5<span style="font-size:18px;color:var(--muted)">/10</span></div>
+    <div class="score-bar"><div class="score-fill" data-width="50" style="background:var(--orange)"></div></div>
+  </div>
+  <div class="score-card">
+    <div class="score-label">Performance</div>
+    <div class="score-number" style="color:var(--yellow)">6<span style="font-size:18px;color:var(--muted)">/10</span></div>
+    <div class="score-bar"><div class="score-fill" data-width="60" style="background:var(--yellow)"></div></div>
+  </div>
+  <div class="score-card">
+    <div class="score-label">Overall Readiness</div>
+    <div class="score-number" style="color:var(--blue)">5<span style="font-size:18px;color:var(--muted)">/10</span></div>
+    <div class="score-bar"><div class="score-fill" data-width="50" style="background:var(--blue)"></div></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('summary')">Summary</button>
+    <button class="tab" onclick="switchTab('security')">🔴 Security</button>
+    <button class="tab" onclick="switchTab('bugs')">🟠 Bugs</button>
+    <button class="tab" onclick="switchTab('performance')">🟡 Performance</button>
+  </div>
+
+  <!-- SUMMARY TAB -->
+  <div class="tab-content active" id="tab-summary">
+    <div class="summary-grid">
+      <div class="summary-card">
+        <h3>✅ What's Good</h3>
+        <ul>
+          <li>All tRPC procedures use <code>protectedProcedure</code> — auth is enforced</li>
+          <li>Zod input validation on every mutation/query</li>
+          <li>Cursor-based pagination implemented correctly</li>
+          <li>Invite code uses <code>crypto.randomBytes</code> (secure)</li>
+          <li>Drizzle cascade deletes are properly configured</li>
+          <li>Clerk middleware wraps all non-public routes</li>
+        </ul>
+      </div>
+      <div class="summary-card">
+        <h3>🚨 Must Fix Before Production</h3>
+        <ul>
+          <li>Socket.io handler has zero auth — anyone can send messages</li>
+          <li>Server update doesn't verify the caller is the owner/admin</li>
+          <li>Message delete doesn't check if caller owns the message</li>
+          <li><code>userServerData</code> can crash on undefined in deleteOrLeave</li>
+          <li>No rate limiting on Socket.io (TODO even noted in code)</li>
+          <li>DB connection uses non-pooled Neon driver under load</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-title">Pre-production checklist</div>
+    <div class="summary-card">
+      <ul class="checklist">
+        <li><span class="icon">❌</span>Add auth token verification inside the Socket.io <code>connection</code> handler</li>
+        <li><span class="icon">❌</span>Add ownership check before updating or deleting a server</li>
+        <li><span class="icon">❌</span>Add ownership check before marking a message as deleted</li>
+        <li><span class="icon">❌</span>Guard against <code>undefined</code> crash in <code>deleteOrLeave</code></li>
+        <li><span class="icon">❌</span>Implement rate limiting on Socket.io chat events</li>
+        <li><span class="icon">❌</span>Switch to Neon pooled connection (<code>neon-serverless</code>) or connection pool</li>
+        <li><span class="icon">❌</span>Add DB indexes on foreign keys (serverId, userId, channelId, createdAt)</li>
+        <li><span class="icon">❌</span>Remove all <code>console.log</code> debug statements from production code</li>
+        <li><span class="icon">⚠️</span>Review the <code>/api/uploadthing</code> public route exemption — add intent comment</li>
+        <li><span class="icon">⚠️</span>Constrain invite code query with rate limiting to prevent brute-force</li>
+        <li><span class="icon">✅</span>Zod validation on all tRPC inputs — good</li>
+        <li><span class="icon">✅</span>Clerk middleware protects all routes by default — good</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SECURITY TAB -->
+  <div class="tab-content" id="tab-security">
+
+    <div class="section-title">Critical</div>
+
+    <div class="issue p-critical" onclick="toggleIssue(this)">
+      <div class="issue-header">
+        <div>
+          <div class="issue-title"><span class="badge badge-critical">Critical</span> Socket.io has no authentication</div>
+          <div class="issue-file">src/pages/api/socket/io.ts</div>
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="issue-body">
+        <p class="issue-desc">Any client — authenticated or not — can connect to the Socket.io server and emit <code>chat:message</code> events. The handler trusts the <code>userId</code> sent by the client directly in the message payload. A malicious user can impersonate any user ID or spam the DB with fabricated messages.</p>
+        <div class="fix-label problem">❌ Problem — userId comes from untrusted client payload</div>
+        <div class="code-block"><span class="comment">// io.ts — userId is whatever the client sends</span>
+socket.on(`chat:message`, async (msgData: messageData) => {
+  <span class="bad">const { channelId, serverId, userId, msg, id } = msgData;</span>
+  <span class="comment">// No check that userId == the logged in user</span>
+  await db.insert(messages).values({ id, channelId, serverId, <span class="bad">userId</span>, msg });
+});</div>
+        <div class="fix-label solution">✅ Fix — verify Clerk session token on socket handshake</div>
+        <div class="code-block"><span class="comment">// Pass Clerk session token from client during connection</span>
+<span class="keyword">const</span> io = <span class="keyword">new</span> Server(res.socket.server, {
+  path: <span class="str">"/api/socket/io"</span>,
+});
+
+io.use(<span class="keyword">async</span> (socket, next) => {
+  <span class="keyword">const</span> token = socket.handshake.auth.token;
+  <span class="keyword">try</span> {
+    <span class="keyword">const</span> payload = <span class="keyword">await</span> verifyToken(token, { secretKey: process.env.CLERK_SECRET_KEY });
+    socket.data.userId = payload.sub; <span class="comment">// store verified userId on socket</span>
+    next();
+  } <span class="keyword">catch</span> {
+    next(<span class="keyword">new</span> Error(<span class="str">"Unauthorized"</span>));
+  }
+});
+
+io.on(<span class="str">"connection"</span>, (socket) => {
+  socket.on(<span class="str">"chat:message"</span>, <span class="keyword">async</span> (msgData) => {
+    <span class="good">const userId = socket.data.userId; // use verified server-side userId</span>
+    await db.insert(messages).values({ ...msgData, userId });
+  });
+});</div>
+      </div>
+    </div>
+
+    <div class="issue p-critical" onclick="toggleIssue(this)">
+      <div class="issue-header">
+        <div>
+          <div class="issue-title"><span class="badge badge-critical">Critical</span> Server update has no ownership check</div>
+          <div class="issue-file">src/procedures/server/servers-procedure.tsx — createOrUpdate</div>
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="issue-body">
+        <p class="issue-desc">When a <code>serverId</code> is passed to <code>createOrUpdate</code>, the mutation updates the server without verifying that the calling user is the server's ADMIN. Any authenticated user who discovers a server's UUID can rename it or swap its image.</p>
+        <div class="fix-label problem">❌ Problem — no role check on update path</div>
+        <div class="code-block"><span class="keyword">if</span> (serverId) {
+  <span class="comment">// ← no check that userId is ADMIN of this server</span>
+  <span class="bad">const [updateServer] = await db</span>
+    .update(servers)
+    .set({ name, imageKey, imageUrl })
+    .where(eq(servers.id, serverId))
+    .returning();
+}</div>
+        <div class="fix-label solution">✅ Fix — verify role before allowing update</div>
+        <div class="code-block"><span class="keyword">if</span> (serverId) {
+  <span class="good">const [serverUser] = await db.select().from(serverUsers)
+    .where(and(eq(serverUsers.serverId, serverId), eq(serverUsers.userId, userId)));
+  if (!serverUser || serverUser.role !== "ADMIN") {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Only admins can update the server." });
+  }</span>
+  const [updateServer] = await db.update(servers)...
+}</div>
+      </div>
+    </div>
+
+    <div class="section-title">High</div>
+
+    <div class="issue p-high" onclick="toggleIssue(this)">
+      <div class="issue-header">
+        <div>
+          <div class="issue-title"><span class="badge badge-high">High</span> Message delete doesn't verify ownership</div>
+          <div class="issue-file">src/procedures/messages/message-procedure.tsx — delete</div>
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="issue-body">
+        <p class="issue-desc">The <code>delete</code> procedure marks any message as deleted given just its UUID, without checking whether the caller sent it or is a MODERATOR/ADMIN of the server. Any member can "delete" another member's messages.</p>
+        <div class="fix-label problem">❌ Problem</div>
+        <div class="code-block"><span class="comment">// No check: does userId === message.userId, or is user a moderator?</span>
+<span class="bad">const [message] = await db.select().from(messages).where(eq(messages.id, messageId));</span>
+<span class="comment">// Immediately updates without any auth check</span>
+await db.update(messages).set({ msg: "This message was deleted", isDeleted: true })...</div>
+        <div class="fix-label solution">✅ Fix</div>
+        <div class="code-block"><span class="good">// Check: caller is message owner OR is MODERATOR/ADMIN
+if (message.userId !== userId) {
+  const [serverUser] = await db.select().from(serverUsers)
+    .where(and(eq(serverUsers.serverId, message.serverId), eq(serverUsers.userId, userId)));
+  if (!serverUser || serverUser.role === "MEMBER") {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+}</span></div>
+      </div>
+    </div>
+
+    <div class="issue p-high" onclick="toggleIssue(this)">
+      <div class="issue-header">
+        <div>
+          <div class="issue-title"><span class="badge badge-high">High</span> No rate limiting on Socket.io messages</div>
+          <div class="issue-file">src/pages/api/socket/io.ts</div>
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="issue-body">
+        <p class="issue-desc">The code itself has a <code>// todo: add rate limiting</code> comment. Without rate limiting, a single user can flood the DB with thousands of messages per second. Use a token bucket per socket connection.</p>
+        <div class="fix-label solution">✅ Simple fix with a per-socket counter</div>
+        <div class="code-block">io.on(<span class="str">"connection"</span>, (socket) => {
+  <span class="good">let msgCount = 0;
+  setInterval(() => { msgCount = 0; }, 1000); // reset every second
+
+  socket.on("chat:message", async (msgData) => {
+    if (++msgCount > 5) {
+      socket.emit("error:ratelimit", { message: "Slow down!" });
+      return;
+    }</span>
+    <span class="comment">// ...rest of handler</span>
+  });
+});</div>
+      </div>
+    </div>
+
+    <div class="issue p-medium" onclick="toggleIssue(this)">
+      <div class="issue-header">
+        <div>
+          <div class="issue-title"><span class="badge badge-medium">Medium</span> Invite code is guessable by brute force</div>
+          <div class="issue-file">src/procedures/server/servers-procedure.tsx — getOneFromInvite</div>
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="issue-body">
+        <p class="issue-desc">The invite code is 8 alphanumeric characters — good entropy, but the <code>getOneFromInvite</code> query has no rate limiting. An attacker could enumerate codes programmatically. Consider adding server-side rate limiting or increasing code length to 12+ characters.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUGS TAB -->
+  <div class="tab-content" id="tab-bugs">
+
+    <div class="section-title">High — Will crash in production</div>
+
+    <div class="issue p-high" onclick="toggleIssue(this)">
+      <div class="issue-header">
+        <div>
+          <div class="issue-title"><span class="badge badge-high">High</span> Crash if user has no server_users entry in deleteOrLeave</div>
+          <div class="issue-file">src/procedures/server/servers-procedure.tsx — deleteOrLeave</div>
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="issue-body">
+        <p class="issue-desc">If the <code>DELETE</code> returns no rows (user wasn't in the server), <code>userServerData</code> is <code>undefined</code>, and accessing <code>userServerData.role</code> throws a runtime crash that will surface as a 500 error to the user.</p>
+        <div class="fix-label problem">❌ Problem</div>
+        <div class="code-block"><span class="bad">const [userServerData] = await db.delete(serverUsers)</span>
+  .where(and(...))
+  .returning();
+<span class="comment">// userServerData could be undefined here ↓</span>
+<span class="bad">if (userServerData.role === "ADMIN") {</span>  // 💥 crash</div>
+        <div class="fix-label solution">✅ Fix</div>
+        <div class="code-block"><span class="good">if (!userServerData) {
+  throw new TRPCError({ code: "NOT_FOUND", message: "You are not in this server." });
+}
+if (userServerData.role === "ADMIN") {</span>
+  await db.delete(servers).where(eq(servers.id, serverId));
+}</div>
+      </div>
+    </div>
+
+    <div class="issue p-high" onclick="toggleIssue(this)">
+      <div class="issue-header">
+        <div>
+          <div class="issue-title"><span class="badge badge-high">High</span> roleUpdate crashes if caller is not in server</div>
+          <div class="issue-file">src/procedures/server/servers-procedure.tsx — roleUpdate</div>
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="issue-body">
+        <p class="issue-desc"><code>serverUserDetails</code> is accessed for <code>.role</code> without being checked for <code>undefined</code> first. If the caller isn't in the server, this will crash instead of returning a clean UNAUTHORIZED error.</p>
+        <div class="fix-label solution">✅ Fix — add null guard</div>
+        <div class="code-block"><span class="good">if (!serverUserDetails) {
+  throw new TRPCError({ code: "UNAUTHORIZED", message: "You are not in this server." });
+}</span>
+const loggedInUserRole = serverUserDetails.role;</div>
+      </div>
+    </div>
+
+    <div class="section-title">Medium</div>
+
+    <div class="issue p-medium" onclick="toggleIssue(this)">
+      <div class="issue-header">
+        <div>
+          <div class="issue-title"><span class="badge badge-medium">Medium</span> Server creation is not atomic — partial state possible</div>
+          <div class="issue-file">src/procedures/server/servers-procedure.tsx — createOrUpdate</div>
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="issue-body">
+        <p class="issue-desc">Creating a server involves 3 sequential inserts: server → serverUser → channel. If the 2nd or 3rd insert fails, you're left with an orphaned server or a server with no general channel. Wrap in a transaction.</p>
+        <div class="fix-label solution">✅ Fix — use Drizzle transactions</div>
+        <div class="code-block"><span class="good">await db.transaction(async (tx) => {
+  const [createServer] = await tx.insert(servers).values({...}).returning();
+  const [createServerUser] = await tx.insert(serverUsers).values({...}).returning();
+  const [createChannel] = await tx.insert(channels).values({...}).returning();
+  return { createServerUser };
+});</span></div>
+      </div>
+    </div>
+
+    <div class="issue p-medium" onclick="toggleIssue(this)">
+      <div class="issue-header">
+        <div>
+          <div class="issue-title"><span class="badge badge-medium">Medium</span> Debug console.logs left in production code</div>
+          <div class="issue-file">src/pages/api/socket/io.ts, message-procedure.tsx</div>
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="issue-body">
+        <p class="issue-desc">There are numerous <code>console.log</code> calls including <code>console.log(message, "message")</code> and <code>console.log(msgData, "msgData")</code> that will leak internal data structures to server logs. Remove before deploying.</p>
+      </div>
+    </div>
+
+    <div class="issue p-medium" onclick="toggleIssue(this)">
+      <div class="issue-header">
+        <div>
+          <div class="issue-title"><span class="badge badge-medium">Medium</span> messageData type fully trusted from client in Socket.io</div>
+          <div class="issue-file">src/pages/api/socket/io.ts</div>
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="issue-body">
+        <p class="issue-desc">The socket handler does no schema validation on incoming <code>msgData</code>. A client sending malformed data (e.g., a UUID in <code>id</code> that belongs to a different channel) could corrupt other channels' message lists. Parse with Zod before trusting.</p>
+        <div class="fix-label solution">✅ Fix</div>
+        <div class="code-block"><span class="good">const messageSchema = z.object({
+  id: z.uuid(), channelId: z.uuid(), serverId: z.uuid(),
+  msg: z.string().min(1).max(2000),
+});
+
+socket.on("chat:message", async (raw) => {
+  const result = messageSchema.safeParse(raw);
+  if (!result.success) return;
+  const msgData = result.data;
+  const userId = socket.data.userId; // from verified handshake
+  ...</span>
+});</div>
+      </div>
+    </div>
+
+    <div class="section-title">Low</div>
+
+    <div class="issue p-low" onclick="toggleIssue(this)">
+      <div class="issue-header">
+        <div>
+          <div class="issue-title"><span class="badge badge-low">Low</span> Typo in error messages — "You You cannot"</div>
+          <div class="issue-file">src/procedures/server/servers-procedure.tsx</div>
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="issue-body">
+        <p class="issue-desc">Two places have the message <code>"You You cannot perform this action."</code> — a doubled word that will be visible to end users in error toasts.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERFORMANCE TAB -->
+  <div class="tab-content" id="tab-performance">
+
+    <div class="section-title">High Impact</div>
+
+    <div class="issue p-high" onclick="toggleIssue(this)">
+      <div class="issue-header">
+        <div>
+          <div class="issue-title"><span class="badge badge-high">High</span> Missing database indexes on foreign keys</div>
+          <div class="issue-file">src/db/schema.ts</div>
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="issue-body">
+        <p class="issue-desc">The schema defines foreign keys but no explicit indexes. Postgres does NOT auto-index FKs. Queries filtering on <code>serverId</code>, <code>userId</code>, <code>channelId</code>, and <code>createdAt</code> will do full table scans as data grows. For a chat app this will become noticeable very quickly.</p>
+        <div class="fix-label solution">✅ Add indexes to schema</div>
+        <div class="code-block"><span class="keyword">import</span> { index } from <span class="str">"drizzle-orm/pg-core"</span>;
+
+<span class="good">export const messages = pgTable("messages", {
+  ...
+}, (t) => ({
+  channelIdx: index("messages_channel_id_idx").on(t.channelId),
+  serverIdx: index("messages_server_id_idx").on(t.serverId),
+  createdAtIdx: index("messages_created_at_idx").on(t.createdAt),
+}));
+
+export const serverUsers = pgTable("server_users", {
+  ...
+}, (t) => ({
+  userServerIdx: index("server_users_user_server_idx").on(t.userId, t.serverId),
+}));</span></div>
+      </div>
+    </div>
+
+    <div class="issue p-high" onclick="toggleIssue(this)">
+      <div class="issue-header">
+        <div>
+          <div class="issue-title"><span class="badge badge-high">High</span> Using non-pooled Neon HTTP driver</div>
+          <div class="issue-file">src/db/drizzle.ts</div>
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="issue-body">
+        <p class="issue-desc"><code>drizzle-orm/neon-http</code> creates a new connection per query and is designed for edge runtimes. For a Next.js app with Socket.io running many concurrent queries, you want the WebSocket-based pooled driver to avoid connection limits and latency.</p>
+        <div class="fix-label solution">✅ Switch to neon-serverless with connection pooling</div>
+        <div class="code-block"><span class="comment">// npm install @neondatabase/serverless</span>
+<span class="good">import { Pool } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-serverless";
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+export const db = drizzle(pool);</span></div>
+      </div>
+    </div>
+
+    <div class="section-title">Medium Impact</div>
+
+    <div class="issue p-medium" onclick="toggleIssue(this)">
+      <div class="issue-header">
+        <div>
+          <div class="issue-title"><span class="badge badge-medium">Medium</span> Multiple sequential DB queries where one would do</div>
+          <div class="issue-file">src/procedures/messages/message-procedure.tsx — getMany</div>
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="issue-body">
+        <p class="issue-desc">The <code>getMany</code> query makes 3 sequential round-trips to the DB (fetch server → fetch serverUser → fetch messages with join) before returning data. The first two can be merged into the messages query as additional joins, cutting round trips by 2/3.</p>
+        <div class="fix-label solution">✅ Consolidate into a single query with joins and a membership check</div>
+        <div class="code-block"><span class="comment">// Verify membership inside the messages query</span>
+<span class="good">const messageList = await db
+  .select({ ...getTableColumns(messages), ... })
+  .from(messages)
+  .innerJoin(serverUsers, and(
+    eq(serverUsers.userId, userId),        // membership check
+    eq(serverUsers.serverId, serverId),    // ← throws if not member
+  ))
+  .where(and(eq(messages.channelId, channelId), ...cursor))
+  .orderBy(...)
+  .limit(limit + 1);</span></div>
+      </div>
+    </div>
+
+    <div class="issue p-low" onclick="toggleIssue(this)">
+      <div class="issue-header">
+        <div>
+          <div class="issue-title"><span class="badge badge-low">Low</span> io.emit broadcasts messages to ALL connected clients</div>
+          <div class="issue-file">src/pages/api/socket/io.ts</div>
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="issue-body">
+        <p class="issue-desc"><code>io.emit("chat:message", ...)</code> sends every message to every connected user across all servers and channels. Users are receiving WebSocket events for channels they're not even in. Use Socket.io rooms — one room per channel.</p>
+        <div class="fix-label solution">✅ Use rooms</div>
+        <div class="code-block"><span class="comment">// Client: join the channel room on connect</span>
+socket.emit(<span class="str">"join:channel"</span>, channelId);
+
+<span class="comment">// Server: handle room join</span>
+<span class="good">socket.on("join:channel", (channelId) => {
+  socket.join(channelId);
+});
+
+// Emit only to clients in that channel room
+io.to(channelId).emit("chat:message", payload);</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function switchTab(name) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function toggleIssue(el) {
+    el.classList.toggle('open');
+  }
+
+  // Animate score bars on load
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.querySelectorAll('.score-fill').forEach(el => {
+        el.style.width = el.dataset.width + '%';
+      });
+    }, 200);
+  });
+</script>
+</body>
+</html>

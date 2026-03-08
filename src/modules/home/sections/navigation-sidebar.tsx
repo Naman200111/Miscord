@@ -25,7 +25,7 @@ const NavigationSidebarSection = () => {
 
   return (
     <>
-      <div className="h-full min-w-[60px] flex flex-col gap-2 bg-[#f7f7f7] dark:bg-[#2b2b2d] items-center">
+      <div className="h-full min-w-[60px] flex flex-col gap-2 bg-[#f7f7f7] dark:bg-[#2b2b2d] items-center select-none">
         <div className="mt-3" />
         <SidebarButton
           icon={<Plus className="text-foreground" />}

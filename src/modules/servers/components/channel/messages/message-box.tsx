@@ -118,7 +118,7 @@ const MessageBox = ({
             </span>
 
             {messageTime && (
-              <span className="text-muted-foreground line-clamp-1 text-xs">
+              <span className="text-muted-foreground line-clamp-1 text-xs" suppressHydrationWarning={true}>
                 {messageTime?.toLocaleString()}
               </span>
             )}

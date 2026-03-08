@@ -2,11 +2,22 @@ import { db } from "@/db/drizzle";
 import { messages } from "@/db/schema";
 import { messageData } from "@/types/types";
 import { eq } from "drizzle-orm";
-import { NextApiRequest } from "next";
+import { Socket } from "net";
+import { NextApiResponse } from "next";
+import { Server as HTTPServer } from "http";
 import { Server } from "socket.io";
 
-// Todo: give proper types
-export default function handler(req: NextApiRequest, res) {
+type NextApiResponseServerIO = NextApiResponse & {
+  socket: Socket & {
+    server: HTTPServer & {
+      io: Server;
+    };
+  };
+};
+
+export default function handler(
+  res: NextApiResponseServerIO,
+) {
   if (!res.socket.server.io) {
     const io = new Server(res.socket.server, {
       path: "/api/socket/io",
@@ -29,6 +40,7 @@ export default function handler(req: NextApiRequest, res) {
             .select()
             .from(messages)
             .where(eq(messages.id, id));
+
           if (existingMessage) {
             [customizeMessage] = await db
               .update(messages)
