@@ -29,7 +29,6 @@ export default function handler(req: NextApiRequest, res) {
             .select()
             .from(messages)
             .where(eq(messages.id, id));
-
           if (existingMessage) {
             [customizeMessage] = await db
               .update(messages)
@@ -40,13 +39,13 @@ export default function handler(req: NextApiRequest, res) {
           } else {
             [customizeMessage] = await db
               .insert(messages)
-              .values({ channelId, serverId, userId, msg })
+              .values({ id, channelId, serverId, userId, msg })
               .returning();
             console.log("message added to db");
           }
 
           io.emit(`chat:message`, {
-            id,
+            id: customizeMessage.id,
             userId: customizeMessage.userId,
             channelId: customizeMessage.channelId,
             serverId: customizeMessage.serverId,

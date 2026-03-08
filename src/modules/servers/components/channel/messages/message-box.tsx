@@ -15,7 +15,7 @@ import { socket } from "@/lib/socket";
 import { cn } from "@/lib/utils";
 import { useTRPC } from "@/trpc/client";
 import { channelRoles, messageData } from "@/types/types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import {
   AlertTriangle,
   EditIcon,
@@ -52,19 +52,17 @@ const MessageBox = ({
     userId,
     id,
   } = msgData;
+
   const [message, setMessage] = useState(msg);
-  const [isDeleted, setIsDeleted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(msgData.isDeleted);
   const [isEditing, setIsEditing] = useState(false);
 
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
 
   const deleteMessage = useMutation(
     trpc.message.delete.mutationOptions({
       onSuccess: (data) => {
-        queryClient.invalidateQueries(
-          trpc.message.getOne.queryOptions({ id: data.id }),
-        );
+        setMessage(data.msg);
         setIsDeleted(true);
         toast.message("Message deleted");
       },
@@ -137,9 +135,9 @@ const MessageBox = ({
                 state && state !== "success" ? "text-gray-400" : "",
               )}
             >
-              {msg}
+              {isDeleted ? <span className="text-muted-foreground">{message}</span> : <span>{message}</span>}
               {isEdited && !isDeleted && (
-                <span className="text-muted-foreground text-sm"> (edited)</span>
+                <span className="text-muted-foreground text-sm"> (edited) </span>
               )}
             </p>
           )}

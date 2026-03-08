@@ -93,42 +93,6 @@ const ChannelMessagingSectionSuspense = ({
   const [message, setMessage] = useState("");
   const [liveMessages, setLiveMessages] = useState<messageData[]>([]);
 
-  // const listener = useCallback(
-  //   (msgData: messageData) => {
-  //     if (channelId === msgData.channelId) {
-  //       setMessages((prev) => {
-  //         const exists = prev.some((m) => m.id === msgData.id);
-  //         if (exists) {
-  //           return prev.map((prevMsg) => {
-  //             if (prevMsg.id && msgData.id === prevMsg.id) {
-  //               return msgData;
-  //             }
-  //             return prevMsg;
-  //           });
-  //         } else {
-  //           return [...prev, msgData];
-  //         }
-  //       });
-  //     }
-  //   },
-  //   [channelId],
-  // );
-
-  // useEffect(() => {
-  //   setMessages(messagesList);
-  // }, [messagesList]);
-
-  // useEffect(() => {
-  //   const handler = (msgData: messageData) => handleIncomingMessage(msgData);
-  //   socket.on(`chat:message`, handler);
-  //   socket.on("error:sending", handler);
-
-  //   return () => {
-  //     socket.off(`chat:message`, handler);
-  //     socket.off("error:sending", handler);
-  //   };
-  // }, [handleIncomingMessage]);
-
   const handleIncomingMessage = useCallback(
     (incomingMessage: messageData) => {
       if (incomingMessage.channelId !== channelId) return;
@@ -160,14 +124,6 @@ const ChannelMessagingSectionSuspense = ({
     };
   }, [handleIncomingMessage]);
 
-  // return () => {
-  //   socket.off(`chat:message`, (msgData: messageData) => listener(msgData));
-  //   socket.off("error:sending", (msgData: messageData) =>
-  //     handleErrorInSending(msgData),
-  //   );
-  // };
-  // }, [listener, handleErrorInSending]);
-
   const messages = useMemo(() => {
     const combined = [...serverMessagesList, ...liveMessages];
     const uniqueMap = new Map<string, messageData>();
@@ -197,18 +153,6 @@ const ChannelMessagingSectionSuspense = ({
     socket.emit(`chat:message`, msgData);
     setMessage("");
   };
-
-  // const deleteMessage = useMutation(
-  //   trpc.message.delete.mutationOptions({
-  //     onSuccess: (data) => {
-  //       queryClient.invalidateQueries(trpc.message.getOne.queryOptions({id: data.id}))
-  //       toast.message("Message deleted");
-  //     },
-  //     onError: () => {
-  //       toast.message("Failed to delete message");
-  //     },
-  //   }),
-  // );
 
   return (
     <div className="h-full w-full flex-col items-center flex bg-[#e5e5e5] dark:bg-[#2e2e2e]">

@@ -133,16 +133,16 @@ export const messageProcedure = createTRPCRouter({
   delete: protectedProcedure
     .input(
       z.object({
-        id: z.string().nonempty(),
+        id: z.uuid().nonempty(),
       }),
     )
     .mutation(async ({ input }) => {
       const { id: messageId } = input;
       const [message] = await db
-        .select()
-        .from(messages)
-        .where(eq(messages.id, messageId));
-
+      .select()
+      .from(messages)
+      .where(eq(messages.id, messageId));
+      
       console.log(message, "message");
       if (!message) {
         throw new TRPCError({
