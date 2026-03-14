@@ -3,7 +3,7 @@ import { messages } from "@/db/schema";
 import { messageData } from "@/types/types";
 import { eq } from "drizzle-orm";
 import { Socket } from "net";
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { Server as HTTPServer } from "http";
 import { Server } from "socket.io";
 
@@ -16,6 +16,7 @@ type NextApiResponseServerIO = NextApiResponse & {
 };
 
 export default function handler(
+  req: NextApiRequest,
   res: NextApiResponseServerIO,
 ) {
   if (!res.socket.server.io) {

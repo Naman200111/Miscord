@@ -26,21 +26,19 @@ import {
   X,
 } from "lucide-react";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface MessageBoxProps {
   msgData: messageData;
   loggedInUser: string;
   loggedInUserRole: channelRoles;
-  // deleteMessage: () => {};
 }
 
 const MessageBox = ({
   msgData,
   loggedInUser,
   loggedInUserRole,
-  // deleteMessage,
 }: MessageBoxProps) => {
   const {
     msg,
@@ -72,10 +70,15 @@ const MessageBox = ({
     }),
   );
 
+  useEffect(() => {
+    setMessage(msgData.msg);
+    setIsDeleted(msgData.isDeleted);
+  }, [msgData]);
+
   const isEdited =
     msgData.updatedAt &&
     msgData.createdAt &&
-    msgData.updatedAt > msgData.createdAt;
+    new Date(msgData.updatedAt) > new Date(msgData.createdAt);
 
   const messageTime = updatedAt && new Date(updatedAt);
   const canEditMessage = userId === loggedInUser;

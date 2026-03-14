@@ -3,9 +3,8 @@
 import { ArrowLeftCircle, Hash } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import { socket } from "@/lib/socket";
-import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useSocket } from "@/hooks/use-socket";
 
 const ChannelHeader = ({
   name,
@@ -15,29 +14,7 @@ const ChannelHeader = ({
   serverId: string;
 }) => {
   const router = useRouter();
-
-  const [socketConnected, setSocketConnected] = useState(false);
-
-  const onConnect = () => {
-    setSocketConnected(true);
-  };
-  const onDisconnect = () => {
-    setSocketConnected(false);
-  };
-
-  useEffect(() => {
-    if (socket.connected) {
-      onConnect();
-    }
-
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-    };
-  }, []);
+  const socketConnected = useSocket();
 
   return (
     <div className="flex flex-col w-full bg-[#e5e5e5] dark:bg-[#2e2e2e] z-1 sticky top-0">

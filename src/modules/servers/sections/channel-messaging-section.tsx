@@ -25,6 +25,7 @@ import MessageBox from "../components/channel/messages/message-box";
 
 import { messageData } from "@/types/types";
 import { cn } from "@/lib/utils";
+import { useSocket } from "@/hooks/use-socket";
 
 const ChannelMessagingSectionSkeleton = () => (
   <div className="h-full w-full flex flex-col items-center justify-center">
@@ -59,6 +60,7 @@ const ChannelMessagingSectionSuspense = ({
   serverId: string;
 }) => {
   const trpc = useTRPC();
+  const isSocketConnected = useSocket();
 
   const { data: currentUser } = useSuspenseQuery(
     trpc.user.getCurrentUser.queryOptions(),
@@ -70,13 +72,15 @@ const ChannelMessagingSectionSuspense = ({
 
   const {
     data: messagePages,
-    isFetching,
     hasNextPage,
     fetchNextPage,
+    isFetchingNextPage,
   } = useSuspenseInfiniteQuery(
     trpc.message.getMany.infiniteQueryOptions(
       { serverId, channelId, limit: DEFAULT_MESSAGES_LIMIT },
-      { getNextPageParam: (lastPage) => lastPage.nextCursor },
+      { getNextPageParam: (lastPage) => lastPage.nextCursor,
+        refetchInterval: isSocketConnected ? false : 1000
+      },
     ),
   );
 
@@ -157,9 +161,9 @@ const ChannelMessagingSectionSuspense = ({
       <div className="w-full h-full bg-[#e5e5e5] dark:bg-[#2e2e2e] overflow-y-scroll no-scrollbar flex flex-col-reverse">
         <div>
           <InfiniteScroll
-            isFetching={isFetching}
             hasNextPage={hasNextPage}
             fetchNextPage={fetchNextPage}
+            isFetchingNextPage={isFetchingNextPage}
             manual
           />
           {messages.map((msgData) => (

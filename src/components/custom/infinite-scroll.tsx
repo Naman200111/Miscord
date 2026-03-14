@@ -6,15 +6,15 @@ import useIntersectionObserver from "@/hooks/use-intersection-observer";
 interface InfiniteScrollProps {
   manual?: boolean;
   fetchNextPage: () => void;
-  isFetching: boolean;
   hasNextPage: boolean;
+  isFetchingNextPage: boolean;
 }
 
 const InfiniteScroll = ({
   manual = false,
   fetchNextPage,
-  isFetching,
   hasNextPage,
+  isFetchingNextPage,
 }: InfiniteScrollProps) => {
   const { observerRef, isIntersecting } = useIntersectionObserver();
 
@@ -26,8 +26,8 @@ const InfiniteScroll = ({
 
   return (
     <div ref={observerRef} className="flex justify-center">
-      {isFetching && <Loader2Icon className="animate-spin" />}
-      {manual && hasNextPage && !isFetching ? (
+      {isFetchingNextPage && <Loader2Icon className="animate-spin" />}
+      {manual && hasNextPage && !isFetchingNextPage ? (
         <Button size="sm" onClick={() => fetchNextPage()}>
           Load More
         </Button>
