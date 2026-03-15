@@ -80,15 +80,15 @@ const ServerManageMembersModalSuspense = ({
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
-  const { data, isFetching, hasNextPage, fetchNextPage } =
+  const { data, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useSuspenseInfiniteQuery(
       trpc.server.getManyMembers.infiniteQueryOptions(
         {
           serverId,
           limit: DEFAULT_MEMBERS_FETCH_LIMIT,
         },
-        { getNextPageParam: (lastPage) => lastPage.nextCursor }
-      )
+        { getNextPageParam: (lastPage) => lastPage.nextCursor },
+      ),
     );
 
   const members = (data.pages || []).flatMap((page) => page.members);
@@ -102,15 +102,15 @@ const ServerManageMembersModalSuspense = ({
               serverId,
               limit: DEFAULT_MEMBERS_FETCH_LIMIT,
             },
-            { getNextPageParam: (lastPage) => lastPage.nextCursor }
-          )
+            { getNextPageParam: (lastPage) => lastPage.nextCursor },
+          ),
         );
         toast.message("Member roles changed");
       },
       onError: (error) => {
         toast.message(error.message || "Something went wrong");
       },
-    })
+    }),
   );
 
   const performServerKick = useMutation(
@@ -122,15 +122,15 @@ const ServerManageMembersModalSuspense = ({
               serverId,
               limit: DEFAULT_MEMBERS_FETCH_LIMIT,
             },
-            { getNextPageParam: (lastPage) => lastPage.nextCursor }
-          )
+            { getNextPageParam: (lastPage) => lastPage.nextCursor },
+          ),
         );
         toast.message("Member kicked from the server.");
       },
       onError: (error) => {
         toast.message(error.message || "Something went wrong");
       },
-    })
+    }),
   );
 
   return (
@@ -248,7 +248,7 @@ const ServerManageMembersModalSuspense = ({
 
           <InfiniteScroll
             hasNextPage={hasNextPage}
-            isFetching={isFetching}
+            isFetchingNextPage={isFetchingNextPage}
             fetchNextPage={fetchNextPage}
             manual
           />

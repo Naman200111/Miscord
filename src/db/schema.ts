@@ -41,7 +41,7 @@ export const servers = pgTable("servers", {
 
 export const channels = pgTable("channels", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
-  type: channelTypes("type").default("TEXT"),
+  type: channelTypes("type").default("TEXT").notNull(),
   name: text("name").notNull(),
   serverId: uuid("server_id").references(() => servers.id, {
     onDelete: "cascade",

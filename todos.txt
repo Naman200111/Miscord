@@ -8,6 +8,8 @@
 11. should add rate limiting on messaging, i think to avoid spamming
 12. fixes
 
+--- deployments
+
 
 enhancements
 -- add video call support

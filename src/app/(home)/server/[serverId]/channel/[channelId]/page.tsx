@@ -11,10 +11,6 @@ const ChannelPage = async ({ params }: ChannelPageProps) => {
   const { channelId, serverId } = await params;
   const queryClient = getQueryClient();
 
-  void queryClient.prefetchQuery(
-    trpc.channel.getOne.queryOptions({ serverId, channelId })
-  );
-
   void queryClient.prefetchInfiniteQuery(
     trpc.message.getMany.infiniteQueryOptions({
       channelId,

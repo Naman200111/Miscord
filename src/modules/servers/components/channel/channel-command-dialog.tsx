@@ -19,7 +19,7 @@ interface ChannelCommandDialogProps {
   serverId: string;
   textChannels: channel[];
   // audioChannels: channel[];
-  // videoChannels: channel[];
+  videoChannels: channel[];
 }
 
 const ChannelCommandDialog = ({
@@ -27,7 +27,7 @@ const ChannelCommandDialog = ({
   setOpen,
   textChannels,
   // audioChannels,
-  // videoChannels,
+  videoChannels,
   serverId,
 }: ChannelCommandDialogProps) => {
   const router = useRouter();
@@ -59,7 +59,7 @@ const ChannelCommandDialog = ({
             </CommandItem>
           ))}
         </CommandGroup> */}
-        {/* <CommandSeparator />
+        <CommandSeparator />
         <CommandGroup heading="Video Channels">
           {videoChannels.map((channel, index) => (
             <CommandItem key={index}>
@@ -67,7 +67,7 @@ const ChannelCommandDialog = ({
               <span className="line-clamp-1">{channel.name}</span>
             </CommandItem>
           ))}
-        </CommandGroup> */}
+        </CommandGroup>
       </CommandList>
     </CommandDialog>
   );

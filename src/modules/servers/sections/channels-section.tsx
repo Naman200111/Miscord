@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import ErrorComponent from "@/components/custom/error-box";
 
-import { Hash, Loader2Icon} from "lucide-react";
+import { Hash, Loader2Icon, VideoIcon } from "lucide-react";
 
 import CustomizeChannelModal from "../components/channel/customize-channel-modal";
 import SingularChannelSection from "./singular-channel-section";
@@ -54,7 +54,7 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
 
   const textChannels = channels.filter((channel) => channel.type === "TEXT");
   // const audioChannels = channels.filter((channel) => channel.type === "AUDIO");
-  // const videoChannels = channels.filter((channel) => channel.type === "VIDEO");
+  const videoChannels = channels.filter((channel) => channel.type === "VIDEO");
 
   // to conditionally show pages
   const path = usePathname();
@@ -119,7 +119,7 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
         setOpen={setOpen}
         textChannels={textChannels}
         // audioChannels={audioChannels}
-        // videoChannels={videoChannels}
+        videoChannels={videoChannels}
         serverId={serverId}
       />
 
@@ -147,7 +147,7 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
           serverId={serverId}
         /> */}
         {/* Video channels =>? Future scope  */}
-        {/* <SingularChannelSection
+        <SingularChannelSection
           channelIcon={<VideoIcon size={18} className="flex-shrink-0" />}
           channels={videoChannels}
           heading="Video Channels"
@@ -156,7 +156,7 @@ const ChannelsSectionSuspense = ({ serverId }: ChannelsSectionProps) => {
           role={data.role}
           setForm={setForm}
           serverId={serverId}
-        /> */}
+        />
       </div>
 
       {openCustomizeChannelModal && (

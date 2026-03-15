@@ -74,7 +74,7 @@ const SingularChannelSection = ({
           key={index}
           className="flex justify-between items-center hover:bg-muted py-1 rounded-md"
           onClick={() => {
-            if (channel.type === "TEXT") {
+            if (channel.type === "TEXT" || channel.type === "VIDEO") {
               router.push(`/server/${serverId}/channel/${channel.id}`);
             }
           }}

@@ -27,6 +27,16 @@ import { messageData } from "@/types/types";
 import { cn } from "@/lib/utils";
 import { useSocket } from "@/hooks/use-socket";
 
+type channelData = {
+    id: string;
+    type: "TEXT" | "AUDIO" | "VIDEO";
+    name: string;
+    serverId: string | null;
+    userId: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+};
+
 const ChannelMessagingSectionSkeleton = () => (
   <div className="h-full w-full flex flex-col items-center justify-center">
     <Loader2Icon className="animate-spin" />
@@ -34,18 +44,21 @@ const ChannelMessagingSectionSkeleton = () => (
 );
 
 export const ChannelMessagingSection = ({
-  channelId,
+  channelData,
   serverId,
+  channelId,
 }: {
-  channelId: string;
+  channelData: channelData;
   serverId: string;
+  channelId: string;
 }) => {
   return (
     <Suspense fallback={<ChannelMessagingSectionSkeleton />}>
       <ErrorBoundary fallback={<ErrorComponent />}>
         <ChannelMessagingSectionSuspense
-          channelId={channelId}
+          channelData={channelData}
           serverId={serverId}
+          channelId={channelId}
         />
       </ErrorBoundary>
     </Suspense>
@@ -53,21 +66,19 @@ export const ChannelMessagingSection = ({
 };
 
 const ChannelMessagingSectionSuspense = ({
-  channelId,
+  channelData,
   serverId,
+  channelId,
 }: {
-  channelId: string;
+  channelData: channelData;
   serverId: string;
+  channelId: string;
 }) => {
   const trpc = useTRPC();
   const isSocketConnected = useSocket();
 
   const { data: currentUser } = useSuspenseQuery(
     trpc.user.getCurrentUser.queryOptions(),
-  );
-
-  const { data } = useSuspenseQuery(
-    trpc.channel.getOne.queryOptions({ serverId, channelId }),
   );
 
   const {
@@ -84,7 +95,7 @@ const ChannelMessagingSectionSuspense = ({
     ),
   );
 
-  const channelName = data.name;
+  const channelName = channelData.name;
   const serverMessagesList = useMemo(
     () =>
       (messagePages.pages.reverse() || []).flatMap((page) => page.messageList),
