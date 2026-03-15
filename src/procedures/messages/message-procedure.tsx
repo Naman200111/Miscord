@@ -109,7 +109,7 @@ export const messageProcedure = createTRPCRouter({
           // todo: check why this works and not doing this before setting nextcursor
           messageList = messageList.slice(0, -1);
         }
-        
+
         messageList = messageList.reverse();
         return {
           nextCursor,
@@ -139,11 +139,10 @@ export const messageProcedure = createTRPCRouter({
     .mutation(async ({ input }) => {
       const { id: messageId } = input;
       const [message] = await db
-      .select()
-      .from(messages)
-      .where(eq(messages.id, messageId));
-      
-      console.log(message, "message");
+        .select()
+        .from(messages)
+        .where(eq(messages.id, messageId));
+
       if (!message) {
         throw new TRPCError({
           message: "This message does not exist.",

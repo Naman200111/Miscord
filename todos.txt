@@ -1,23 +1,9 @@
-3. sanity
-5. work on cleaned message updates for crud operations on multiple machine
-6. improve load times & using LLM to find breaking issues & imporve loading experience
-7. improve performance metrics
-8. remove console logs
-9. check error boundaries
-10. singleton db : globalThis.db ??= drizzle(...) check
-11. should add rate limiting on messaging, i think to avoid spamming
-12. fixes
-
+1. improve load times & using LLM to find breaking issues & imporve loading experience
+2. check error boundaries
+3. singleton db : globalThis.db ??= drizzle(...) check
+4. should add rate limiting on messaging, i think to avoid spamming
 --- deployments
-
-
-enhancements
--- add video call support
-
-learnings :
-1. working of intersection observer
-2. working on socket io learnings & simplify if possible
-
+--- fix readme
 
 #white shades : f7f7f7 > ececec 
 #white hover: e5e5e5

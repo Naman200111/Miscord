@@ -28,13 +28,13 @@ import { cn } from "@/lib/utils";
 import { useSocket } from "@/hooks/use-socket";
 
 type channelData = {
-    id: string;
-    type: "TEXT" | "AUDIO" | "VIDEO";
-    name: string;
-    serverId: string | null;
-    userId: string | null;
-    createdAt: Date;
-    updatedAt: Date;
+  id: string;
+  type: "TEXT" | "AUDIO" | "VIDEO";
+  name: string;
+  serverId: string | null;
+  userId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 const ChannelMessagingSectionSkeleton = () => (
@@ -89,8 +89,9 @@ const ChannelMessagingSectionSuspense = ({
   } = useSuspenseInfiniteQuery(
     trpc.message.getMany.infiniteQueryOptions(
       { serverId, channelId, limit: DEFAULT_MESSAGES_LIMIT },
-      { getNextPageParam: (lastPage) => lastPage.nextCursor,
-        refetchInterval: isSocketConnected ? false : 1000
+      {
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+        refetchInterval: isSocketConnected ? 3000 : 1000,
       },
     ),
   );

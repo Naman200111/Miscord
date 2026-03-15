@@ -10,7 +10,7 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 
-import { Hash, VideoIcon, Volume2Icon } from "lucide-react";
+import { Hash, VideoIcon } from "lucide-react";
 import { channel } from "@/types/types";
 
 interface ChannelCommandDialogProps {

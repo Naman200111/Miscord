@@ -121,7 +121,10 @@ const MessageBox = ({
             </span>
 
             {messageTime && (
-              <span className="text-muted-foreground line-clamp-1 text-xs" suppressHydrationWarning={true}>
+              <span
+                className="text-muted-foreground line-clamp-1 text-xs"
+                suppressHydrationWarning={true}
+              >
                 {messageTime?.toLocaleString()}
               </span>
             )}
@@ -138,9 +141,16 @@ const MessageBox = ({
                 state && state !== "success" ? "text-gray-400" : "",
               )}
             >
-              {isDeleted ? <span className="text-muted-foreground">{message}</span> : <span>{message}</span>}
+              {isDeleted ? (
+                <span className="text-muted-foreground">{message}</span>
+              ) : (
+                <span>{message}</span>
+              )}
               {isEdited && !isDeleted && (
-                <span className="text-muted-foreground text-sm"> (edited) </span>
+                <span className="text-muted-foreground text-sm">
+                  {" "}
+                  (edited){" "}
+                </span>
               )}
             </p>
           )}
@@ -178,7 +188,7 @@ const MessageBox = ({
             </div>
           )}
         </div>
-        {canDeleteMessage && (
+        {!isDeleted && canDeleteMessage && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
