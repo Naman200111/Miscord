@@ -62,7 +62,12 @@ const ChannelCommandDialog = ({
         <CommandSeparator />
         <CommandGroup heading="Video Channels">
           {videoChannels.map((channel, index) => (
-            <CommandItem key={index}>
+            <CommandItem
+              key={index}
+              onSelect={() => {
+                router.push(`/server/${serverId}/channel/${channel.id}`);
+              }}
+            >
               <VideoIcon size={18} />
               <span className="line-clamp-1">{channel.name}</span>
             </CommandItem>

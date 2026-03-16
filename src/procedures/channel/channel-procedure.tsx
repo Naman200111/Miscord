@@ -13,7 +13,7 @@ export const channelProcedure = createTRPCRouter({
         type: z.enum(["TEXT", "AUDIO", "VIDEO"]),
         serverId: z.uuid().nonempty(),
         channelId: z.uuid().nullish(),
-      })
+      }),
     )
     .mutation(
       async ({
@@ -43,7 +43,7 @@ export const channelProcedure = createTRPCRouter({
             .update(channels)
             .set({ name, type })
             .where(
-              and(eq(channels.serverId, serverId), eq(channels.id, channelId))
+              and(eq(channels.serverId, serverId), eq(channels.id, channelId)),
             )
             .returning();
 
@@ -68,7 +68,7 @@ export const channelProcedure = createTRPCRouter({
           .returning();
 
         return createChannel;
-      }
+      },
     ),
 
   getOne: protectedProcedure
@@ -76,7 +76,7 @@ export const channelProcedure = createTRPCRouter({
       z.object({
         serverId: z.uuid().nonempty(),
         channelId: z.uuid().nonempty(),
-      })
+      }),
     )
     .query(async ({ input: { serverId, channelId }, ctx: { id: userId } }) => {
       const [server] = await db
@@ -93,8 +93,8 @@ export const channelProcedure = createTRPCRouter({
         .where(
           and(
             eq(serverUsers.serverId, serverId),
-            eq(serverUsers.userId, userId)
-          )
+            eq(serverUsers.userId, userId),
+          ),
         );
 
       if (!serverUserDetails) {
@@ -108,7 +108,7 @@ export const channelProcedure = createTRPCRouter({
         .select()
         .from(channels)
         .where(
-          and(eq(channels.serverId, serverId), eq(channels.id, channelId))
+          and(eq(channels.serverId, serverId), eq(channels.id, channelId)),
         );
 
       if (!channel) {
@@ -125,7 +125,7 @@ export const channelProcedure = createTRPCRouter({
     .input(
       z.object({
         serverId: z.uuid().nonempty(),
-      })
+      }),
     )
     .query(async ({ input: { serverId }, ctx: { id: userId } }) => {
       const [server] = await db
@@ -142,8 +142,8 @@ export const channelProcedure = createTRPCRouter({
         .where(
           and(
             eq(serverUsers.serverId, serverId),
-            eq(serverUsers.userId, userId)
-          )
+            eq(serverUsers.userId, userId),
+          ),
         );
 
       if (!serverUserDetails) {
@@ -156,7 +156,8 @@ export const channelProcedure = createTRPCRouter({
       const serverChannels = await db
         .select()
         .from(channels)
-        .where(and(eq(channels.serverId, serverId)));
+        .where(and(eq(channels.serverId, serverId)))
+        .orderBy(channels.createdAt);
 
       return serverChannels;
     }),
@@ -166,7 +167,7 @@ export const channelProcedure = createTRPCRouter({
       z.object({
         serverId: z.uuid().nonempty(),
         channelId: z.uuid().nonempty(),
-      })
+      }),
     )
     .mutation(
       async ({ input: { serverId, channelId }, ctx: { id: userId } }) => {
@@ -185,7 +186,7 @@ export const channelProcedure = createTRPCRouter({
           .select()
           .from(channels)
           .where(
-            and(eq(channels.serverId, serverId), eq(channels.id, channelId))
+            and(eq(channels.serverId, serverId), eq(channels.id, channelId)),
           );
 
         if (!channel) {
@@ -201,8 +202,8 @@ export const channelProcedure = createTRPCRouter({
           .where(
             and(
               eq(serverUsers.serverId, serverId),
-              eq(serverUsers.userId, userId)
-            )
+              eq(serverUsers.userId, userId),
+            ),
           );
 
         if (!serverUser || serverUser.role === "MEMBER") {
@@ -225,6 +226,6 @@ export const channelProcedure = createTRPCRouter({
           .returning();
 
         return deleteChannel;
-      }
+      },
     ),
 });
