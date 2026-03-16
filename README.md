@@ -1,21 +1,66 @@
-Welcome to Miscord -- A Discord Application Clone which features the following functionalities :
+# 🚀 Miscord
 
-1. Creating a Server
-2. Creating a Channel -- (Text Or Video) inside the Server
-3. Inviting members to a server
-4. Customizing a server and its channels.
-5. Real-time communication between members of a server in a channel.
-6. Group video-call support in a server channel.
-7. Add, Edit & Delete support for the messages within a channel.
-8. Roles -> Member / Moderator / Admin as the real discord provides.
-9. Sleek and responsive UI design -- similar to discord
-10. ... and so much more.
+**Miscord** is a **Discord-inspired real-time communication platform** where users can create servers, chat in channels, and connect through text and video.
 
-Get the live experience here : https://miscord-45dy.onrender.com/
+🌐 **Live Demo:**  
+https://miscord-45dy.onrender.com/
 
-1. To get started : Created a global channel : Welcome
-2. To get added to the server use the following link : https://miscord-45dy.onrender.com/invite/IMRQp6p0
-3. You can create channels in it to start chatting / create new custom servers and invite only someone you know.
+---
 
-Note: This application is deployed on Render instead of Vercel because the application uses web-sockets with Nextjs and Vercel has serverless architecture and does not support web-sockets.
-Render free tier sometimes take up time on initial render when the service is not used for long.
+## 📸 Screenshots
+
+### Server Interface
+![Server](./public/screenshots/Server.png)
+
+### Channel Chat
+![Chat](./public/screenshots/Channel.png)
+
+### Video Channel
+![Video](./public/screenshots/Video%20call.png)
+
+---
+
+## ✨ Features
+
+- 🏠 **Servers** — Create and customize servers
+- 📁 **Channels** — Text & Video channels
+- 👥 **Invites** — Invite members via shareable links
+- 💬 **Real-time Chat** — Instant messaging with WebSockets
+- ✏️ **Message Controls** — Edit & delete messages
+- 📹 **Video Calls** — Group video communication in channels
+- 🛡 **Roles** — Member / Moderator / Admin
+- 🎨 **Modern UI** — Clean, responsive Discord-style design
+
+---
+
+## 🧪 Try It
+
+1. Join the global server **Welcome to Miscord**
+2. Use the invite link: https://miscord-45dy.onrender.com/invite/IMRQp6p0
+3. Create channels (or chat in **general** channel) and start chatting.
+
+---
+
+## 🛠 Tech Stack
+
+- **Next.js**
+- **TypeScript**
+- **tRPC**
+- **Drizzle ORM**
+- **PostgreSQL**
+- **WebSockets**
+- **React Query**
+- **TailwindCSS**
+
+---
+
+## ⚠️ Deployment Note
+
+Miscord is deployed on **Render** because the app relies on **WebSockets** for real-time communication.  
+Vercel's serverless architecture does not support persistent WebSocket connections.
+
+⚡ On the **Render free tier**, the service may take a few seconds to wake up if inactive.
+
+---
+
+⭐ If you like this project, consider **starring the repo**!
