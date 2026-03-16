@@ -1,5 +1,14 @@
 # 🚀 Miscord
 
+![Next.js](https://img.shields.io/badge/Next.js-000?logo=nextdotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![tRPC](https://img.shields.io/badge/tRPC-2596BE?logo=trpc&logoColor=white)
+![Drizzle](https://img.shields.io/badge/Drizzle%20ORM-C5F74F?logo=drizzle&logoColor=black)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
+![Clerk](https://img.shields.io/badge/Auth-Clerk-6C47FF?logo=clerk&logoColor=white)
+![WebSockets](https://img.shields.io/badge/WebSockets-RealTime-orange)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-38BDF8?logo=tailwindcss&logoColor=white)
+
 **Miscord** is a **Discord-inspired real-time communication platform** where users can create servers, chat in channels, and connect through text and video.
 
 🌐 **Live Demo:**  
@@ -29,6 +38,7 @@ https://miscord-45dy.onrender.com/
 - ✏️ **Message Controls** — Edit & delete messages
 - 📹 **Video Calls** — Group video communication in channels
 - 🛡 **Roles** — Member / Moderator / Admin
+- 🔐 **Authentication** — Secure user authentication with Clerk
 - 🎨 **Modern UI** — Clean, responsive Discord-style design
 
 ---
@@ -51,6 +61,7 @@ https://miscord-45dy.onrender.com/
 - **WebSockets**
 - **React Query**
 - **TailwindCSS**
+- **Clerk Authentication**
 
 ---
 
